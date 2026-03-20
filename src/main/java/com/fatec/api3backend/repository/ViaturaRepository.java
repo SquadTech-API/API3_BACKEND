@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface ViaturaRepository extends JpaRepository<Viatura, Long> {
     // Não precisa escrever nada aqui dentro!
     // O JpaRepository já nos dá os métodos de listar, salvar e deletar.
+    Viatura findByPlaca(String placa);
 }

@@ -1,20 +1,39 @@
 package com.fatec.api3backend.model;
+
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Entity
-@Data // Esta anotação do Lombok cria os Getters e Setters automaticamente
+@Table(name = "viaturas")
+@Data
 public class Viatura {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Campos solicitados pelo cliente
-    private String nucleoDar;      // núcleo/Dar
-    private String numeroFl;       // numero.fl.
-    private String marcaModelo;    // Marca e modelo
-    private String tipoCombustivel; // tipo de combustível aceito
-    private String placa;          // Placas
-    private String prefixo;        // Prefixo
+    @NotBlank(message = "Núcleo/DAR é obrigatório")
+    @Column(nullable = false)
+    private String nucleoDar;
+
+    @NotBlank(message = "Número FL é obrigatório")
+    @Column(nullable = false)
+    private String numeroFl;
+
+    @NotBlank(message = "Marca/Modelo é obrigatório")
+    @Column(nullable = false)
+    private String marcaModelo;
+
+    @NotBlank(message = "Tipo de combustível é obrigatório")
+    @Column(nullable = false)
+    private String tipoCombustivel;
+
+    @NotBlank(message = "Placa é obrigatória")
+    @Column(nullable = false, unique = true)
+    private String placa;
+
+    @NotBlank(message = "Prefixo é obrigatório")
+    @Column(nullable = false)
+    private String prefixo;
 }
