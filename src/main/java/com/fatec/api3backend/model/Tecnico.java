@@ -1,33 +1,43 @@
 package com.fatec.api3backend.model;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import org.hibernate.validator.constraints.br.CPF;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.Data;
 
 @Entity
+@Table(name = "tecnicos")
 @Data
 public class Tecnico {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "O nome é obrigatório")
+    @NotBlank(message = "Nome é obrigatório")
+    @Column(nullable = false)
     private String nome;
 
-    @CPF(message = "CPF inválido")
-    @NotBlank(message = "O CPF é obrigatório")
+    @NotBlank(message = "CPF é obrigatório")
+    @Column(nullable = false, unique = true)
     private String cpf;
 
-    private String dataNasc;
-    private String setor;
+    @NotBlank(message = "Email é obrigatório")
+    @Column(nullable = false)
+    private String email;
 
-    @NotBlank(message = "A matrícula é obrigatória")
-    private String matricula;
+    public String getCpf() {
+        return this.cpf;
+    }
 
-    private String habilitacao;
-    private String senha;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
