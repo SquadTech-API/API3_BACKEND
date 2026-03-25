@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Entity
 @Table(name = "viaturas")
-@Data
+@Data // Mantemos para não quebrar outras partes, mas vamos garantir os métodos abaixo
 public class Viatura {
 
     @Id
@@ -36,4 +36,22 @@ public class Viatura {
     @NotBlank(message = "Prefixo é obrigatório")
     @Column(nullable = false)
     private String prefixo;
+
+    // --- MÉTODOS MANUAIS PARA DESTRAVAR O COMPILADOR ---
+
+    public String getPlaca() {
+        return this.placa;
+    }
+
+    public void setPlaca(String placa) {
+        this.placa = placa;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
