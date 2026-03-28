@@ -2,6 +2,7 @@ package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.AtualizarSenhaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.LoginDTO;
+import br.com.edu.fatec.IPEMControl.DTO.LoginRespostaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.UsuarioDTO;
 import br.com.edu.fatec.IPEMControl.Entities.Usuario;
 import br.com.edu.fatec.IPEMControl.Service.UsuarioService;
@@ -34,10 +35,10 @@ public class UsuarioController {
                 .orElse(ResponseEntity.notFound().build());
     }
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDTO dto) {
-        boolean autenticado = service.autenticar(dto.getEmail(), dto.getSenha());
-        if (autenticado) {
-            return ResponseEntity.ok("Login realizado com sucesso!");
+    public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
+        LoginRespostaDTO response = service.autenticar(dto.getEmail(), dto.getSenha());
+        if (response != null) {
+            return ResponseEntity.ok(response);
         }
         return ResponseEntity.status(401).body("Email ou senha inválidos.");
     }

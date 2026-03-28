@@ -1,6 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.AtualizarSenhaDTO;
+import br.com.edu.fatec.IPEMControl.DTO.LoginRespostaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.UsuarioDTO;
 import br.com.edu.fatec.IPEMControl.Entities.Usuario;
 import br.com.edu.fatec.IPEMControl.Repository.UsuarioRepository;
@@ -43,10 +44,19 @@ public class UsuarioService {
         return repository.findByMatricula(matricula);
 
     }
-    public boolean autenticar(String email, String senha) {
-        Optional<Usuario> usuario = repository.findByEmail(email);
-        if (usuario.isEmpty()) return false;
-        return passwordEncoder.matches(senha, usuario.get().getSenhaHash());
+    public LoginRespostaDTO autenticar(String email, String senha) {
+        Optional<Usuario> optUsuario = repository.findByEmail(email);
+        if (optUsuario.isEmpty()) return null;
+
+        Usuario usuario = optUsuario.get();
+        if (!passwordEncoder.matches(senha, usuario.getSenhaHash())) return null;
+
+        return new LoginRespostaDTO(
+                usuario.getMatricula(),
+                usuario.getNomeCompleto(),
+                usuario.getCargo(),
+                usuario.getEmail()
+        );
     }
     public boolean atualizarSenha(AtualizarSenhaDTO dto) {
         Optional<Usuario> optUsuario = repository.findByEmail(dto.getEmail());
