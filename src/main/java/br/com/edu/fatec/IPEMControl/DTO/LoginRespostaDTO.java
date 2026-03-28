@@ -8,7 +8,7 @@ import lombok.Data;
 public class LoginRespostaDTO {
     private Integer matricula;
     private String nomeCompleto;
-    private String email;
     private String cargo;
+    private String email;
 }
 
