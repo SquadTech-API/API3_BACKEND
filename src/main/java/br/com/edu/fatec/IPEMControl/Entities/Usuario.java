@@ -1,5 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +29,7 @@ public class Usuario {
     private String cargo;
 
     @Column(name = "senha_hash", nullable = false, length = 255)
+    @JsonIgnore
     private String senhaHash;
 
     @Column(name = "ativo", nullable = false)
