@@ -1,9 +1,8 @@
 package br.com.edu.fatec.IPEMControl.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -18,41 +17,56 @@ public class Usuario {
     @Column(name = "matricula")
     private Integer matricula;
 
-    @Column(name = "cpf", length = 14)
+    @Column(name = "cpf", nullable = false, unique = true, length = 11)
     private String cpf;
 
-    @Column(name = "numero_habilitacao", length = 20)
+    @Column(name = "numero_habilitacao", unique = true, length = 20)
     private String numeroHabilitacao;
 
-    @Column(name = "nome", nullable = false, length = 150)
+    @Column(name = "nome", nullable = false, length = 120)
     private String nome;
 
-    @Column(name = "data_nascimento")
+    @Column(name = "data_nascimento", nullable = false)
     private LocalDate dataNascimento;
 
     @Column(name = "email", nullable = false, unique = true, length = 150)
     private String email;
 
+    @JsonIgnore
     @Column(name = "senha", nullable = false, length = 255)
     private String senha;
 
-    @Column(name = "tipo_usuario", length = 50)
-    private String tipoUsuario;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_usuario", nullable = false, length = 10)
+    private TipoUsuario tipoUsuario = TipoUsuario.tecnico;
 
-    @Column(name = "cargo", length = 100)
+    @Column(name = "cargo", length = 80)
     private String cargo;
 
-    @Column(name = "colaborador_ativo")
+    @Column(name = "colaborador_ativo", nullable = false)
     private Boolean colaboradorAtivo = true;
 
-    @Column(name = "tipo_habilitacao", length = 10)
-    private String tipoHabilitacao;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_habilitacao", length = 2)
+    private TipoHabilitacao tipoHabilitacao;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    // ── Enums internos ────────────────────────────────────────────────────────
+
+    public enum TipoUsuario {
+        adm, tecnico
+    }
+
+    public enum TipoHabilitacao {
+        B, C, D, E, AB, AC, AD, AE
+    }
+
+    // ── Lifecycle callbacks ───────────────────────────────────────────────────
 
     @PrePersist
     public void prePersist() {
