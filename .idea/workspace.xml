@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2ea0f281-98a2-4f36-b8f7-b50393a79e5d" name="Changes" comment="refactor(#U01): remoção do espaço em application.properties" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="Sprint-1" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;menegasso0&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/SquadTech-API/API3_BACKEND.git&quot;,
+    &quot;accountId&quot;: &quot;06c52470-38bb-4941-885f-d56c90f4e03d&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3BSTRj3jmPgwKYnKWLEokk08BsY" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.Api3BackendApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.IPEMControlApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;#U01&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="br.com.edu.fatec.IPEMControl.testeipemsenhacombanco" />
+      <recent name="br.com.edu.fatec.IPEMControl" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="KtorApplicationConfigurationType" />
+        <option value="MicronautRunConfigurationType" />
+        <option value="QuarkusRunConfigurationType" />
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+    <option name="configurationStatuses">
+      <map>
+        <entry key="SpringBootApplicationConfigurationType">
+          <value>
+            <map>
+              <entry key="IPEMControlApplication" value="STOPPED" />
+            </map>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="RunManager" selected="Spring Boot.IPEMControlApplication">
+    <configuration name="Api3BackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="api3-backend" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.fatec.api3backend.Api3BackendApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="IPEMControlApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="api3-backend" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="br.com.edu.fatec.IPEMControl.IPEMControlApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TesteIpemSenhaCoMbancoApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="api3-backend" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="br.com.edu.fatec.IPEMControl.TesteIpemSenhaCoMbancoApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Spring Boot.Api3BackendApplication" />
+      <item itemvalue="Spring Boot.IPEMControlApplication" />
+      <item itemvalue="Spring Boot.TesteIpemSenhaCoMbancoApplication" />
+    </list>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.32098.37" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.32098.37" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2ea0f281-98a2-4f36-b8f7-b50393a79e5d" name="Changes" comment="" />
+      <created>1774481465942</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1774481465942</updated>
+      <workItem from="1774481467008" duration="1728000" />
+      <workItem from="1774486526598" duration="817000" />
+      <workItem from="1774710076298" duration="3913000" />
+      <workItem from="1774718100401" duration="4013000" />
+      <workItem from="1774723091720" duration="4847000" />
+      <workItem from="1774740877193" duration="2022000" />
+    </task>
+    <task id="LOCAL-00001" summary="fix(#U01.1B): adaptação do pom.xml e application.properties para receber o banco">
+      <option name="closed" value="true" />
+      <created>1774654234365</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1774654234365</updated>
+    </task>
+    <task id="LOCAL-00002" summary="feat(#U01.1B): implementação das classes principais">
+      <option name="closed" value="true" />
+      <created>1774657199969</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1774657199969</updated>
+    </task>
+    <task id="LOCAL-00003" summary="chore(#U01.1B): remoção das credenciais e username do BD">
+      <option name="closed" value="true" />
+      <created>1774719229544</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1774719229544</updated>
+    </task>
+    <task id="LOCAL-00004" summary="fix(#U01.2B): correção da ordem de chamada dos atributos">
+      <option name="closed" value="true" />
+      <created>1774724337074</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1774724337074</updated>
+    </task>
+    <task id="LOCAL-00005" summary="chore(#U01): liberação dos campos username e password para conectar o banco">
+      <option name="closed" value="true" />
+      <created>1774741545816</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1774741545816</updated>
+    </task>
+    <task id="LOCAL-00006" summary="refactor(#U01): remoção do espaço em application.properties">
+      <option name="closed" value="true" />
+      <created>1774743165991</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1774743165991</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="fix(#U01.1B): adaptação do pom.xml e application.properties para receber o banco" />
+    <MESSAGE value="feat(#U01.1B): implementação das classes principais" />
+    <MESSAGE value="chore(#U01.1B): remoção das credenciais e username do BD" />
+    <MESSAGE value="fix(#U01.2B): correção da ordem de chamada dos atributos" />
+    <MESSAGE value="chore(#U01): liberação dos campos username e password para conectar o banco" />
+    <MESSAGE value="refactor(#U01): remoção do espaço em application.properties" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor(#U01): remoção do espaço em application.properties" />
+  </component>
+</project>
