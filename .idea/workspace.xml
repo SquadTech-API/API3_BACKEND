@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea0f281-98a2-4f36-b8f7-b50393a79e5d" name="Changes" comment="refactor(#U01): remoção do espaço em application.properties" />
+    <list default="true" id="2ea0f281-98a2-4f36-b8f7-b50393a79e5d" name="Changes" comment="feat(#A01): conexao com MySQL concluida e endpoint /adm/veiculos funcional&quot;">
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Controller/VeiculoAdmController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Repository/VeiculoRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Entities/Veiculo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Entities/Veiculo.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,6 +19,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -31,12 +38,19 @@
     &quot;assignee&quot;: &quot;menegasso0&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/SquadTech-API/API3_BACKEND.git&quot;,
-    &quot;accountId&quot;: &quot;06c52470-38bb-4941-885f-d56c90f4e03d&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/SquadTech-API/API3_BACKEND.git",
+    "accountId": "087ebb3f-7af7-4369-bd56-81e0c75d7db6"
   }
-}</component>
+}]]></component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0,
   &quot;fromUser&quot;: false
@@ -46,26 +60,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;Spring Boot.Api3BackendApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.IPEMControlApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;#U01&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "Spring Boot.Api3BackendApplication.executor": "Run",
+    "Spring Boot.IPEMControlApplication.executor": "Run",
+    "git-widget-placeholder": "#A01",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="br.com.edu.fatec.IPEMControl.testeipemsenhacombanco" />
@@ -102,7 +121,7 @@
       </method>
     </configuration>
     <configuration name="IPEMControlApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
-      <module name="api3-backend" />
+      <module name="TesteIpemSenhaCOMbanco" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="br.com.edu.fatec.IPEMControl.IPEMControlApplication" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -124,8 +143,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.32098.37" />
-        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.32098.37" />
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.25557.131" />
+        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-IU-252.25557.131" />
       </set>
     </attachedChunks>
   </component>
@@ -142,6 +161,7 @@
       <workItem from="1774718100401" duration="4013000" />
       <workItem from="1774723091720" duration="4847000" />
       <workItem from="1774740877193" duration="2022000" />
+      <workItem from="1774813637251" duration="3967000" />
     </task>
     <task id="LOCAL-00001" summary="fix(#U01.1B): adaptação do pom.xml e application.properties para receber o banco">
       <option name="closed" value="true" />
@@ -204,6 +224,7 @@
     <MESSAGE value="fix(#U01.2B): correção da ordem de chamada dos atributos" />
     <MESSAGE value="chore(#U01): liberação dos campos username e password para conectar o banco" />
     <MESSAGE value="refactor(#U01): remoção do espaço em application.properties" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor(#U01): remoção do espaço em application.properties" />
+    <MESSAGE value="feat(#A01): conexao com MySQL concluida e endpoint /adm/veiculos funcional&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(#A01): conexao com MySQL concluida e endpoint /adm/veiculos funcional&quot;" />
   </component>
 </project>
