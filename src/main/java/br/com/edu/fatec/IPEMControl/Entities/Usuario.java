@@ -1,9 +1,10 @@
 package br.com.edu.fatec.IPEMControl.Entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
-
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,44 +12,56 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 public class Usuario {
 
     @Id
     @Column(name = "matricula")
     private Integer matricula;
 
-    @Column(name = "nome_completo", nullable = false, length = 150)
-    private String nomeCompleto;
+    @Column(name = "cpf", length = 14)
+    private String cpf;
+
+    @Column(name = "numero_habilitacao", length = 20)
+    private String numeroHabilitacao;
+
+    @Column(name = "nome", nullable = false, length = 150)
+    private String nome;
+
+    @Column(name = "data_nascimento")
+    private LocalDate dataNascimento;
 
     @Column(name = "email", nullable = false, unique = true, length = 150)
     private String email;
 
-    @Column(name = "cargo", nullable = false, length = 100)
+    @Column(name = "senha", nullable = false, length = 255)
+    private String senha;
+
+    @Column(name = "tipo_usuario", length = 50)
+    private String tipoUsuario;
+
+    @Column(name = "cargo", length = 100)
     private String cargo;
 
-    @Column(name = "senha_hash", nullable = false, length = 255)
-    @JsonIgnore
-    private String senhaHash;
+    @Column(name = "colaborador_ativo")
+    private Boolean colaboradorAtivo = true;
 
-    @Column(name = "ativo", nullable = false)
-    private Boolean ativo = true;
+    @Column(name = "tipo_habilitacao", length = 10)
+    private String tipoHabilitacao;
 
-    @Column(name = "criado_em", updatable = false)
-    private LocalDateTime criadoEm;
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
-    @Column(name = "atualizado_em")
-    private LocalDateTime atualizadoEm;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @PrePersist
     public void prePersist() {
-        this.criadoEm = LocalDateTime.now();
-        this.atualizadoEm = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.atualizadoEm = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 }
