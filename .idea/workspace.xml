@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2ea0f281-98a2-4f36-b8f7-b50393a79e5d" name="Changes" comment="feat(#A01): conexao com MySQL concluida e endpoint /adm/veiculos funcional&quot;">
-      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Controller/VeiculoAdmController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Repository/VeiculoRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Entities/Veiculo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Entities/Veiculo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Controller/VeiculoAdmController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Controller/VeiculoAdmController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,12 +35,12 @@
     &quot;assignee&quot;: &quot;menegasso0&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/SquadTech-API/API3_BACKEND.git",
-    "accountId": "087ebb3f-7af7-4369-bd56-81e0c75d7db6"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/SquadTech-API/API3_BACKEND.git&quot;,
+    &quot;accountId&quot;: &quot;087ebb3f-7af7-4369-bd56-81e0c75d7db6&quot;
   }
-}]]></component>
+}</component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -57,35 +54,38 @@
 }</component>
   <component name="ProjectId" id="3BSTRj3jmPgwKYnKWLEokk08BsY" />
   <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "Spring Boot.Api3BackendApplication.executor": "Run",
-    "Spring Boot.IPEMControlApplication.executor": "Run",
-    "git-widget-placeholder": "#A01",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.configurations.included.in.services": "true",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.Api3BackendApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.IPEMControlApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;#A01&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\elder\Documents\GitHub\API3_BACKEND\src\main\resources\static\assets\styles\scripts" />
+      <recent name="C:\Users\elder\Documents\GitHub\API3_BACKEND\src\main\resources\static\assets\styles" />
+    </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="br.com.edu.fatec.IPEMControl.testeipemsenhacombanco" />
       <recent name="br.com.edu.fatec.IPEMControl" />
@@ -161,7 +161,8 @@
       <workItem from="1774718100401" duration="4013000" />
       <workItem from="1774723091720" duration="4847000" />
       <workItem from="1774740877193" duration="2022000" />
-      <workItem from="1774813637251" duration="3967000" />
+      <workItem from="1774813637251" duration="4612000" />
+      <workItem from="1774898907673" duration="2517000" />
     </task>
     <task id="LOCAL-00001" summary="fix(#U01.1B): adaptação do pom.xml e application.properties para receber o banco">
       <option name="closed" value="true" />
@@ -211,7 +212,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774743165991</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="feat(#A01): conexao com MySQL concluida e endpoint /adm/veiculos funcional&quot;">
+      <option name="closed" value="true" />
+      <created>1774817729991</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1774817729991</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
