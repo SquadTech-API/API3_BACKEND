@@ -3,6 +3,7 @@ package br.com.edu.fatec.IPEMControl.Controller;
 import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity; // Adicione este import
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,9 +21,11 @@ public class VeiculoAdmController {
         return repository.save(veiculo);
     }
 
+    // Mantive apenas um GetMapping para não dar erro
     @GetMapping
-    public List<Veiculo> listar() {
-        return repository.findAll();
+    public ResponseEntity<List<Veiculo>> listarTodos() {
+        List<Veiculo> lista = repository.findAll();
+        return ResponseEntity.ok(lista);
     }
 
     @DeleteMapping("/{id}")
@@ -35,13 +38,16 @@ public class VeiculoAdmController {
         return repository.findById(id)
                 .map(veiculo -> {
                     veiculo.setPlaca(veiculoAtualizado.getPlaca());
+                    veiculo.setMarca(veiculoAtualizado.getMarca());
                     veiculo.setModelo(veiculoAtualizado.getModelo());
-                    // Adicione aqui outros campos (cor, ano, etc) se existirem no seu Veiculo.java
+                    veiculo.setAno(veiculoAtualizado.getAno());
+                    veiculo.setKm(veiculoAtualizado.getKm());
+                    veiculo.setCombustivel(veiculoAtualizado.getCombustivel());
+                    veiculo.setStatus(veiculoAtualizado.getStatus());
                     return repository.save(veiculo);
                 }).orElseGet(() -> {
                     veiculoAtualizado.setId(id);
                     return repository.save(veiculoAtualizado);
                 });
     }
-
 }
