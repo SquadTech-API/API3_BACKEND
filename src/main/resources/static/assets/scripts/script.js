@@ -94,7 +94,7 @@ form.addEventListener("submit", function(event) {
 
     console.log("Dados enviados", dados);
 
-        const API_URL = "URL_DO_BACKEND_AQUI";
+        const API_URL = "http://localhost:8080/adm/veiculos";
 
         fetch(API_URL, {
         method: "POST",

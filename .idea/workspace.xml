@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2ea0f281-98a2-4f36-b8f7-b50393a79e5d" name="Changes" comment="feat(#A01): conexao com MySQL concluida e endpoint /adm/veiculos funcional&quot;">
+    <list default="true" id="2ea0f281-98a2-4f36-b8f7-b50393a79e5d" name="Changes" comment="feat(#A01): CRUD de veiculos completo e integracao com frontend">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Controller/VeiculoAdmController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Controller/VeiculoAdmController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Entities/Veiculo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Entities/Veiculo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/assets/styles/scripts/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/assets/scripts/script.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,33 +58,34 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;Spring Boot.Api3BackendApplication.executor&quot;: &quot;Run&quot;,
-    &quot;Spring Boot.IPEMControlApplication.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;#A01&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "Spring Boot.Api3BackendApplication.executor": "Run",
+    "Spring Boot.IPEMControlApplication.executor": "Run",
+    "git-widget-placeholder": "#A01",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\elder\Documents\GitHub\API3_BACKEND\src\main\resources\static\assets" />
       <recent name="C:\Users\elder\Documents\GitHub\API3_BACKEND\src\main\resources\static\assets\styles\scripts" />
       <recent name="C:\Users\elder\Documents\GitHub\API3_BACKEND\src\main\resources\static\assets\styles" />
     </key>
@@ -162,7 +165,12 @@
       <workItem from="1774723091720" duration="4847000" />
       <workItem from="1774740877193" duration="2022000" />
       <workItem from="1774813637251" duration="4612000" />
-      <workItem from="1774898907673" duration="2517000" />
+      <workItem from="1774898907673" duration="2731000" />
+      <workItem from="1774908122046" duration="38000" />
+      <workItem from="1774910615792" duration="1462000" />
+      <workItem from="1774965272793" duration="61000" />
+      <workItem from="1774970538724" duration="611000" />
+      <workItem from="1774976130024" duration="6274000" />
     </task>
     <task id="LOCAL-00001" summary="fix(#U01.1B): adaptação do pom.xml e application.properties para receber o banco">
       <option name="closed" value="true" />
@@ -220,7 +228,15 @@
       <option name="project" value="LOCAL" />
       <updated>1774817729991</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="feat(#A01): CRUD de veiculos completo e integracao com frontend">
+      <option name="closed" value="true" />
+      <created>1774901711150</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1774901711151</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -234,6 +250,7 @@
     <MESSAGE value="chore(#U01): liberação dos campos username e password para conectar o banco" />
     <MESSAGE value="refactor(#U01): remoção do espaço em application.properties" />
     <MESSAGE value="feat(#A01): conexao com MySQL concluida e endpoint /adm/veiculos funcional&quot;" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat(#A01): conexao com MySQL concluida e endpoint /adm/veiculos funcional&quot;" />
+    <MESSAGE value="feat(#A01): CRUD de veiculos completo e integracao com frontend" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat(#A01): CRUD de veiculos completo e integracao com frontend" />
   </component>
 </project>

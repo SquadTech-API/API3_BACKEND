@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 @Entity
 @Data
-@Table(name = "VEICULO")
+@Table(name = "veiculo")
 public class Veiculo {
 
     @Id
@@ -18,14 +18,14 @@ public class Veiculo {
     private String modelo;
     private Integer ano;
     private String combustivel;
-    private String status; // Ex: Ativo, Inativo, Manutenção
+    private String status;
 
-    @Column(name = "KM_ATUAL")
-    private Double kmAtual;
+    @Column(name = "km_atual")
+    private Double km;
 
-    @Column(name = "ULTIMA_REVISAO")
+    @Column(name = "ultima_revisao")
     private LocalDate ultimaRevisao;
 
-    @Column(name = "PROXIMA_REVISAO")
+    @Column(name = "proxima_revisao")
     private LocalDate proximaRevisao;
 }
