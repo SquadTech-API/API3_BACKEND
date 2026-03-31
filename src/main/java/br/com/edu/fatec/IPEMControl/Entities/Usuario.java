@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,44 +12,72 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
 public class Usuario {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "matricula")
     private Integer matricula;
 
-    @Column(name = "nome_completo", nullable = false, length = 150)
-    private String nomeCompleto;
+    @Column(name = "cpf", nullable = false, unique = true, length = 11)
+    private String cpf;
+
+    @Column(name = "numero_habilitacao", unique = true, length = 20)
+    private String numeroHabilitacao;
+
+    @Column(name = "nome", nullable = false, length = 120)
+    private String nome;
+
+    @Column(name = "data_nascimento", nullable = false)
+    private LocalDate dataNascimento;
 
     @Column(name = "email", nullable = false, unique = true, length = 150)
     private String email;
 
-    @Column(name = "cargo", nullable = false, length = 100)
+    @Column(name = "senha", nullable = false, length = 255)
+    @JsonIgnore
+    private String senha;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_usuario", nullable = false, length = 10)
+    private TipoUsuario tipoUsuario = TipoUsuario.tecnico;
+
+    @Column(name = "cargo", length = 80)
     private String cargo;
 
-    @Column(name = "senha_hash", nullable = false, length = 255)
-    @JsonIgnore
-    private String senhaHash;
+    @Column(name = "colaborador_ativo", nullable = false)
+    private Boolean colaboradorAtivo = true;
 
-    @Column(name = "ativo", nullable = false)
-    private Boolean ativo = true;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_habilitacao", length = 2)
+    private TipoHabilitacao tipoHabilitacao;
 
-    @Column(name = "criado_em", updatable = false)
-    private LocalDateTime criadoEm;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
-    @Column(name = "atualizado_em")
-    private LocalDateTime atualizadoEm;
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+
+    // ── Enums internos ────────────────────────────────────────────────────────
+
+    public enum TipoUsuario {
+        adm, tecnico
+    }
+
+    public enum TipoHabilitacao {
+        B, C, D, E, AB, AC, AD, AE
+    }
+
+    // ── Lifecycle callbacks ───────────────────────────────────────────────────
 
     @PrePersist
     public void prePersist() {
-        this.criadoEm = LocalDateTime.now();
-        this.atualizadoEm = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.atualizadoEm = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 }
