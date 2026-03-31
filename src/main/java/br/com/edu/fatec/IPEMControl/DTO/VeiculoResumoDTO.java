@@ -8,13 +8,14 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 public class VeiculoResumoDTO {
-    private Integer idVeiculo;
+
+    private Integer id;
     private String modelo;
     private String prefixo;
-    private String nucleoDar;
-    private BigDecimal kmAtual;
-    private LocalDateTime ultimoUso;
-    private Boolean disponivel;
+    private String ultimoUso;
+    private String ultimoAbastecimento;
+    private String km;
+    private String status;
 }
 
 

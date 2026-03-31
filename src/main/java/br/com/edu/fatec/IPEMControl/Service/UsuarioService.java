@@ -70,7 +70,8 @@ public class UsuarioService {
                 usuario.getMatricula(),
                 usuario.getNome(),
                 usuario.getCargo(),
-                usuario.getEmail()
+                usuario.getEmail(),
+                usuario.getTipoUsuario().name()
 
         );
     }

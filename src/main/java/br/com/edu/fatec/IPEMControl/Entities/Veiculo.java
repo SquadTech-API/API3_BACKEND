@@ -19,6 +19,9 @@ public class Veiculo {
     @Column(name = "id_veiculo")
     private Integer idVeiculo;
 
+    @Column(name = "disponivel")
+    private Boolean disponivel;
+
     @Column(name = "prefixo", length = 20)
     private String prefixo;
 
