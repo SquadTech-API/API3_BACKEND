@@ -3,7 +3,6 @@ package br.com.edu.fatec.IPEMControl.Entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -15,7 +14,6 @@ import java.time.LocalDateTime;
 public class Usuario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "matricula")
     private Integer matricula;
 
@@ -34,8 +32,8 @@ public class Usuario {
     @Column(name = "email", nullable = false, unique = true, length = 150)
     private String email;
 
-    @Column(name = "senha", nullable = false, length = 255)
     @JsonIgnore
+    @Column(name = "senha", nullable = false, length = 255)
     private String senha;
 
     @Enumerated(EnumType.STRING)

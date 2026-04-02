@@ -24,6 +24,7 @@ public class UsuarioService {
     public Usuario salvar(UsuarioDTO dto) {
         Usuario usuario = new Usuario();
 
+        usuario.setMatricula(dto.getMatricula());
         usuario.setCpf(dto.getCpf());
         usuario.setNumeroHabilitacao(dto.getNumeroHabilitacao());
         usuario.setNome(dto.getNome());
@@ -33,8 +34,6 @@ public class UsuarioService {
         usuario.setTipoUsuario(dto.getTipoUsuario() != null ? dto.getTipoUsuario() : Usuario.TipoUsuario.tecnico);
         usuario.setCargo(dto.getCargo());
         usuario.setTipoHabilitacao(dto.getTipoHabilitacao());
-
-        // Criptografa a senha antes de salvar
         usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
 
         return repository.save(usuario);
@@ -63,18 +62,17 @@ public class UsuarioService {
 
         Usuario usuario = optional.get();
 
-        // Verifica se o colaborador está ativo
         if (!usuario.getColaboradorAtivo()) return null;
 
-        // Compara a senha digitada com o hash salvo no banco
         if (!passwordEncoder.matches(senha, usuario.getSenha())) return null;
 
-        // Retorna os dados do usuário (sem a senha)
         return new LoginRespostaDTO(
                 usuario.getMatricula(),
                 usuario.getNome(),
-                usuario.getTipoUsuario().name(), // "adm" ou "tecnico"
-                usuario.getEmail()
+                usuario.getCargo(),
+                usuario.getEmail(),
+                usuario.getTipoUsuario().name()
+
         );
     }
 
@@ -86,10 +84,8 @@ public class UsuarioService {
 
         Usuario usuario = optional.get();
 
-        // Verifica se a senha atual está correta
         if (!passwordEncoder.matches(dto.getSenhaAtual(), usuario.getSenha())) return false;
 
-        // Salva a nova senha criptografada
         usuario.setSenha(passwordEncoder.encode(dto.getNovaSenha()));
         repository.save(usuario);
         return true;

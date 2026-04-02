@@ -10,5 +10,6 @@ public class LoginRespostaDTO {
     private String nomeCompleto;
     private String cargo;
     private String email;
+    private String tipoUsuario;
 }
 
