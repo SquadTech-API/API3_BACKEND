@@ -5,10 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2ea0f281-98a2-4f36-b8f7-b50393a79e5d" name="Changes" comment="feat(#A01): CRUD de veiculos completo e integracao com frontend">
-      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Entities/Motorista.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Repository/MotoristaRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Service/MotoristaService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Controller/UsoVeiculoController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/DTO/UsoVeiculoDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Entities/UsoVeiculo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Repository/UsoVeiculoRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Service/UsoVeiculoService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Entities/Motorista.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Entities/Tecnico.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Repository/MotoristaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Repository/TecnicoRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Service/MotoristaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/br/com/edu/fatec/IPEMControl/Service/TecnicoService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -3,8 +3,8 @@ package br.com.edu.fatec.IPEMControl.Entities;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "motoristas")
-public class Motorista {
+@Table(name = "técnicos")
+public class Tecnico {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,16 +18,14 @@ public class Motorista {
 
     private String telefone;
 
-    // Construtores
-    public Motorista() {}
+    public Tecnico() {}
 
-    public Motorista(String nome, String cnh, String telefone) {
+    public Tecnico(String nome, String cnh, String telefone) {
         this.nome = nome;
         this.cnh = cnh;
         this.telefone = telefone;
     }
 
-    // Getters e Setters
     public Long getId() { return id; }
 
     public String getNome() { return nome; }
