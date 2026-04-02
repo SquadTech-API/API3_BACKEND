@@ -29,12 +29,12 @@ public class VeiculoAdmController {
     }
 
     @DeleteMapping("/{id}")
-    public void excluir(@PathVariable Long id) {
+    public void excluir(@PathVariable Integer id) {
         repository.deleteById(id);
     }
 
     @PutMapping("/{id}")
-    public Veiculo editar(@PathVariable Long id, @RequestBody Veiculo veiculoAtualizado) {
+    public Veiculo editar(@PathVariable Integer id, @RequestBody Veiculo veiculoAtualizado) {
         return repository.findById(id)
                 .map(veiculo -> {
                     veiculo.setPlaca(veiculoAtualizado.getPlaca());
@@ -42,8 +42,11 @@ public class VeiculoAdmController {
                     veiculo.setModelo(veiculoAtualizado.getModelo());
                     veiculo.setAno(veiculoAtualizado.getAno());
                     veiculo.setKm(veiculoAtualizado.getKm());
-                    veiculo.setCombustivel(veiculoAtualizado.getCombustivel());
-                    veiculo.setStatus(veiculoAtualizado.getStatus());
+                    veiculo.setTipoCombustivel(veiculoAtualizado.getTipoCombustivel());
+                    veiculo.setDisponivel(veiculoAtualizado.getDisponivel());
+                    veiculo.setPrefixo(veiculoAtualizado.getPrefixo());
+                    veiculo.setNucleoDar(veiculoAtualizado.getNucleoDar());
+                    veiculo.setHabilitacaoCategoria(veiculoAtualizado.getHabilitacaoCategoria());
                     return repository.save(veiculo);
                 }).orElseGet(() -> {
                     veiculoAtualizado.setId(id);
