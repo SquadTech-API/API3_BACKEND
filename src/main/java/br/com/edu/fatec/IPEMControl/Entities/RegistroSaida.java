@@ -48,6 +48,10 @@ public class RegistroSaida {
     @JoinColumn(name = "matricula_usuario")
     private Usuario usuario;
 
+    @ManyToOne
+    @JoinColumn(name = "id_tipo_servico")
+    private TipoServico tipoServico;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
