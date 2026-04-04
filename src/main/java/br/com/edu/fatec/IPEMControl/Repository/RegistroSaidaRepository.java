@@ -9,6 +9,5 @@ import java.util.Optional;
 @Repository
 public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, Integer> {
 
-    // 🔥 PEGARÁ SOMENTE O ÚLTIMO REGISTRO
     Optional<RegistroSaida> findTopByVeiculoIdVeiculoOrderByDataHoraSaidaDesc(Integer idVeiculo);
 }

@@ -3,14 +3,14 @@ package br.com.edu.fatec.IPEMControl.Controller;
 import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity; // Adicione este import
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/adm/veiculos")
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")
 public class VeiculoAdmController {
 
     @Autowired
@@ -21,7 +21,6 @@ public class VeiculoAdmController {
         return repository.save(veiculo);
     }
 
-    // Mantive apenas um GetMapping para não dar erro
     @GetMapping
     public ResponseEntity<List<Veiculo>> listarTodos() {
         List<Veiculo> lista = repository.findAll();
@@ -41,7 +40,7 @@ public class VeiculoAdmController {
                     veiculo.setMarca(veiculoAtualizado.getMarca());
                     veiculo.setModelo(veiculoAtualizado.getModelo());
                     veiculo.setAno(veiculoAtualizado.getAno());
-                    veiculo.setKm(veiculoAtualizado.getKm());
+                    veiculo.setKmAtual(veiculoAtualizado.getKmAtual());
                     veiculo.setTipoCombustivel(veiculoAtualizado.getTipoCombustivel());
                     veiculo.setDisponivel(veiculoAtualizado.getDisponivel());
                     veiculo.setPrefixo(veiculoAtualizado.getPrefixo());
@@ -49,7 +48,7 @@ public class VeiculoAdmController {
                     veiculo.setHabilitacaoCategoria(veiculoAtualizado.getHabilitacaoCategoria());
                     return repository.save(veiculo);
                 }).orElseGet(() -> {
-                    veiculoAtualizado.setId(id);
+                    veiculoAtualizado.setIdVeiculo(id);
                     return repository.save(veiculoAtualizado);
                 });
     }
