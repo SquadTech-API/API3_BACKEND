@@ -2,6 +2,8 @@ package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.FecharSaidaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.RegistroSaidaDTO;
+import br.com.edu.fatec.IPEMControl.DTO.RetornoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.RetornoRespostaDTO;
 import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
 import br.com.edu.fatec.IPEMControl.Service.RegistroSaidaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,13 @@ public class RegistroSaidaController {
     @PostMapping
     public ResponseEntity<RegistroSaida> abrirSaida(@RequestBody RegistroSaidaDTO dto) {
         return ResponseEntity.status(201).body(registroSaidaService.abrirSaida(dto));
+    }
+
+    @PatchMapping("/{id}/retorno")
+    public ResponseEntity<RetornoRespostaDTO> registrarRetorno(
+            @PathVariable Integer id,
+            @RequestBody RetornoDTO dto) {
+        return ResponseEntity.ok(registroSaidaService.registrarRetorno(id, dto));
     }
 
     @PatchMapping("/{id}/fechar")

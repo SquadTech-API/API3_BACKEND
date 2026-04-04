@@ -40,6 +40,9 @@ public class RegistroSaida {
     @Column(name = "km_final", precision = 10, scale = 2)
     private BigDecimal kmFinal;
 
+    @Column(name = "km_rodados", precision = 10, scale = 2)
+    private BigDecimal kmRodados;
+
     @ManyToOne
     @JoinColumn(name = "id_veiculo")
     private Veiculo veiculo;
@@ -51,7 +54,7 @@ public class RegistroSaida {
     @ManyToOne
     @JoinColumn(name = "id_tipo_servico")
     private TipoServico tipoServico;
-
+    
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
