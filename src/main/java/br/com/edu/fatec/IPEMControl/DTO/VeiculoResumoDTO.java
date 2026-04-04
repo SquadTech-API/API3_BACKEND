@@ -7,7 +7,10 @@ import lombok.Data;
 @AllArgsConstructor
 public class VeiculoResumoDTO {
 
-    private Integer id;
+    // Jackson serializa como "idVeiculo" (camelCase padrão)
+    // veiculos.js lê v.idVeiculo para salvar no sessionStorage
+    private Integer idVeiculo;
+
     private String modelo;
     private String prefixo;
     private String ultimoUso;

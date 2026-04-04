@@ -8,10 +8,10 @@ public class UsoVeiculoDTO {
     private String veiculo;
     private LocalDateTime dataInicio;
 
-    // getters e setters
-
     public Long getTecnicoId() { return tecnicoId; }
-    public void setTecnicoId(Long motoristaId) { this.tecnicoId = tecnicoId; }
+
+    // CORRIGIDO: estava "this.tecnicoId = tecnicoId" (usava o campo, ignorava o parâmetro)
+    public void setTecnicoId(Long tecnicoId) { this.tecnicoId = tecnicoId; }
 
     public String getVeiculo() { return veiculo; }
     public void setVeiculo(String veiculo) { this.veiculo = veiculo; }

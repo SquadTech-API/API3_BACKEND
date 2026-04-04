@@ -10,4 +10,11 @@ import java.util.Optional;
 public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, Integer> {
 
     Optional<RegistroSaida> findTopByVeiculoIdVeiculoOrderByDataHoraSaidaDesc(Integer idVeiculo);
+
+    // ADICIONADO: para o endpoint GET /registro-saidas/ativo?veiculoId=X
+    Optional<RegistroSaida> findTopByVeiculoIdVeiculoAndStatusOrderByDataHoraSaidaDesc(
+            Integer idVeiculo, String status);
+
+    Optional<RegistroSaida> findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(
+            Integer matricula, String status);
 }

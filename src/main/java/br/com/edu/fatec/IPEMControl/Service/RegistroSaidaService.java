@@ -46,6 +46,15 @@ public class RegistroSaidaService {
         if (dto.getLocalDestino() == null || dto.getLocalDestino().isBlank())
             throw new RegraDeNegocioException("Informe o local de destino.");
 
+        // ── ADICIONADO: impede o usuário de abrir nova saída se já tem uma em andamento
+        boolean usuarioJaEmSaida = registroSaidaRepository
+                .findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(
+                        dto.getMatriculaUsuario(), "em_andamento")
+                .isPresent();
+        if (usuarioJaEmSaida)
+            throw new RegraDeNegocioException(
+                    "Você já possui uma saída em andamento. Registre o retorno antes de iniciar uma nova saída.");
+
         Veiculo veiculo = veiculoRepository.findById(dto.getIdVeiculo())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
 
@@ -55,8 +64,7 @@ public class RegistroSaidaService {
         if (veiculo.getKmAtual() != null &&
                 dto.getKmInicial().compareTo(veiculo.getKmAtual()) < 0) {
             throw new RegraDeNegocioException(
-                    "KM inicial (" + dto.getKmInicial() + ") não pode ser menor que o KM atual do veículo (" + veiculo.getKmAtual() + ")."
-            );
+                    "KM inicial (" + dto.getKmInicial() + ") não pode ser menor que o KM atual do veículo (" + veiculo.getKmAtual() + ").");
         }
 
         Usuario usuario = usuarioRepository.findByMatricula(dto.getMatriculaUsuario())
@@ -97,15 +105,12 @@ public class RegistroSaidaService {
         if (!"em_andamento".equalsIgnoreCase(registro.getStatus()))
             throw new RegraDeNegocioException("Esta saída já foi encerrada.");
 
-        if (dto.getKmFinal().compareTo(registro.getKmInicial()) < 0) {
+        if (dto.getKmFinal().compareTo(registro.getKmInicial()) < 0)
             throw new RegraDeNegocioException(
-                    "KM final (" + dto.getKmFinal() + ") não pode ser menor que o KM inicial (" + registro.getKmInicial() + ")."
-            );
-        }
+                    "KM final (" + dto.getKmFinal() + ") não pode ser menor que o KM inicial (" + registro.getKmInicial() + ").");
 
-        if (dto.getDataRetorno().isBefore(registro.getDataHoraSaida())) {
+        if (dto.getDataRetorno().isBefore(registro.getDataHoraSaida()))
             throw new RegraDeNegocioException("Horário de chegada não pode ser anterior ao horário de saída.");
-        }
 
         BigDecimal kmRodados = dto.getKmFinal().subtract(registro.getKmInicial());
 
@@ -114,9 +119,8 @@ public class RegistroSaidaService {
         registro.setDataRetorno(dto.getDataRetorno());
         registro.setStatus("concluido");
 
-        if (dto.getObservacoes() != null && !dto.getObservacoes().isBlank()) {
+        if (dto.getObservacoes() != null && !dto.getObservacoes().isBlank())
             registro.setObservacoes(dto.getObservacoes());
-        }
 
         Veiculo veiculo = registro.getVeiculo();
         veiculo.setKmAtual(dto.getKmFinal());
@@ -146,7 +150,6 @@ public class RegistroSaidaService {
 
         if (!"em_andamento".equalsIgnoreCase(registro.getStatus()))
             throw new RegraDeNegocioException("Esta saída já foi encerrada.");
-
         if (dto.getKmFinal() == null)
             throw new RegraDeNegocioException("Informe o KM final.");
         if (dto.getDataRetorno() == null)
@@ -163,9 +166,8 @@ public class RegistroSaidaService {
         registro.setDataRetorno(dto.getDataRetorno());
         registro.setStatus("concluido");
 
-        if (dto.getObservacoes() != null && !dto.getObservacoes().isBlank()) {
+        if (dto.getObservacoes() != null && !dto.getObservacoes().isBlank())
             registro.setObservacoes(dto.getObservacoes());
-        }
 
         Veiculo veiculo = registro.getVeiculo();
         veiculo.setKmAtual(dto.getKmFinal());

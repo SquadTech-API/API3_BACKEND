@@ -56,7 +56,8 @@ public class VeiculoService {
                     .orElse("—");
 
             Optional<Abastecimento> ultimoAbastecimento =
-                    abastecimentoRepository.findTopByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(veiculo.getIdVeiculo());
+                    abastecimentoRepository
+                            .findTopByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(veiculo.getIdVeiculo());
 
             String ultimoAbastecimentoStr = ultimoAbastecimento
                     .map(a -> formatarData(a.getDataHora()))
@@ -66,6 +67,7 @@ public class VeiculoService {
                     ? FMT_KM.format(veiculo.getKmAtual().longValue())
                     : "—";
 
+            // CORRIGIDO: primeiro argumento é idVeiculo (campo renomeado no DTO)
             return new VeiculoResumoDTO(
                     veiculo.getIdVeiculo(),
                     veiculo.getModelo(),

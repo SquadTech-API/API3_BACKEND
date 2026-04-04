@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+// CORRIGIDO: era /abastecimento (singular) mas o JS chama /abastecimento (mantido singular)
+// Deixamos singular para bater com o abastecimento.js corrigido que chama /abastecimento
 @RequestMapping("/abastecimento")
 public class AbastecimentoController {
 
@@ -16,6 +18,6 @@ public class AbastecimentoController {
 
     @PostMapping
     public ResponseEntity<Abastecimento> criar(@RequestBody AbastecimentoDTO dto) {
-        return ResponseEntity.ok(abastecimentoService.salvar(dto));
+        return ResponseEntity.status(201).body(abastecimentoService.salvar(dto));
     }
 }
