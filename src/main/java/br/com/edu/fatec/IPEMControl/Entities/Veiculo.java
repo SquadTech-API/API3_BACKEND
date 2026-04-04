@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -19,38 +20,35 @@ public class Veiculo {
     @Column(name = "id_veiculo")
     private Integer idVeiculo;
 
-    @Column(name = "disponivel")
-    private Boolean disponivel;
-
-    @Column(name = "prefixo", length = 20)
+    @Column(name = "prefixo", nullable = false, length = 20)
     private String prefixo;
 
-    @Column(name = "nucleo_dar", length = 100)
+    @Column(name = "nucleo_dar", nullable = false, length = 100)
     private String nucleoDar;
 
-    @Column(name = "placa", length = 10)
+    @Column(name = "placa", nullable = false, unique = true, length = 10)
     private String placa;
 
-    @Column(name = "numero_fl", length = 20)
-    private String numeroFl;
-
-    @Column(name = "modelo", length = 100)
+    @Column(name = "modelo", nullable = false, length = 100)
     private String modelo;
 
-    @Column(name = "marca", length = 100)
+    @Column(name = "marca", nullable = false, length = 100)
     private String marca;
 
-    @Column(name = "ano")
+    @Column(name = "ano", nullable = false)
     private Integer ano;
 
-    @Column(name = "tipo_combustivel", length = 50)
+    @Column(name = "tipo_combustivel", nullable = false, length = 50)
     private String tipoCombustivel;
 
-    @Column(name = "habilitacao_categoria", length = 10)
+    @Column(name = "habilitacao_categoria", nullable = false, length = 10)
     private String habilitacaoCategoria;
 
-    @Column(name = "km_atual", precision = 10, scale = 2)
+    @Column(name = "km_atual", nullable = false, precision = 10, scale = 2)
     private BigDecimal kmAtual;
+
+    @Column(name = "disponivel", nullable = false)
+    private Boolean disponivel = true;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
