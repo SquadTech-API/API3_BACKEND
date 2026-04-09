@@ -1,9 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.FecharSaidaDTO;
-import br.com.edu.fatec.IPEMControl.DTO.RegistroSaidaDTO;
-import br.com.edu.fatec.IPEMControl.DTO.RetornoDTO;
-import br.com.edu.fatec.IPEMControl.DTO.RetornoRespostaDTO;
+import br.com.edu.fatec.IPEMControl.DTO.*;
 import br.com.edu.fatec.IPEMControl.Entities.*;
 import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
@@ -12,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -46,7 +44,6 @@ public class RegistroSaidaService {
         if (dto.getLocalDestino() == null || dto.getLocalDestino().isBlank())
             throw new RegraDeNegocioException("Informe o local de destino.");
 
-        // ── ADICIONADO: impede o usuário de abrir nova saída se já tem uma em andamento
         boolean usuarioJaEmSaida = registroSaidaRepository
                 .findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(
                         dto.getMatriculaUsuario(), "em_andamento")
@@ -93,7 +90,6 @@ public class RegistroSaidaService {
     }
 
     public RetornoRespostaDTO registrarRetorno(Integer id, RetornoDTO dto) {
-
         if (dto.getKmFinal() == null)
             throw new RegraDeNegocioException("Informe o KM final.");
         if (dto.getDataRetorno() == null)
@@ -144,7 +140,6 @@ public class RegistroSaidaService {
     }
 
     public RegistroSaida fecharSaida(Integer id, FecharSaidaDTO dto) {
-
         RegistroSaida registro = registroSaidaRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de saída não encontrado."));
 
@@ -185,4 +180,19 @@ public class RegistroSaidaService {
         return registroSaidaRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de saída não encontrado."));
     }
+
+    public RelatorioUsoMensalDTO gerarRelatorioUsoMensal(LocalDateTime inicio, LocalDateTime fim) {
+        // 1. Busca os dados filtrados por data (Tarefa #A05.1B)
+        List<RegistroSaida> viagens = registroSaidaRepository.findByDataRetornoBetween(inicio, fim);
+
+        // 2. Soma a quilometragem total (Tarefa #A05.2B)
+        BigDecimal totalKm = viagens.stream()
+                .map(v -> v.getKmRodados() != null ? v.getKmRodados() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // 3. Retorna o resumo estruturado (Tarefa #A05.3B)
+        return new RelatorioUsoMensalDTO(totalKm, viagens.size(), viagens);
+    }
+
+
 }
