@@ -23,7 +23,6 @@ public class UsoVeiculoService {
         this.tecnicoRepository = tecnicoRepository;
     }
 
-    // 🔥 REGISTRAR USO
     public UsoVeiculo registrar(UsoVeiculoDTO dto) {
 
         Tecnico tecnico = tecnicoRepository.findById(dto.getTecnicoId())
