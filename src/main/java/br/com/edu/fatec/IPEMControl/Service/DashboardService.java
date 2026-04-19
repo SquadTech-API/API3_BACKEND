@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.DashboardComparativoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.DashboardGraficoDTO;
 import br.com.edu.fatec.IPEMControl.Repository.UsoVeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,19 +14,19 @@ public class DashboardService {
     @Autowired
     private UsoVeiculoRepository usoVeiculoRepository;
 
-    public List<DashboardComparativoDTO> buscarComparativo() {
+    public DashboardGraficoDTO buscarComparativo() {
         List<Object[]> resultados = usoVeiculoRepository.buscarComparativoUso();
 
-        List<DashboardComparativoDTO> lista = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+        List<Long> usos = new ArrayList<>();
+        List<Double> horas = new ArrayList<>();
 
         for (Object[] row : resultados) {
-            String veiculo = (String) row[0];
-            Long totalUsos = ((Number) row[1]).longValue();
-            Double horasUso = row[2] != null ? ((Number) row[2]).doubleValue() : 0.0;
-
-            lista.add(new DashboardComparativoDTO(veiculo, totalUsos, horasUso));
+            labels.add((String) row[0]);
+            usos.add(((Number) row[1]).longValue());
+            horas.add(row[2] != null ? ((Number) row[2]).doubleValue() : 0.0);
         }
 
-        return lista;
+        return new DashboardGraficoDTO(labels, usos, horas);
     }
 }
