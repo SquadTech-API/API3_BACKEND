@@ -12,11 +12,15 @@ public interface UsoVeiculoRepository extends JpaRepository<UsoVeiculo, Long> {
 
     List<UsoVeiculo> findByDataFimIsNull();
 
-    @Query("""
-        SELECT u.veiculo, COUNT(u), SUM(u.kmPercorrido)
-        FROM UsoVeiculo u
-        GROUP BY u.veiculo
-        ORDER BY COUNT(u) DESC
-    """)
-    List<Object[]> buscarComparativoViaturas();
+    @Query(value = """
+        SELECT 
+            veiculo,
+            COUNT(*) AS total_usos,
+            SUM(TIMESTAMPDIFF(HOUR, data_inicio, data_fim)) AS horas_uso
+        FROM uso_veiculo
+        WHERE data_fim IS NOT NULL
+        GROUP BY veiculo
+        ORDER BY total_usos DESC
+    """, nativeQuery = true)
+    List<Object[]> buscarComparativoUso();
 }
