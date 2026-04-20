@@ -4,6 +4,8 @@ import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,4 +19,9 @@ public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, In
 
     Optional<RegistroSaida> findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(
             Integer matricula, String status);
+    List<RegistroSaida> findByUsuarioMatriculaAndDataHoraSaidaBetween(
+            Integer matricula,
+            LocalDateTime inicioDia,
+            LocalDateTime fimDia
+    );
 }
