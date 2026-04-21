@@ -23,7 +23,6 @@ public class UsuarioService {
 
     public Usuario salvar(UsuarioDTO dto) {
         Usuario usuario = new Usuario();
-
         usuario.setMatricula(dto.getMatricula());
         usuario.setCpf(dto.getCpf());
         usuario.setNumeroHabilitacao(dto.getNumeroHabilitacao());
@@ -35,35 +34,27 @@ public class UsuarioService {
         usuario.setCargo(dto.getCargo());
         usuario.setTipoHabilitacao(dto.getTipoHabilitacao());
         usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
-
         return repository.save(usuario);
     }
 
-    // ── Listar todos os usuários
     public List<Usuario> listarTodos() {
         return repository.findAll();
     }
 
-    // ── Buscar por matrícula
     public Optional<Usuario> buscarPorMatricula(Integer matricula) {
         return repository.findByMatricula(matricula);
     }
 
-    // ── Buscar por email
     public Optional<Usuario> buscarPorEmail(String email) {
         return repository.findByEmail(email);
     }
 
-    // ── Autenticar (login)
     public LoginRespostaDTO autenticar(String email, String senha) {
         Optional<Usuario> optional = repository.findByEmail(email);
-
         if (optional.isEmpty()) return null;
 
         Usuario usuario = optional.get();
-
         if (!usuario.getColaboradorAtivo()) return null;
-
         if (!passwordEncoder.matches(senha, usuario.getSenha())) return null;
 
         return new LoginRespostaDTO(
@@ -72,18 +63,14 @@ public class UsuarioService {
                 usuario.getCargo(),
                 usuario.getEmail(),
                 usuario.getTipoUsuario().name()
-
         );
     }
 
-    // ── Atualizar senha
     public boolean atualizarSenha(AtualizarSenhaDTO dto) {
         Optional<Usuario> optional = repository.findByEmail(dto.getEmail());
-
         if (optional.isEmpty()) return false;
 
         Usuario usuario = optional.get();
-
         if (!passwordEncoder.matches(dto.getSenhaAtual(), usuario.getSenha())) return false;
 
         usuario.setSenha(passwordEncoder.encode(dto.getNovaSenha()));
