@@ -6,13 +6,13 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>4.0.4</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>org.example</groupId>
-    <artifactId>TesteIpemSenhaCOMbanco</artifactId>
+    <artifactId>IpemControl</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>TesteIpemSenhaCOMbanco</name>
-    <description>TesteIpemSenhaCOMbanco</description>
+    <name>IpemControl</name>
+    <description>IpemControl</description>
     <url/>
     <licenses>
         <license/>

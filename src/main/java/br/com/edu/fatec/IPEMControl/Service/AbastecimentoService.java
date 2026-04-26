@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.AbastecimentoDTO;
-import br.com.edu.fatec.IPEMControl.DTO.AbastecimentoHistoricoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.FuelSupplyHistoryDTO;
 import br.com.edu.fatec.IPEMControl.Entities.Abastecimento;
 import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
 import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
@@ -44,7 +44,7 @@ public class AbastecimentoService {
         return abastecimentoRepository.save(abastecimento);
     }
 
-    public List<AbastecimentoHistoricoDTO> listarHistorico(Integer idVeiculo) {
+    public List<FuelSupplyHistoryDTO> listarHistorico(Integer idVeiculo) {
         List<Abastecimento> lista = (idVeiculo != null)
                 ? abastecimentoRepository.findByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(idVeiculo)
                 : abastecimentoRepository.findAllByOrderByDataHoraDesc();
@@ -54,11 +54,11 @@ public class AbastecimentoService {
                 .collect(Collectors.toList());
     }
 
-    private AbastecimentoHistoricoDTO mapearParaHistoricoDTO(Abastecimento a) {
+    private FuelSupplyHistoryDTO mapearParaHistoricoDTO(Abastecimento a) {
         RegistroSaida saida = a.getRegistroSaida();
         Veiculo veiculo = (saida != null) ? saida.getVeiculo() : null;
 
-        return new AbastecimentoHistoricoDTO(
+        return new FuelSupplyHistoryDTO(
                 a.getIdAbastecimento(),
                 a.getDataHora(),
                 a.getTipoCombustivel(),
