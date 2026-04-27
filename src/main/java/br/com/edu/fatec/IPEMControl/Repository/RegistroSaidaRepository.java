@@ -29,10 +29,6 @@ public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, In
 
     // ── Queries para /relatorios/tecnicos/geral ──────────────────────────────
 
-    /**
-     * Query 3.1: Saídas e KM por técnico no período.
-     * Colunas resultado: [0]=matricula, [1]=nome, [2]=total_saidas, [3]=km_total
-     */
     @Query(value = """
         SELECT u.matricula, u.nome,
                COUNT(rs.id_saida)               AS total_saidas,
@@ -47,10 +43,6 @@ public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, In
         """, nativeQuery = true)
     List<Object[]> buscarSaidasKmPorTecnico(@Param("dataInicio") LocalDateTime dataInicio);
 
-    /**
-     * KM médio por semana — últimas 4 semanas (para gráfico de linha).
-     * Colunas resultado: [0]=semana (YEARWEEK), [1]=km_medio
-     */
     @Query(value = """
         SELECT YEARWEEK(data_hora_saida, 1) AS semana,
                AVG(km_rodados)              AS km_medio
@@ -63,10 +55,6 @@ public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, In
         """, nativeQuery = true)
     List<Object[]> buscarKmPorSemana(@Param("dataInicio") LocalDateTime dataInicio);
 
-    /**
-     * Distribuição de serviços no período — para gráfico de rosca.
-     * Colunas resultado: [0]=nome_servico, [1]=total
-     */
     @Query(value = """
         SELECT ts.nome_servico, COUNT(rs.id_saida) AS total
         FROM registro_saida rs
@@ -78,7 +66,6 @@ public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, In
 
     // ── Queries para /relatorios/tecnicos/{matricula} ────────────────────────
 
-    /** Total de saídas do técnico no período */
     @Query(value = """
         SELECT COUNT(*) FROM registro_saida
         WHERE matricula_usuario = :matricula
@@ -87,7 +74,6 @@ public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, In
     long countPorMatriculaEPeriodo(@Param("matricula") Integer matricula,
                                    @Param("dataInicio") LocalDateTime dataInicio);
 
-    /** Soma de km_rodados do técnico no período */
     @Query(value = """
         SELECT COALESCE(SUM(km_rodados), 0) FROM registro_saida
         WHERE matricula_usuario = :matricula
@@ -96,9 +82,6 @@ public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, In
     BigDecimal sumKmPorMatriculaEPeriodo(@Param("matricula") Integer matricula,
                                          @Param("dataInicio") LocalDateTime dataInicio);
 
-    /**
-     * Query 3.5: Tempo médio de saída em horas (apenas saídas concluídas).
-     */
     @Query(value = """
         SELECT AVG(TIMESTAMPDIFF(MINUTE, data_hora_saida, data_retorno)) / 60.0
         FROM registro_saida
@@ -109,7 +92,6 @@ public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, In
     Double calcularTempoMedioHoras(@Param("matricula") Integer matricula,
                                    @Param("dataInicio") LocalDateTime dataInicio);
 
-    /** Maior km_rodados do técnico no período */
     @Query(value = """
         SELECT COALESCE(MAX(km_rodados), 0) FROM registro_saida
         WHERE matricula_usuario = :matricula
@@ -118,7 +100,6 @@ public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, In
     BigDecimal buscarMaiorKm(@Param("matricula") Integer matricula,
                              @Param("dataInicio") LocalDateTime dataInicio);
 
-    /** Duração em horas da saída mais longa (concluídas) */
     @Query(value = """
         SELECT COALESCE(MAX(TIMESTAMPDIFF(MINUTE, data_hora_saida, data_retorno)), 0) / 60.0
         FROM registro_saida
@@ -129,10 +110,6 @@ public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, In
     Double buscarMaiorDuracaoHoras(@Param("matricula") Integer matricula,
                                    @Param("dataInicio") LocalDateTime dataInicio);
 
-    /**
-     * Query 3.4: Destinos mais frequentes (top 5).
-     * Colunas: [0]=local_destino, [1]=quantidade
-     */
     @Query(value = """
         SELECT local_destino, COUNT(*) AS quantidade
         FROM registro_saida
@@ -143,10 +120,6 @@ public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, In
         """, nativeQuery = true)
     List<Object[]> buscarDestinosMaisFrequentes(@Param("matricula") Integer matricula);
 
-    /**
-     * Serviços realizados pelo técnico no período.
-     * Colunas: [0]=nome_servico, [1]=total
-     */
     @Query(value = """
         SELECT ts.nome_servico, COUNT(rs.id_saida) AS total
         FROM registro_saida rs
@@ -158,17 +131,8 @@ public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, In
     List<Object[]> buscarServicosDoTecnico(@Param("matricula") Integer matricula,
                                            @Param("dataInicio") LocalDateTime dataInicio);
 
-    /**
-     * Query 3.3: Saída ativa do técnico (em_andamento) — já existe equivalente,
-     * mas reutilizamos findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc.
-     */
-
-    /** Última saída do técnico (qualquer status) */
     Optional<RegistroSaida> findTopByUsuarioMatriculaOrderByDataHoraSaidaDesc(Integer matricula);
 
-    /**
-     * Veículos distintos utilizados pelo técnico (prefixo + placa).
-     */
     @Query(value = """
         SELECT DISTINCT CONCAT(v.prefixo, ' — ', v.placa)
         FROM registro_saida rs
@@ -177,7 +141,37 @@ public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, In
         """, nativeQuery = true)
     List<String> buscarVeiculosUtilizados(@Param("matricula") Integer matricula);
 
-    /** Contagem de técnicos ativos */
     @Query(value = "SELECT COUNT(*) FROM usuario WHERE colaborador_ativo = TRUE", nativeQuery = true)
     long countTecnicosAtivos();
+
+    // ── Queries para dashboard de veículos ───────────────────────────────────
+
+    @Query(value = """
+        SELECT v.id_veiculo,
+               v.prefixo,
+               COALESCE(SUM(rs.km_rodados), 0) AS km_total
+        FROM registro_saida rs
+        JOIN veiculo v ON rs.id_veiculo = v.id_veiculo
+        WHERE rs.data_hora_saida >= NOW() - INTERVAL 7 DAY
+        GROUP BY v.id_veiculo, v.prefixo
+        ORDER BY km_total DESC
+        LIMIT 5
+        """, nativeQuery = true)
+    List<Object[]> buscarTop5KmSemana();
+
+    @Query(value = """
+        SELECT COALESCE(SUM(rs.km_rodados), 0)
+        FROM registro_saida rs
+        WHERE rs.id_veiculo = :idVeiculo
+          AND rs.data_hora_saida >= NOW() - INTERVAL 7 DAY
+        """, nativeQuery = true)
+    Double totalKmSemana(@Param("idVeiculo") Integer idVeiculo);
+
+    @Query(value = """
+        SELECT COUNT(*)
+        FROM registro_saida rs
+        WHERE rs.id_veiculo = :idVeiculo
+          AND rs.data_hora_saida >= NOW() - INTERVAL 7 DAY
+        """, nativeQuery = true)
+    Long totalSaidasSemana(@Param("idVeiculo") Integer idVeiculo);
 }
