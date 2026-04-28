@@ -8,31 +8,24 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "troca_oleo")
+@Table(name = "oil_maintenance")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrocaOleo {
+public class OilMaintenance {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_troca_oleo")
-    private Integer idTrocaOleo;
+    private Integer id;
 
-    @Column(name = "km_troca", precision = 10, scale = 2)
-    private BigDecimal kmTroca;
-
-    @Column(name = "km_proxima_troca", precision = 10, scale = 2)
-    private BigDecimal kmProximaTroca;
+    private BigDecimal odometerAtChange;
+    private BigDecimal nextChangeOdometer;
 
     @ManyToOne
-    @JoinColumn(name = "id_saida")
-    private RegistroSaida registroSaida;
+    @JoinColumn(name = "exit_record_id")
+    private RegistroSaida exitRecord;
 
-    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @PrePersist
