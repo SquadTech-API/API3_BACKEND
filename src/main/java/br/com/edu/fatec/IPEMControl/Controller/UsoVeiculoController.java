@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/uso-veiculo")
+@RequestMapping("/uso-veiculos")
 public class UsoVeiculoController {
 
     private final UsoVeiculoService service;
@@ -19,7 +19,7 @@ public class UsoVeiculoController {
     }
 
     @PostMapping
-    public UsoVeiculo registrar(@RequestBody UsoVeiculoDTO dto) {
+    public UsoVeiculoDTO registrar(@RequestBody UsoVeiculoDTO dto) {
         return service.registrar(dto);
     }
 
