@@ -26,7 +26,7 @@ public class VeiculoServico {
 
     @ManyToOne
     @JoinColumn(name = "id_veiculo")
-    private Veiculo veiculo;
+    private Vehicle vehicle;
 
     @ManyToOne
     @JoinColumn(name = "id_tipo_servico")

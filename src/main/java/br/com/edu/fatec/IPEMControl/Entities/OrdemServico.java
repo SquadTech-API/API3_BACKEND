@@ -20,7 +20,7 @@ public class OrdemServico {
 
     @ManyToOne
     @JoinColumn(name = "id_veiculo", nullable = false)
-    private Veiculo veiculo;
+    private Vehicle vehicle;
 
     @ManyToOne
     @JoinColumn(name = "id_tipo_servico", nullable = false)

@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface OilMaintenanceRepository extends JpaRepository<OilMaintenance, Integer> {
 
-    // Latest oil maintenance for a specific vehicle
+    //Manutenção de óleo mais recente para um veículo específico
     @Query("SELECT o FROM OilMaintenance o " +
             "JOIN o.exitRecord rs " +
             "JOIN rs.vehicle v " +
@@ -21,6 +21,6 @@ public interface OilMaintenanceRepository extends JpaRepository<OilMaintenance, 
             "ORDER BY o.createdAt DESC")
     Optional<OilMaintenance> findLatestByVehicleId(@Param("vehicleId") Integer vehicleId);
 
-    // Oil maintenances after a given date
+    //Manutenção do óleo após uma determinada data
     List<OilMaintenance> findByCreatedAtAfterOrderByCreatedAtDesc(LocalDateTime from);
 }

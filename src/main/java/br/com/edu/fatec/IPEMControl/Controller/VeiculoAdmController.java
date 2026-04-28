@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
+import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +17,13 @@ public class VeiculoAdmController {
     private VeiculoRepository repository;
 
     @PostMapping
-    public Veiculo cadastrar(@RequestBody Veiculo veiculo) {
-        return repository.save(veiculo);
+    public Vehicle cadastrar(@RequestBody Vehicle vehicle) {
+        return repository.save(vehicle);
     }
 
     @GetMapping
-    public ResponseEntity<List<Veiculo>> listarTodos() {
-        List<Veiculo> lista = repository.findAll();
+    public ResponseEntity<List<Vehicle>> listarTodos() {
+        List<Vehicle> lista = repository.findAll();
         return ResponseEntity.ok(lista);
     }
 
@@ -33,23 +33,23 @@ public class VeiculoAdmController {
     }
 
     @PutMapping("/{id}")
-    public Veiculo editar(@PathVariable Integer id, @RequestBody Veiculo veiculoAtualizado) {
+    public Vehicle editar(@PathVariable Integer id, @RequestBody Vehicle vehicleAtualizado) {
         return repository.findById(id)
                 .map(veiculo -> {
-                    veiculo.setPlaca(veiculoAtualizado.getPlaca());
-                    veiculo.setMarca(veiculoAtualizado.getMarca());
-                    veiculo.setModelo(veiculoAtualizado.getModelo());
-                    veiculo.setAno(veiculoAtualizado.getAno());
-                    veiculo.setKmAtual(veiculoAtualizado.getKmAtual());
-                    veiculo.setTipoCombustivel(veiculoAtualizado.getTipoCombustivel());
-                    veiculo.setDisponivel(veiculoAtualizado.getDisponivel());
-                    veiculo.setPrefixo(veiculoAtualizado.getPrefixo());
-                    veiculo.setNucleoDar(veiculoAtualizado.getNucleoDar());
-                    veiculo.setHabilitacaoCategoria(veiculoAtualizado.getHabilitacaoCategoria());
+                    veiculo.setPlaca(vehicleAtualizado.getPlaca());
+                    veiculo.setMarca(vehicleAtualizado.getMarca());
+                    veiculo.setModelo(vehicleAtualizado.getModelo());
+                    veiculo.setAno(vehicleAtualizado.getAno());
+                    veiculo.setKmAtual(vehicleAtualizado.getKmAtual());
+                    veiculo.setTipoCombustivel(vehicleAtualizado.getTipoCombustivel());
+                    veiculo.setDisponivel(vehicleAtualizado.getDisponivel());
+                    veiculo.setPrefixo(vehicleAtualizado.getPrefixo());
+                    veiculo.setNucleoDar(vehicleAtualizado.getNucleoDar());
+                    veiculo.setHabilitacaoCategoria(vehicleAtualizado.getHabilitacaoCategoria());
                     return repository.save(veiculo);
                 }).orElseGet(() -> {
-                    veiculoAtualizado.setIdVeiculo(id);
-                    return repository.save(veiculoAtualizado);
+                    vehicleAtualizado.setIdVeiculo(id);
+                    return repository.save(vehicleAtualizado);
                 });
     }
 }

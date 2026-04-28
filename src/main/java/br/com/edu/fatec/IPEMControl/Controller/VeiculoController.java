@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.VeiculoResumoDTO;
-import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
+import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import br.com.edu.fatec.IPEMControl.Service.VeiculoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class VeiculoController {
     // ADICIONADO: busca veículo completo por ID
     // Usado pelo nova_saida.js e nova_entrada.js para preencher o card de veículo
     @GetMapping("/{id}")
-    public ResponseEntity<Veiculo> buscarPorId(@PathVariable Integer id) {
+    public ResponseEntity<Vehicle> buscarPorId(@PathVariable Integer id) {
         return veiculoRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -37,7 +37,7 @@ public class VeiculoController {
 
     // Cadastro de novo veículo (usado pelo addveic.js)
     @PostMapping
-    public ResponseEntity<Veiculo> criar(@RequestBody Veiculo veiculo) {
-        return ResponseEntity.status(201).body(veiculoRepository.save(veiculo));
+    public ResponseEntity<Vehicle> criar(@RequestBody Vehicle vehicle) {
+        return ResponseEntity.status(201).body(veiculoRepository.save(vehicle));
     }
 }
