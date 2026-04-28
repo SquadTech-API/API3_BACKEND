@@ -5,7 +5,7 @@ import br.com.edu.fatec.IPEMControl.DTO.FuelSupplyHistoryDTO;
 import br.com.edu.fatec.IPEMControl.Entities.Abastecimento;
 import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
 import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
-import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.FuelSupplyRepository;
 import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class AbastecimentoService {
 
     @Autowired
-    private AbastecimentoRepository abastecimentoRepository;
+    private FuelSupplyRepository fuelSupplyRepository;
 
     @Autowired
     private RegistroSaidaRepository registroSaidaRepository;
@@ -41,13 +41,13 @@ public class AbastecimentoService {
         abastecimento.setPostoCidade(dto.getPostoCidade());
         abastecimento.setNotaFiscal(dto.getNotaFiscal());
 
-        return abastecimentoRepository.save(abastecimento);
+        return fuelSupplyRepository.save(abastecimento);
     }
 
     public List<FuelSupplyHistoryDTO> listarHistorico(Integer idVeiculo) {
         List<Abastecimento> lista = (idVeiculo != null)
-                ? abastecimentoRepository.findByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(idVeiculo)
-                : abastecimentoRepository.findAllByOrderByDataHoraDesc();
+                ? fuelSupplyRepository.findByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(idVeiculo)
+                : fuelSupplyRepository.findAllByOrderByDataHoraDesc();
 
         return lista.stream()
                 .map(this::mapearParaHistoricoDTO)
