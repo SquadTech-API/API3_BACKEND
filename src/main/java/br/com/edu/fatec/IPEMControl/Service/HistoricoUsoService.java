@@ -18,9 +18,10 @@ public class HistoricoUsoService {
     }
 
     public List<HistoricoUsoDTO> buscarHistoricoPorVeiculo(Integer veiculoId) {
-        List<HistoricoUso> historicos = historicoUsoRepository
-                .findByVeiculoIdOrderByDataRegistroDesc(veiculoId);
+        // Buscamos a lista usando o nome correto do método que ajustamos no Repository
+        List<HistoricoUso> historicos = historicoUsoRepository.findByVeiculoIdVeiculoOrderByDataRegistroDesc(veiculoId);
 
+        // Transformamos a lista de Entidades em DTOs para o Front-end
         return historicos.stream()
                 .map(h -> new HistoricoUsoDTO(
                         h.getDescricao(),

@@ -27,30 +27,23 @@ public class RegistroSaidaService {
     @Autowired
     private TipoServicoRepository tipoServicoRepository;
 
-    public RegistroSaida abrirSaida(RegistroSaidaDTO dto) {
+    @Autowired
+    private AbastecimentoRepository abastecimentoRepository;
 
-        if (dto.getIdVeiculo() == null)
-            throw new RegraDeNegocioException("Informe o veículo.");
-        if (dto.getMatriculaUsuario() == null)
-            throw new RegraDeNegocioException("Informe o usuário.");
-        if (dto.getIdTipoServico() == null)
-            throw new RegraDeNegocioException("Informe o tipo de serviço.");
-        if (dto.getKmInicial() == null)
-            throw new RegraDeNegocioException("Informe o KM inicial.");
-        if (dto.getKmInicial().compareTo(BigDecimal.ZERO) < 0)
-            throw new RegraDeNegocioException("KM inicial não pode ser negativo.");
-        if (dto.getDataHoraSaida() == null)
-            throw new RegraDeNegocioException("Informe a data e hora de saída.");
-        if (dto.getLocalDestino() == null || dto.getLocalDestino().isBlank())
-            throw new RegraDeNegocioException("Informe o local de destino.");
+    public RegistroSaida abrirSaida(RegistroSaidaDTO dto) {
+        if (dto.getIdVeiculo() == null) throw new RegraDeNegocioException("Informe o veículo.");
+        if (dto.getMatriculaUsuario() == null) throw new RegraDeNegocioException("Informe o usuário.");
+        if (dto.getIdTipoServico() == null) throw new RegraDeNegocioException("Informe o tipo de serviço.");
+        if (dto.getKmInicial() == null) throw new RegraDeNegocioException("Informe o KM inicial.");
+        if (dto.getKmInicial().compareTo(BigDecimal.ZERO) < 0) throw new RegraDeNegocioException("KM inicial não pode ser negativo.");
+        if (dto.getDataHoraSaida() == null) throw new RegraDeNegocioException("Informe a data e hora de saída.");
+        if (dto.getLocalDestino() == null || dto.getLocalDestino().isBlank()) throw new RegraDeNegocioException("Informe o local de destino.");
 
         boolean usuarioJaEmSaida = registroSaidaRepository
-                .findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(
-                        dto.getMatriculaUsuario(), "em_andamento")
+                .findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(dto.getMatriculaUsuario(), "em_andamento")
                 .isPresent();
         if (usuarioJaEmSaida)
-            throw new RegraDeNegocioException(
-                    "Você já possui uma saída em andamento. Registre o retorno antes de iniciar uma nova saída.");
+            throw new RegraDeNegocioException("Você já possui uma saída em andamento. Registre o retorno antes de iniciar uma nova saída.");
 
         Veiculo veiculo = veiculoRepository.findById(dto.getIdVeiculo())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
@@ -58,10 +51,8 @@ public class RegistroSaidaService {
         if (Boolean.FALSE.equals(veiculo.getDisponivel()))
             throw new RegraDeNegocioException("Veículo não está disponível.");
 
-        if (veiculo.getKmAtual() != null &&
-                dto.getKmInicial().compareTo(veiculo.getKmAtual()) < 0) {
-            throw new RegraDeNegocioException(
-                    "KM inicial (" + dto.getKmInicial() + ") não pode ser menor que o KM atual do veículo (" + veiculo.getKmAtual() + ").");
+        if (veiculo.getKmAtual() != null && dto.getKmInicial().compareTo(veiculo.getKmAtual()) < 0) {
+            throw new RegraDeNegocioException("KM inicial (" + dto.getKmInicial() + ") não pode ser menor que o KM atual do veículo (" + veiculo.getKmAtual() + ").");
         }
 
         Usuario usuario = usuarioRepository.findByMatricula(dto.getMatriculaUsuario())
@@ -90,10 +81,8 @@ public class RegistroSaidaService {
     }
 
     public RetornoRespostaDTO registrarRetorno(Integer id, RetornoDTO dto) {
-        if (dto.getKmFinal() == null)
-            throw new RegraDeNegocioException("Informe o KM final.");
-        if (dto.getDataRetorno() == null)
-            throw new RegraDeNegocioException("Informe o horário de chegada.");
+        if (dto.getKmFinal() == null) throw new RegraDeNegocioException("Informe o KM final.");
+        if (dto.getDataRetorno() == null) throw new RegraDeNegocioException("Informe o horário de chegada.");
 
         RegistroSaida registro = registroSaidaRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de saída não encontrado."));
@@ -102,8 +91,7 @@ public class RegistroSaidaService {
             throw new RegraDeNegocioException("Esta saída já foi encerrada.");
 
         if (dto.getKmFinal().compareTo(registro.getKmInicial()) < 0)
-            throw new RegraDeNegocioException(
-                    "KM final (" + dto.getKmFinal() + ") não pode ser menor que o KM inicial (" + registro.getKmInicial() + ").");
+            throw new RegraDeNegocioException("KM final não pode ser menor que o KM inicial.");
 
         if (dto.getDataRetorno().isBefore(registro.getDataHoraSaida()))
             throw new RegraDeNegocioException("Horário de chegada não pode ser anterior ao horário de saída.");
@@ -126,19 +114,14 @@ public class RegistroSaidaService {
         registroSaidaRepository.save(registro);
 
         return new RetornoRespostaDTO(
-                registro.getIdSaida(),
-                registro.getStatus(),
-                registro.getKmInicial(),
-                registro.getKmFinal(),
-                kmRodados,
-                registro.getDataHoraSaida(),
-                registro.getDataRetorno(),
-                veiculo.getModelo(),
-                veiculo.getPrefixo(),
+                registro.getIdSaida(), registro.getStatus(), registro.getKmInicial(),
+                registro.getKmFinal(), kmRodados, registro.getDataHoraSaida(),
+                registro.getDataRetorno(), veiculo.getModelo(), veiculo.getPrefixo(),
                 registro.getUsuario().getNome()
         );
     }
 
+    // MÉTODO QUE ESTAVA FALTANDO PARA O SEU CONTROLLER
     public RegistroSaida fecharSaida(Integer id, FecharSaidaDTO dto) {
         RegistroSaida registro = registroSaidaRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de saída não encontrado."));
@@ -182,17 +165,23 @@ public class RegistroSaidaService {
     }
 
     public RelatorioUsoMensalDTO gerarRelatorioUsoMensal(LocalDateTime inicio, LocalDateTime fim) {
-        // 1. Busca os dados filtrados por data (Tarefa #A05.1B)
         List<RegistroSaida> viagens = registroSaidaRepository.findByDataRetornoBetween(inicio, fim);
 
-        // 2. Soma a quilometragem total (Tarefa #A05.2B)
         BigDecimal totalKm = viagens.stream()
                 .map(v -> v.getKmRodados() != null ? v.getKmRodados() : BigDecimal.ZERO)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // 3. Retorna o resumo estruturado (Tarefa #A05.3B)
-        return new RelatorioUsoMensalDTO(totalKm, viagens.size(), viagens);
+        BigDecimal totalGasto = BigDecimal.ZERO;
+        BigDecimal totalLitros = BigDecimal.ZERO;
+
+        for (RegistroSaida viagem : viagens) {
+            List<Abastecimento> abastecimentos = abastecimentoRepository.findByRegistroSaida(viagem);
+            for (Abastecimento a : abastecimentos) {
+                if (a.getValorTotal() != null) totalGasto = totalGasto.add(a.getValorTotal());
+                if (a.getQuantidadeLitros() != null) totalLitros = totalLitros.add(a.getQuantidadeLitros());
+            }
+        }
+
+        return new RelatorioUsoMensalDTO(totalKm, viagens.size(), totalGasto, totalLitros, viagens);
     }
-
-
 }

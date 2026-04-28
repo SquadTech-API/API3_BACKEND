@@ -1,6 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Repository;
 
 import br.com.edu.fatec.IPEMControl.Entities.Abastecimento;
+import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +14,9 @@ import java.util.Optional;
 
 @Repository
 public interface AbastecimentoRepository extends JpaRepository<Abastecimento, Integer> {
+
+    // Método essencial para o Relatório Uso Mensal
+    List<Abastecimento> findByRegistroSaida(RegistroSaida registroSaida);
 
     Optional<Abastecimento> findTopByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(Integer idVeiculo);
 
