@@ -1,32 +1,30 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.HistoricoUsoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.HistoricoUsoCardDTO;
 import br.com.edu.fatec.IPEMControl.Entities.HistoricoUso;
 import br.com.edu.fatec.IPEMControl.Repository.HistoricoUsoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class HistoricoUsoService {
 
-    private final HistoricoUsoRepository historicoUsoRepository;
+    @Autowired
+    private HistoricoUsoRepository repository;
 
-    public HistoricoUsoService(HistoricoUsoRepository historicoUsoRepository) {
-        this.historicoUsoRepository = historicoUsoRepository;
-    }
+    public List<HistoricoUsoCardDTO> listarHistoricoPorVeiculo(Integer idVeiculo) {
+        List<HistoricoUso> historicos = repository.findByVeiculoIdVeiculoOrderByDataRegistroDesc(idVeiculo);
 
-    public List<HistoricoUsoDTO> buscarHistoricoPorVeiculo(Integer veiculoId) {
-        // Buscamos a lista usando o nome correto do método que ajustamos no Repository
-        List<HistoricoUso> historicos = historicoUsoRepository.findByVeiculoIdVeiculoOrderByDataRegistroDesc(veiculoId);
-
-        // Transformamos a lista de Entidades em DTOs para o Front-end
-        return historicos.stream()
-                .map(h -> new HistoricoUsoDTO(
-                        h.getDescricao(),
-                        h.getDataRegistro()
-                ))
-                .collect(Collectors.toList());
+        return historicos.stream().map(h -> new HistoricoUsoCardDTO(
+                h.getDescricao(),
+                h.getDataRegistro(),
+                "Serviço Padrão",
+                BigDecimal.ZERO,  
+                false             // Lógica de abastecimento
+        )).collect(Collectors.toList());
     }
 }

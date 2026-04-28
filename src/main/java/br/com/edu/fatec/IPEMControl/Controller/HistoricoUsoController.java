@@ -1,25 +1,23 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.DTO.HistoricoUsoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.HistoricoUsoCardDTO;
 import br.com.edu.fatec.IPEMControl.Service.HistoricoUsoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/veiculos")
+@RequestMapping("/historico")
 @CrossOrigin("*")
 public class HistoricoUsoController {
 
-    private final HistoricoUsoService service;
+    @Autowired
+    private HistoricoUsoService service;
 
-    public HistoricoUsoController(HistoricoUsoService service) {
-        this.service = service;
-    }
-
-    @GetMapping("/{id}/historico")
-    public ResponseEntity<List<HistoricoUsoDTO>> buscarHistorico(@PathVariable Integer id) {
-        return ResponseEntity.ok(service.buscarHistoricoPorVeiculo(id));
+    @GetMapping("/veiculo/{id}")
+    public ResponseEntity<List<HistoricoUsoCardDTO>> getHistorico(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.listarHistoricoPorVeiculo(id));
     }
 }
