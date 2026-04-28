@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Service
 public class AbastecimentoService {
 
-    @Autowired
+
     private FuelSupplyRepository fuelSupplyRepository;
 
     @Autowired

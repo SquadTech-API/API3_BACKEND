@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Repository;
 
-import br.com.edu.fatec.IPEMControl.Entities.Abastecimento;
+import br.com.edu.fatec.IPEMControl.Entities.FuelSupply;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,86 +11,65 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface FuelSupplyRepository extends JpaRepository<Abastecimento, Integer> {
+public interface FuelSupplyRepository extends JpaRepository<FuelSupply, Integer> {
 
-    // Usado pelo VehicleService
-    Optional<Abastecimento> findTopByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(Integer vehicleId);
+    //Usado pelo VehicleService
+    Optional<FuelSupply> findTopByExitRecordVehicleIdOrderByDateTimeDesc(Integer vehicleId);
 
-    // Histórico por veículo
-    List<Abastecimento> findByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(Integer vehicleId);
+    //Histórico por veículo
+    List<FuelSupply> findByExitRecordVehicleIdOrderByDateTimeDesc(Integer vehicleId);
 
-    // Todos os abastecimentos
-    List<Abastecimento> findAllByOrderByDataHoraDesc();
+    //Todos os abastecimentos
+    List<FuelSupply> findAllByOrderByDateTimeDesc();
 
-    // Filtro por intervalo de datas
-    List<Abastecimento> findByDataHoraBetweenOrderByDataHoraDesc(
+    //Filtro por intervalo de datas
+    List<FuelSupply> findByDateTimeBetweenOrderByDateTimeDesc(
             LocalDateTime from, LocalDateTime to);
 
-    // Filtro por placa
-    List<Abastecimento> findByRegistroSaidaVeiculoPlacaOrderByDataHoraDesc(String plate);
+    //Filtro por placa
+    List<FuelSupply> findByExitRecordVehiclePlateOrderByDateTimeDesc(String plate);
 
-    // Filtro por período
-    List<Abastecimento> findByDataHoraAfterOrderByDataHoraDesc(LocalDateTime from);
+    //Filtro por período
+    List<FuelSupply> findByDateTimeAfterOrderByDateTimeDesc(LocalDateTime from);
 
     //Gasto e litros por semana
-    @Query(value = """
-        SELECT WEEK(data_hora) as week,
-               SUM(valor_total) as spent,
-               SUM(quantidade_litros) as liters
-        FROM abastecimento
-        WHERE data_hora >= :startDate
-        GROUP BY WEEK(data_hora)
-        ORDER BY week
-        """, nativeQuery = true)
+    @Query("SELECT WEEK(f.dateTime), SUM(f.totalValue), SUM(f.litersAmount) " +
+            "FROM FuelSupply f WHERE f.dateTime >= :startDate " +
+            "GROUP BY WEEK(f.dateTime) ORDER BY WEEK(f.dateTime)")
     List<Object[]> findWeeklyStats(@Param("startDate") LocalDateTime startDate);
 
     //Ranking de postos
-    @Query(value = """
-        SELECT posto_nome, posto_cidade, COUNT(*) as visit_count
-        FROM abastecimento
-        WHERE data_hora >= :startDate
-        GROUP BY posto_nome, posto_cidade
-        ORDER BY visit_count DESC
-        LIMIT 10
-        """, nativeQuery = true)
+    @Query("SELECT f.stationName, f.stationCity, COUNT(f) " +
+            "FROM FuelSupply f WHERE f.dateTime >= :startDate " +
+            "GROUP BY f.stationName, f.stationCity " +
+            "ORDER BY COUNT(f) DESC")
     List<Object[]> findTopStations(@Param("startDate") LocalDateTime startDate);
 
     //Distribuição por tipo de combustível
-    @Query(value = """
-        SELECT tipo_combustivel,
-               ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER(), 1) as percentage
-        FROM abastecimento
-        WHERE data_hora >= :startDate
-        GROUP BY tipo_combustivel
-        """, nativeQuery = true)
+    @Query("SELECT f.fuelType, COUNT(f) " +
+            "FROM FuelSupply f WHERE f.dateTime >= :startDate " +
+            "GROUP BY f.fuelType")
     List<Object[]> findFuelTypeDistribution(@Param("startDate") LocalDateTime startDate);
 
     //Consumo médio por veículo
-    @Query(value = """
-        SELECT v.placa,
-               SUM(a.quantidade_litros) as total_liters,
-               SUM(rs.km_rodados) as total_km,
-               CASE WHEN SUM(a.quantidade_litros) > 0
-                    THEN SUM(rs.km_rodados) / SUM(a.quantidade_litros)
-                    ELSE 0 END as consumption_kml,
-               SUM(a.valor_total) as total_spent
-        FROM abastecimento a
-        JOIN registro_saida rs ON a.id_saida = rs.id_saida
-        JOIN veiculo v ON rs.id_veiculo = v.id_veiculo
-        WHERE a.data_hora >= :startDate
-        GROUP BY v.placa
-        """, nativeQuery = true)
+    @Query("SELECT v.plate, SUM(f.litersAmount), SUM(rs.kmRodados), " +
+            "CASE WHEN SUM(f.litersAmount) > 0 " +
+            "THEN SUM(rs.kmRodados) / SUM(f.litersAmount) ELSE 0 END, " +
+            "SUM(f.totalValue) " +
+            "FROM FuelSupply f " +
+            "JOIN f.exitRecord rs " +
+            "JOIN rs.veiculo v " +
+            "WHERE f.dateTime >= :startDate " +
+            "GROUP BY v.plate")
     List<Object[]> findConsumptionByVehicle(@Param("startDate") LocalDateTime startDate);
 
     //Ranking de usuários
-    @Query(value = """
-        SELECT u.nome, COUNT(a.id_abastecimento) as fuel_supply_count, SUM(a.valor_total) as total_spent
-        FROM abastecimento a
-        JOIN registro_saida rs ON a.id_saida = rs.id_saida
-        JOIN usuario u ON rs.matricula_usuario = u.matricula
-        WHERE a.data_hora >= :startDate
-        GROUP BY u.nome
-        ORDER BY fuel_supply_count DESC
-        """, nativeQuery = true)
+    @Query("SELECT u.nome, COUNT(f), SUM(f.totalValue) " +
+            "FROM FuelSupply f " +
+            "JOIN f.exitRecord rs " +
+            "JOIN rs.usuario u " +
+            "WHERE f.dateTime >= :startDate " +
+            "GROUP BY u.nome " +
+            "ORDER BY COUNT(f) DESC")
     List<Object[]> findUserRanking(@Param("startDate") LocalDateTime startDate);
 }
