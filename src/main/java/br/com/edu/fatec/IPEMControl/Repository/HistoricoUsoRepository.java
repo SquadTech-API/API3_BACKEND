@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface HistoricoUsoRepository extends JpaRepository<HistoricoUso, Integer> {
 
-    List<HistoricoUso> findByViaturaIdOrderByDataRegistroDesc(Integer viaturaId);
+    List<HistoricoUso> findByVeiculoIdOrderByDataRegistroDesc(Integer veiculoId);
 }

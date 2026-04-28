@@ -2,19 +2,20 @@ package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.DashboardGraficoDTO;
 import br.com.edu.fatec.IPEMControl.Service.DashboardService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/dashboard")
-@CrossOrigin("*")
+@RequestMapping("/dashboard")
 public class DashboardController {
 
-    @Autowired
-    private DashboardService dashboardService;
+    private final DashboardService service;
+
+    public DashboardController(DashboardService service) {
+        this.service = service;
+    }
 
     @GetMapping("/comparativo")
     public DashboardGraficoDTO comparativo() {
-        return dashboardService.buscarComparativo();
+        return service.buscarComparativo();
     }
 }

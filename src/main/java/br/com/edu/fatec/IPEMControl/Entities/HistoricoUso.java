@@ -16,8 +16,8 @@ public class HistoricoUso {
     private LocalDateTime dataRegistro;
 
     @ManyToOne
-    @JoinColumn(name = "viatura_id")
-    private Viatura viatura;
+    @JoinColumn(name = "veiculo_id")
+    private Veiculo veiculo;
 
     public Integer getId() {
         return id;
@@ -43,11 +43,11 @@ public class HistoricoUso {
         this.dataRegistro = dataRegistro;
     }
 
-    public Viatura getViatura() {
-        return viatura;
+    public Veiculo getVeiculo() {
+        return veiculo;
     }
 
-    public void setViatura(Viatura viatura) {
-        this.viatura = viatura;
+    public void setVeiculo(Veiculo veiculo) {
+        this.veiculo = veiculo;
     }
 }

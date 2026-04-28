@@ -7,47 +7,41 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/relatorios/veiculo")
-@CrossOrigin(origins = "*")
+@RequestMapping("/relatorios/veiculos")
+@CrossOrigin("*")
 public class RelatorioVeiculoController {
 
-    private final RelatorioVeiculoService relatorioVeiculoService;
-    private final RelatorioVeiculoExportService relatorioVeiculoExportService;
+    private final RelatorioVeiculoService service;
+    private final RelatorioVeiculoExportService exportService;
 
-    public RelatorioVeiculoController(
-            RelatorioVeiculoService relatorioVeiculoService,
-            RelatorioVeiculoExportService relatorioVeiculoExportService) {
-
-        this.relatorioVeiculoService = relatorioVeiculoService;
-        this.relatorioVeiculoExportService = relatorioVeiculoExportService;
+    public RelatorioVeiculoController(RelatorioVeiculoService service,
+                                      RelatorioVeiculoExportService exportService) {
+        this.service = service;
+        this.exportService = exportService;
     }
 
-    @GetMapping("/{idVeiculo}")
-    public ResponseEntity<RelatorioVeiculoDTO> gerarRelatorio(@PathVariable Integer idVeiculo) {
-        return ResponseEntity.ok(relatorioVeiculoService.gerarRelatorioVeiculo(idVeiculo));
+    @GetMapping("/{id}")
+    public ResponseEntity<RelatorioVeiculoDTO> gerar(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.gerarRelatorioVeiculo(id));
     }
 
-    @GetMapping("/{idVeiculo}/pdf")
-    public ResponseEntity<byte[]> exportarPdf(@PathVariable Integer idVeiculo) {
-        return relatorioVeiculoExportService.exportarPdf(
-                relatorioVeiculoService.gerarRelatorioVeiculo(idVeiculo), idVeiculo);
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> pdf(@PathVariable Integer id) {
+        return exportService.exportarPdf(service.gerarRelatorioVeiculo(id), id);
     }
 
-    @GetMapping("/{idVeiculo}/csv")
-    public ResponseEntity<byte[]> exportarCsv(@PathVariable Integer idVeiculo) {
-        return relatorioVeiculoExportService.exportarCsv(
-                relatorioVeiculoService.gerarRelatorioVeiculo(idVeiculo), idVeiculo);
+    @GetMapping("/{id}/csv")
+    public ResponseEntity<byte[]> csv(@PathVariable Integer id) {
+        return exportService.exportarCsv(service.gerarRelatorioVeiculo(id), id);
     }
 
-    @GetMapping("/{idVeiculo}/xlsx")
-    public ResponseEntity<byte[]> exportarExcel(@PathVariable Integer idVeiculo) {
-        return relatorioVeiculoExportService.exportarExcel(
-                relatorioVeiculoService.gerarRelatorioVeiculo(idVeiculo), idVeiculo);
+    @GetMapping("/{id}/xlsx")
+    public ResponseEntity<byte[]> excel(@PathVariable Integer id) {
+        return exportService.exportarExcel(service.gerarRelatorioVeiculo(id), id);
     }
 
-    @GetMapping("/{idVeiculo}/docx")
-    public ResponseEntity<byte[]> exportarDocx(@PathVariable Integer idVeiculo) {
-        return relatorioVeiculoExportService.exportarDocx(
-                relatorioVeiculoService.gerarRelatorioVeiculo(idVeiculo), idVeiculo);
+    @GetMapping("/{id}/docx")
+    public ResponseEntity<byte[]> docx(@PathVariable Integer id) {
+        return exportService.exportarDocx(service.gerarRelatorioVeiculo(id), id);
     }
 }

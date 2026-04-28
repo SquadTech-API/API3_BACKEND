@@ -23,15 +23,15 @@ public class UsoVeiculoService {
         this.tecnicoRepository = tecnicoRepository;
     }
 
-    public UsoVeiculo registrar(UsoVeiculoDTO dto) {
+    public UsoVeiculoDTO registrar(UsoVeiculoDTO dto) {
 
         Tecnico tecnico = tecnicoRepository.findById(dto.getTecnicoId())
-                .orElseThrow(() -> new RuntimeException("Técnico não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Technician not found"));
 
         boolean emUso = usoRepository.existsByVeiculoAndDataFimIsNull(dto.getVeiculo());
 
         if (emUso) {
-            throw new RuntimeException("Veículo já está em uso!");
+            throw new RuntimeException("Vehicle already in use");
         }
 
         UsoVeiculo uso = new UsoVeiculo();
@@ -39,7 +39,14 @@ public class UsoVeiculoService {
         uso.setVeiculo(dto.getVeiculo());
         uso.setDataInicio(dto.getDataInicio());
 
-        return usoRepository.save(uso);
+        uso = usoRepository.save(uso);
+
+        UsoVeiculoDTO response = new UsoVeiculoDTO();
+        response.setTecnicoId(uso.getTecnico().getId());
+        response.setVeiculo(uso.getVeiculo());
+        response.setDataInicio(uso.getDataInicio());
+
+        return response;
     }
 
     public List<UsoAtivoDTO> listarEmUso() {
