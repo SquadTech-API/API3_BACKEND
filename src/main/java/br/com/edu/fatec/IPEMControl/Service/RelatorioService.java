@@ -47,7 +47,7 @@ public class RelatorioService {
         // Mapeia as entidades para o AtividadeDiariaDTO
         List<AtividadeDiariaDTO> atividades = saidasDoDia.stream()
                 .map(saida -> new AtividadeDiariaDTO(
-                        saida.getVehicle().getPrefixo(),
+                        saida.getVeiculo().getPrefixo(),
                         saida.getLocalDestino(),
                         saida.getDataHoraSaida(),
                         saida.getDataRetorno(),

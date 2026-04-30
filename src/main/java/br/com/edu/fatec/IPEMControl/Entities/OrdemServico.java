@@ -20,14 +20,14 @@ public class OrdemServico {
 
     @ManyToOne
     @JoinColumn(name = "id_veiculo", nullable = false)
-    private Vehicle vehicle;
+    private Veiculo veiculo;
 
     @ManyToOne
     @JoinColumn(name = "id_tipo_servico", nullable = false)
     private TipoServico tipoServico;
 
     @Column(name = "status", length = 50)
-    private String status; // Ex: "ABERTA", "EM_ANDAMENTO", "CONCLUIDA"
+    private String status;
 
     @Column(name = "observacoes", columnDefinition = "TEXT")
     private String observacoes;

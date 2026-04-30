@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
-public class UserRankingDTO {
-    private String name;
-    private Integer fuelSupplyCount;
-    private BigDecimal totalSpent;
+public class RankingUsuarioDTO {
+    private String nome;
+    private Integer quantidadeAbastecimentos;
+    private BigDecimal totalGasto;
 }

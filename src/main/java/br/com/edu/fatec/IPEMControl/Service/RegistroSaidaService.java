@@ -55,16 +55,16 @@ public class RegistroSaidaService {
             throw new RegraDeNegocioException(
                     "Você já possui uma saída em andamento. Registre o retorno antes de iniciar uma nova saída.");
 
-        Vehicle vehicle = veiculoRepository.findById(dto.getIdVeiculo())
+        Veiculo veiculo = veiculoRepository.findById(dto.getIdVeiculo())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
 
-        if (Boolean.FALSE.equals(vehicle.getDisponivel()))
+        if (Boolean.FALSE.equals(veiculo.getDisponivel()))
             throw new RegraDeNegocioException("Veículo não está disponível.");
 
-        if (vehicle.getKmAtual() != null &&
-                dto.getKmInicial().compareTo(vehicle.getKmAtual()) < 0) {
+        if (veiculo.getKmAtual() != null &&
+                dto.getKmInicial().compareTo(veiculo.getKmAtual()) < 0) {
             throw new RegraDeNegocioException(
-                    "KM inicial (" + dto.getKmInicial() + ") não pode ser menor que o KM atual do veículo (" + vehicle.getKmAtual() + ").");
+                    "KM inicial (" + dto.getKmInicial() + ") não pode ser menor que o KM atual do veículo (" + veiculo.getKmAtual() + ").");
         }
 
         Usuario usuario = usuarioRepository.findByMatricula(dto.getMatriculaUsuario())
@@ -77,7 +77,7 @@ public class RegistroSaidaService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
 
         RegistroSaida registro = new RegistroSaida();
-        registro.setVehicle(vehicle);
+        registro.setVeiculo(veiculo);
         registro.setUsuario(usuario);
         registro.setTipoServico(tipoServico);
         registro.setLocalDestino(dto.getLocalDestino());
@@ -86,8 +86,8 @@ public class RegistroSaidaService {
         registro.setDataHoraSaida(dto.getDataHoraSaida());
         registro.setStatus("em_andamento");
 
-        vehicle.setDisponivel(false);
-        veiculoRepository.save(vehicle);
+        veiculo.setDisponivel(false);
+        veiculoRepository.save(veiculo);
 
         return registroSaidaRepository.save(registro);
     }
@@ -122,10 +122,10 @@ public class RegistroSaidaService {
         if (dto.getObservacoes() != null && !dto.getObservacoes().isBlank())
             registro.setObservacoes(dto.getObservacoes());
 
-        Vehicle vehicle = registro.getVehicle();
-        vehicle.setKmAtual(dto.getKmFinal());
-        vehicle.setDisponivel(true);
-        veiculoRepository.save(vehicle);
+        Veiculo veiculo = registro.getVeiculo();
+        veiculo.setKmAtual(dto.getKmFinal());
+        veiculo.setDisponivel(true);
+        veiculoRepository.save(veiculo);
 
         registroSaidaRepository.save(registro);
 
@@ -137,8 +137,8 @@ public class RegistroSaidaService {
                 kmRodados,
                 registro.getDataHoraSaida(),
                 registro.getDataRetorno(),
-                vehicle.getModelo(),
-                vehicle.getPrefixo(),
+                veiculo.getModelo(),
+                veiculo.getPrefixo(),
                 registro.getUsuario().getNome()
         );
     }
@@ -169,10 +169,10 @@ public class RegistroSaidaService {
         if (dto.getObservacoes() != null && !dto.getObservacoes().isBlank())
             registro.setObservacoes(dto.getObservacoes());
 
-        Vehicle vehicle = registro.getVehicle();
-        vehicle.setKmAtual(dto.getKmFinal());
-        vehicle.setDisponivel(true);
-        veiculoRepository.save(vehicle);
+        Veiculo veiculo = registro.getVeiculo();
+        veiculo.setKmAtual(dto.getKmFinal());
+        veiculo.setDisponivel(true);
+        veiculoRepository.save(veiculo);
 
         return registroSaidaRepository.save(registro);
     }

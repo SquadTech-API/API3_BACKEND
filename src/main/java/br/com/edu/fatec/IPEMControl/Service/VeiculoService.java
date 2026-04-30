@@ -3,7 +3,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 import br.com.edu.fatec.IPEMControl.DTO.VeiculoResumoDTO;
 import br.com.edu.fatec.IPEMControl.Entities.Abastecimento;
 import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
-import br.com.edu.fatec.IPEMControl.Repository.FuelSupplyRepository;
+import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
 import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class VeiculoService {
     private RegistroSaidaRepository registroSaidaRepository;
 
     @Autowired
-    private FuelSupplyRepository fuelSupplyRepository;
+    private AbastecimentoRepository abastecimentoRepository;
 
     public List<VeiculoResumoDTO> listarVeiculosResumido() {
 
@@ -55,7 +55,7 @@ public class VeiculoService {
                     .orElse("—");
 
             Optional<Abastecimento> ultimoAbastecimento =
-                    fuelSupplyRepository
+                    abastecimentoRepository
                             .findTopByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(veiculo.getIdVeiculo());
 
             String ultimoAbastecimentoStr = ultimoAbastecimento

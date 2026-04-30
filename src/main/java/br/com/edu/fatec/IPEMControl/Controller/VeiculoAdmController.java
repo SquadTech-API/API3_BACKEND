@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
+import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +17,13 @@ public class VeiculoAdmController {
     private VeiculoRepository repository;
 
     @PostMapping
-    public Vehicle cadastrar(@RequestBody Vehicle vehicle) {
+    public Veiculo cadastrar(@RequestBody Veiculo vehicle) {
         return repository.save(vehicle);
     }
 
     @GetMapping
-    public ResponseEntity<List<Vehicle>> listarTodos() {
-        List<Vehicle> lista = repository.findAll();
+    public ResponseEntity<List<Veiculo>> listarTodos() {
+        List<Veiculo> lista = repository.findAll();
         return ResponseEntity.ok(lista);
     }
 
@@ -33,7 +33,7 @@ public class VeiculoAdmController {
     }
 
     @PutMapping("/{id}")
-    public Vehicle editar(@PathVariable Integer id, @RequestBody Vehicle vehicleAtualizado) {
+    public Veiculo editar(@PathVariable Integer id, @RequestBody Veiculo vehicleAtualizado) {
         return repository.findById(id)
                 .map(veiculo -> {
                     veiculo.setPlaca(vehicleAtualizado.getPlaca());

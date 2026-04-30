@@ -4,7 +4,7 @@ import br.com.edu.fatec.IPEMControl.DTO.OrdemServicoDTO;
 import br.com.edu.fatec.IPEMControl.DTO.OrdemServicoRespostaDTO;
 import br.com.edu.fatec.IPEMControl.Entities.OrdemServico;
 import br.com.edu.fatec.IPEMControl.Entities.TipoServico;
-import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
+import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
 import br.com.edu.fatec.IPEMControl.Repository.OrdemServicoRepository;
@@ -32,14 +32,14 @@ public class OrdemServicoService {
         if (dto.getIdVeiculo() == null) throw new RegraDeNegocioException("Informe o veículo.");
         if (dto.getIdTipoServico() == null) throw new RegraDeNegocioException("Informe o tipo de serviço.");
 
-        Vehicle vehicle = veiculoRepository.findById(dto.getIdVeiculo())
+        Veiculo veiculo = veiculoRepository.findById(dto.getIdVeiculo())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
 
         TipoServico tipoServico = tipoServicoRepository.findById(dto.getIdTipoServico())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
 
         OrdemServico ordem = new OrdemServico();
-        ordem.setVehicle(vehicle);
+        ordem.setVeiculo(veiculo);
         ordem.setTipoServico(tipoServico);
         ordem.setObservacoes(dto.getObservacoes());
 
@@ -57,8 +57,8 @@ public class OrdemServicoService {
     private OrdemServicoRespostaDTO mapearParaDTO(OrdemServico ordem) {
         return new OrdemServicoRespostaDTO(
                 ordem.getIdOrdemServico(),
-                ordem.getVehicle().getPlaca(),
-                ordem.getVehicle().getModelo(),
+                ordem.getVeiculo().getPlaca(),
+                ordem.getVeiculo().getModelo(),
                 ordem.getTipoServico().getNomeServico(),
                 ordem.getStatus(),
                 ordem.getDataAbertura(),
