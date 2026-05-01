@@ -12,4 +12,3 @@ public class LoginRespostaDTO {
     private String email;
     private String tipoUsuario;
 }
-

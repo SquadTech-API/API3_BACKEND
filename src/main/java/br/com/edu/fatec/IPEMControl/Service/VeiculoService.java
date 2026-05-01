@@ -3,7 +3,6 @@ package br.com.edu.fatec.IPEMControl.Service;
 import br.com.edu.fatec.IPEMControl.DTO.VeiculoResumoDTO;
 import br.com.edu.fatec.IPEMControl.Entities.Abastecimento;
 import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
-import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
 import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
 import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
@@ -39,7 +38,7 @@ public class VeiculoService {
     @Autowired
     private AbastecimentoRepository abastecimentoRepository;
 
-    public List<VeiculoResumoDTO> listarVeiculosResumido() {
+    public List<VeiculoResumoDTO> listarVeiculosResumo() {
 
         return veiculoRepository.findAll().stream().map(veiculo -> {
 
@@ -55,6 +54,10 @@ public class VeiculoService {
                     .map(r -> formatarData(r.getDataHoraSaida()))
                     .orElse("—");
 
+            String ultimoMotorista = ultimoRegistro
+                    .map(r -> r.getUsuario().getNome())
+                    .orElse("—");
+
             Optional<Abastecimento> ultimoAbastecimento =
                     abastecimentoRepository
                             .findTopByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(veiculo.getIdVeiculo());
@@ -67,12 +70,12 @@ public class VeiculoService {
                     ? FMT_KM.format(veiculo.getKmAtual().longValue())
                     : "—";
 
-            // CORRIGIDO: primeiro argumento é idVeiculo (campo renomeado no DTO)
             return new VeiculoResumoDTO(
                     veiculo.getIdVeiculo(),
                     veiculo.getModelo(),
                     veiculo.getPrefixo(),
                     ultimoUso,
+                    ultimoMotorista,
                     ultimoAbastecimentoStr,
                     km,
                     emUso ? "em_uso" : "disponivel"

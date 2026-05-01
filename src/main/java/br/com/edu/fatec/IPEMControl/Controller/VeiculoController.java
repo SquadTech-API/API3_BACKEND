@@ -12,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/veiculos")
+@CrossOrigin(origins = "*")
 public class VeiculoController {
 
     @Autowired
@@ -20,14 +21,11 @@ public class VeiculoController {
     @Autowired
     private VeiculoRepository veiculoRepository;
 
-    // Lista resumida para a tela de cards
     @GetMapping
     public ResponseEntity<List<VeiculoResumoDTO>> listar() {
-        return ResponseEntity.ok(veiculoService.listarVeiculosResumido());
+        return ResponseEntity.ok(veiculoService.listarVeiculosResumo());
     }
 
-    // ADICIONADO: busca veículo completo por ID
-    // Usado pelo nova_saida.js e nova_entrada.js para preencher o card de veículo
     @GetMapping("/{id}")
     public ResponseEntity<Veiculo> buscarPorId(@PathVariable Integer id) {
         return veiculoRepository.findById(id)
@@ -35,9 +33,8 @@ public class VeiculoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Cadastro de novo veículo (usado pelo addveic.js)
     @PostMapping
-    public ResponseEntity<Veiculo> criar(@RequestBody Veiculo veiculo) {
-        return ResponseEntity.status(201).body(veiculoRepository.save(veiculo));
+    public ResponseEntity<Veiculo> criar(@RequestBody Veiculo vehicle) {
+        return ResponseEntity.status(201).body(veiculoRepository.save(vehicle));
     }
 }

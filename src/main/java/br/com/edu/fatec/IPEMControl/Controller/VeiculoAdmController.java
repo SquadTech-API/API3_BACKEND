@@ -13,8 +13,11 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class VeiculoAdmController {
 
-    @Autowired
-    private VeiculoRepository repository;
+    private final VeiculoRepository repository;
+
+    public VeiculoAdmController(VeiculoRepository repository) {
+        this.repository = repository;
+    }
 
     @PostMapping
     public Veiculo cadastrar(@RequestBody Veiculo veiculo) {
@@ -22,9 +25,8 @@ public class VeiculoAdmController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Veiculo>> listarTodos() {
-        List<Veiculo> lista = repository.findAll();
-        return ResponseEntity.ok(lista);
+    public List<Veiculo> listarTodos() {
+        return repository.findAll();
     }
 
     @DeleteMapping("/{id}")
@@ -33,23 +35,23 @@ public class VeiculoAdmController {
     }
 
     @PutMapping("/{id}")
-    public Veiculo editar(@PathVariable Integer id, @RequestBody Veiculo veiculoAtualizado) {
+    public Veiculo editar(@PathVariable Integer id, @RequestBody Veiculo atualizado) {
         return repository.findById(id)
-                .map(veiculo -> {
-                    veiculo.setPlaca(veiculoAtualizado.getPlaca());
-                    veiculo.setMarca(veiculoAtualizado.getMarca());
-                    veiculo.setModelo(veiculoAtualizado.getModelo());
-                    veiculo.setAno(veiculoAtualizado.getAno());
-                    veiculo.setKmAtual(veiculoAtualizado.getKmAtual());
-                    veiculo.setTipoCombustivel(veiculoAtualizado.getTipoCombustivel());
-                    veiculo.setDisponivel(veiculoAtualizado.getDisponivel());
-                    veiculo.setPrefixo(veiculoAtualizado.getPrefixo());
-                    veiculo.setNucleoDar(veiculoAtualizado.getNucleoDar());
-                    veiculo.setHabilitacaoCategoria(veiculoAtualizado.getHabilitacaoCategoria());
-                    return repository.save(veiculo);
+                .map(v -> {
+                    v.setPlaca(atualizado.getPlaca());
+                    v.setMarca(atualizado.getMarca());
+                    v.setModelo(atualizado.getModelo());
+                    v.setAno(atualizado.getAno());
+                    v.setKmAtual(atualizado.getKmAtual());
+                    v.setTipoCombustivel(atualizado.getTipoCombustivel());
+                    v.setDisponivel(atualizado.getDisponivel());
+                    v.setPrefixo(atualizado.getPrefixo());
+                    v.setNucleoDar(atualizado.getNucleoDar());
+                    v.setHabilitacaoCategoria(atualizado.getHabilitacaoCategoria());
+                    return repository.save(v);
                 }).orElseGet(() -> {
-                    veiculoAtualizado.setIdVeiculo(id);
-                    return repository.save(veiculoAtualizado);
+                    atualizado.setIdVeiculo(id);
+                    return repository.save(atualizado);
                 });
     }
 }
