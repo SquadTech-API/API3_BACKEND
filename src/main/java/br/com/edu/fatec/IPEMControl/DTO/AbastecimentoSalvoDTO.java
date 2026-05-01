@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
-public class AbastecimentoHistoricoDTO {
+public class AbastecimentoSalvoDTO {
     private Integer idAbastecimento;
     private LocalDateTime dataHora;
     private String tipoCombustivel;
@@ -17,9 +17,5 @@ public class AbastecimentoHistoricoDTO {
     private String postoNome;
     private String postoCidade;
     private String notaFiscal;
-    private Integer idVeiculo;
-    private String modeloVeiculo;
-    private String prefixoVeiculo;
-    private String placaVeiculo;
-    private String nomeResponsavel;
+    private Integer idSaida;
 }

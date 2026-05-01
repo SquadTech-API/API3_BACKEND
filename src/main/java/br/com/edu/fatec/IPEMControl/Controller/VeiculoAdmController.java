@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/adm/veiculos")
+@CrossOrigin(origins = "*")
 public class VeiculoAdmController {
 
     private final VeiculoRepository repository;

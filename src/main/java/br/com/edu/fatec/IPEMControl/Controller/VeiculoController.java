@@ -37,7 +37,7 @@ public class VeiculoController {
 
     // Cadastro de novo veículo (usado pelo addveic.js)
     @PostMapping
-    public ResponseEntity<Veiculo> criar(@RequestBody Veiculo veiculo) {
-        return ResponseEntity.status(201).body(veiculoRepository.save(veiculo));
+    public ResponseEntity<Veiculo> criar(@RequestBody Veiculo vehicle) {
+        return ResponseEntity.status(201).body(veiculoRepository.save(vehicle));
     }
 }
