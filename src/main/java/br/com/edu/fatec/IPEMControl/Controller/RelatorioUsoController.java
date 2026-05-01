@@ -1,31 +1,46 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.DTO.RelatorioUsoMensalDTO;
 import br.com.edu.fatec.IPEMControl.Service.RegistroSaidaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-
 @RestController
-@RequestMapping("/api/relatorios-uso")
+@RequestMapping("/relatorios")
 @CrossOrigin(origins = "*")
 public class RelatorioUsoController {
 
     @Autowired
     private RegistroSaidaService service;
 
+    /**
+     * Endpoint principal para download de relatórios.
+     * Certifique-se de que o front-end envie os parâmetros idVeiculo, formato e periodo.
+     */
+    @GetMapping("/viatura")
+    public ResponseEntity<byte[]> downloadRelatorio(
+            @RequestParam Long idVeiculo,
+            @RequestParam String formato,
+            @RequestParam String periodo) {
 
-    @GetMapping
-    public ResponseEntity<RelatorioUsoMensalDTO> obterRelatorioUso(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fim) {
+        // O Service já está ajustado para filtrar por DataHoraSaida conforme nossa última correção
+        byte[] arquivo = service.gerarArquivoRelatorio(idVeiculo, formato, periodo);
 
-        // Chama a lógica que soma os KMs e filtra as viagens
-        RelatorioUsoMensalDTO relatorio = service.gerarRelatorioUsoMensal(inicio, fim);
+        // Define o tipo de arquivo de retorno com base no formato solicitado
+        MediaType mediaType = switch (formato.toLowerCase()) {
+            case "pdf" -> MediaType.APPLICATION_PDF;
+            case "csv" -> MediaType.parseMediaType("text/csv");
+            default -> MediaType.APPLICATION_OCTET_STREAM;
+        };
 
-        return ResponseEntity.ok(relatorio);
+        // Define a extensão do arquivo no download
+        String extensao = formato.toLowerCase().equals("pdf") ? "pdf" : "csv";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=relatorio_veiculo_" + idVeiculo + "." + extensao)
+                .contentType(mediaType)
+                .body(arquivo);
     }
 }

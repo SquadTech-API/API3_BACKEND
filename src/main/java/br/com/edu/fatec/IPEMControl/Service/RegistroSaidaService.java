@@ -2,13 +2,19 @@ package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.*;
 import br.com.edu.fatec.IPEMControl.Entities.*;
-import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
+import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
 import br.com.edu.fatec.IPEMControl.Repository.*;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -121,7 +127,6 @@ public class RegistroSaidaService {
         );
     }
 
-    // MÉTODO QUE ESTAVA FALTANDO PARA O SEU CONTROLLER
     public RegistroSaida fecharSaida(Integer id, FecharSaidaDTO dto) {
         RegistroSaida registro = registroSaidaRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de saída não encontrado."));
@@ -164,8 +169,9 @@ public class RegistroSaidaService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de saída não encontrado."));
     }
 
-    public RelatorioUsoMensalDTO gerarRelatorioUsoMensal(LocalDateTime inicio, LocalDateTime fim) {
-        List<RegistroSaida> viagens = registroSaidaRepository.findByDataRetornoBetween(inicio, fim);
+    public RelatorioUsoMensalDTO gerarRelatorioUsoMensalPorVeiculo(Long idVeiculo, LocalDateTime inicio, LocalDateTime fim) {
+        // CERTIFICAÇÃO: Alterado para buscar por DataHoraSaida para evitar relatórios zerados
+        List<RegistroSaida> viagens = registroSaidaRepository.findByVeiculoIdVeiculoAndDataHoraSaidaBetween(idVeiculo.intValue(), inicio, fim);
 
         BigDecimal totalKm = viagens.stream()
                 .map(v -> v.getKmRodados() != null ? v.getKmRodados() : BigDecimal.ZERO)
@@ -183,5 +189,94 @@ public class RegistroSaidaService {
         }
 
         return new RelatorioUsoMensalDTO(totalKm, viagens.size(), totalGasto, totalLitros, viagens);
+    }
+
+    public byte[] gerarArquivoRelatorio(Long idVeiculo, String formato, String periodoStr) {
+        LocalDateTime fim = LocalDateTime.now();
+        LocalDateTime inicio = switch (periodoStr.toLowerCase()) {
+            case "hoje" -> fim.withHour(0).withMinute(0).withSecond(0);
+            case "7d" -> fim.minusDays(7);
+            case "30d" -> fim.minusDays(30);
+            case "1y" -> fim.minusYears(1);
+            default -> fim.minusDays(30);
+        };
+
+        RelatorioUsoMensalDTO dados = gerarRelatorioUsoMensalPorVeiculo(idVeiculo, inicio, fim);
+
+        if ("pdf".equalsIgnoreCase(formato)) {
+            return gerarPdfRelatorio(idVeiculo, periodoStr, inicio, fim, dados);
+        }
+
+        StringBuilder relatorio = new StringBuilder();
+        relatorio.append("RELATORIO DE USO - IPEM CONTROL\n");
+        relatorio.append("Viatura ID: ").append(idVeiculo).append("\n");
+        relatorio.append("Periodo: ").append(periodoStr).append(" (").append(inicio.toLocalDate()).append(" a ").append(fim.toLocalDate()).append(")\n");
+        relatorio.append("--------------------------------------------------\n");
+        relatorio.append("RESUMO GERAL:\n");
+        relatorio.append("- Total de Saidas no periodo: ").append(dados.getTotalDeViagens()).append("\n");
+        relatorio.append("- Quilometragem total rodada: ").append(dados.getQuilometragemTotal()).append(" KM\n");
+        relatorio.append("- Consumo total de combustível: ").append(dados.getLitrosTotal()).append(" Litros\n");
+        relatorio.append("- Gasto total com abastecimento: R$ ").append(dados.getGastoTotal()).append("\n");
+        relatorio.append("--------------------------------------------------\n");
+        relatorio.append("DETALHAMENTO DE VIAGENS:\n");
+
+        if (dados.getDetalhes() != null && !dados.getDetalhes().isEmpty()) {
+            for (RegistroSaida v : dados.getDetalhes()) {
+                relatorio.append("Data: ").append(v.getDataHoraSaida().toLocalDate())
+                        .append(" | Usuario: ").append(v.getUsuario() != null ? v.getUsuario().getNome() : "N/I")
+                        .append(" | Destino: ").append(v.getLocalDestino() != null ? v.getLocalDestino() : "N/I")
+                        .append(" | KM Rodados: ").append(v.getKmRodados() != null ? v.getKmRodados() : "0").append("\n");
+            }
+        } else {
+            relatorio.append("Nenhuma viagem registrada para este veiculo no periodo.\n");
+        }
+
+        relatorio.append("--------------------------------------------------\n");
+        relatorio.append("Gerado em: ").append(LocalDateTime.now()).append("\n");
+
+        return relatorio.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    private byte[] gerarPdfRelatorio(Long idVeiculo, String periodoStr, LocalDateTime inicio, LocalDateTime fim, RelatorioUsoMensalDTO dados) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            PdfWriter writer = new PdfWriter(baos);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
+
+            document.add(new Paragraph("RELATORIO DE USO - IPEM CONTROL").setBold().setFontSize(16));
+            document.add(new Paragraph("Viatura ID: " + idVeiculo));
+            document.add(new Paragraph("Periodo: " + periodoStr + " (" + inicio.toLocalDate() + " a " + fim.toLocalDate() + ")"));
+            document.add(new Paragraph("--------------------------------------------------"));
+            document.add(new Paragraph("RESUMO GERAL:"));
+            document.add(new Paragraph("- Total de Saidas no periodo: " + dados.getTotalDeViagens()));
+            document.add(new Paragraph("- Quilometragem total rodada: " + dados.getQuilometragemTotal() + " KM"));
+            document.add(new Paragraph("- Consumo total de combustível: " + dados.getLitrosTotal() + " Litros"));
+            document.add(new Paragraph("- Gasto total com abastecimento: R$ " + dados.getGastoTotal()));
+            document.add(new Paragraph("--------------------------------------------------"));
+            document.add(new Paragraph("DETALHAMENTO DE VIAGENS:"));
+
+            if (dados.getDetalhes() != null && !dados.getDetalhes().isEmpty()) {
+                for (RegistroSaida v : dados.getDetalhes()) {
+                    String user = v.getUsuario() != null ? v.getUsuario().getNome() : "N/I";
+                    String dest = v.getLocalDestino() != null ? v.getLocalDestino() : "N/I";
+                    String km = v.getKmRodados() != null ? v.getKmRodados().toString() : "0";
+
+                    document.add(new Paragraph("Data: " + v.getDataHoraSaida().toLocalDate() +
+                            " | Usuario: " + user +
+                            " | Destino: " + dest +
+                            " | KM Rodados: " + km));
+                }
+            } else {
+                document.add(new Paragraph("Nenhuma viagem registrada para este veiculo no periodo."));
+            }
+
+            document.add(new Paragraph("--------------------------------------------------"));
+            document.add(new Paragraph("Gerado em: " + LocalDateTime.now()));
+
+            document.close();
+            return baos.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao gerar PDF: " + e.getMessage());
+        }
     }
 }
