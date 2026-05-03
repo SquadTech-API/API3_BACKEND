@@ -15,6 +15,10 @@ import java.util.Optional;
 @Repository
 public interface AbastecimentoRepository extends JpaRepository<Abastecimento, Integer> {
 
+    // NOVO MÉTODO: Essencial para o HistoricoUsoService (Item 11)
+    @Query("SELECT a FROM Abastecimento a JOIN a.registroSaida rs WHERE rs.veiculo.idVeiculo = :idVeiculo")
+    List<Abastecimento> findByVeiculoIdVeiculo(@Param("idVeiculo") Integer idVeiculo);
+
     // Método essencial para o Relatório Uso Mensal
     List<Abastecimento> findByRegistroSaida(RegistroSaida registroSaida);
 
@@ -23,7 +27,6 @@ public interface AbastecimentoRepository extends JpaRepository<Abastecimento, In
     List<Abastecimento> findByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(Integer idVeiculo);
 
     List<Abastecimento> findAllByOrderByDataHoraDesc();
-
 
     @Query(value = """
         SELECT rs.matricula_usuario,
@@ -86,55 +89,47 @@ public interface AbastecimentoRepository extends JpaRepository<Abastecimento, In
         """, nativeQuery = true)
     Double totalLitrosSemana(@Param("idVeiculo") Integer idVeiculo);
 
-// Filtro por intervalo de datas
-List<Abastecimento> findByDataHoraBetweenOrderByDataHoraDesc(
-        LocalDateTime inicio, LocalDateTime fim);
+    // Filtros e Estatísticas
+    List<Abastecimento> findByDataHoraBetweenOrderByDataHoraDesc(LocalDateTime inicio, LocalDateTime fim);
 
-// Filtro por placa
-List<Abastecimento> findByRegistroSaidaVeiculoPlacaOrderByDataHoraDesc(String placa);
+    List<Abastecimento> findByRegistroSaidaVeiculoPlacaOrderByDataHoraDesc(String placa);
 
-// Filtro por período
-List<Abastecimento> findByDataHoraAfterOrderByDataHoraDesc(LocalDateTime inicio);
+    List<Abastecimento> findByDataHoraAfterOrderByDataHoraDesc(LocalDateTime inicio);
 
-// Gasto e litros por semana
-@Query("SELECT WEEK(a.dataHora), SUM(a.valorTotal), SUM(a.quantidadeLitros) " +
-        "FROM Abastecimento a WHERE a.dataHora >= :dataInicio " +
-        "GROUP BY WEEK(a.dataHora) ORDER BY WEEK(a.dataHora)")
-List<Object[]> buscarEstatisticasSemanas(@Param("dataInicio") LocalDateTime dataInicio);
+    @Query("SELECT WEEK(a.dataHora), SUM(a.valorTotal), SUM(a.quantidadeLitros) " +
+            "FROM Abastecimento a WHERE a.dataHora >= :dataInicio " +
+            "GROUP BY WEEK(a.dataHora) ORDER BY WEEK(a.dataHora)")
+    List<Object[]> buscarEstatisticasSemanas(@Param("dataInicio") LocalDateTime dataInicio);
 
-// Ranking de postos
-@Query("SELECT a.postoNome, a.postoCidade, COUNT(a) " +
-        "FROM Abastecimento a WHERE a.dataHora >= :dataInicio " +
-        "GROUP BY a.postoNome, a.postoCidade " +
-        "ORDER BY COUNT(a) DESC")
-List<Object[]> buscarRankingPostos(@Param("dataInicio") LocalDateTime dataInicio);
+    @Query("SELECT a.postoNome, a.postoCidade, COUNT(a) " +
+            "FROM Abastecimento a WHERE a.dataHora >= :dataInicio " +
+            "GROUP BY a.postoNome, a.postoCidade " +
+            "ORDER BY COUNT(a) DESC")
+    List<Object[]> buscarRankingPostos(@Param("dataInicio") LocalDateTime dataInicio);
 
-// Distribuição por tipo de combustível
-@Query("SELECT a.tipoCombustivel, COUNT(a) " +
-        "FROM Abastecimento a WHERE a.dataHora >= :dataInicio " +
-        "GROUP BY a.tipoCombustivel " +
-        "ORDER BY COUNT(a) DESC")
-List<Object[]> buscarDistribuicaoCombustivel(@Param("dataInicio") LocalDateTime dataInicio);
+    @Query("SELECT a.tipoCombustivel, COUNT(a) " +
+            "FROM Abastecimento a WHERE a.dataHora >= :dataInicio " +
+            "GROUP BY a.tipoCombustivel " +
+            "ORDER BY COUNT(a) DESC")
+    List<Object[]> buscarDistribuicaoCombustivel(@Param("dataInicio") LocalDateTime dataInicio);
 
-// Consumo médio por veículo
-@Query("SELECT v.placa, SUM(a.quantidadeLitros), SUM(rs.kmRodados), " +
-        "CASE WHEN SUM(a.quantidadeLitros) > 0 " +
-        "THEN SUM(rs.kmRodados) / SUM(a.quantidadeLitros) ELSE 0 END, " +
-        "SUM(a.valorTotal) " +
-        "FROM Abastecimento a " +
-        "JOIN a.registroSaida rs " +
-        "JOIN rs.veiculo v " +
-        "WHERE a.dataHora >= :dataInicio " +
-        "GROUP BY v.placa")
-List<Object[]> buscarConsumoPorVeiculo(@Param("dataInicio") LocalDateTime dataInicio);
+    @Query("SELECT v.placa, SUM(a.quantidadeLitros), SUM(rs.kmRodados), " +
+            "CASE WHEN SUM(a.quantidadeLitros) > 0 " +
+            "THEN SUM(rs.kmRodados) / SUM(a.quantidadeLitros) ELSE 0 END, " +
+            "SUM(a.valorTotal) " +
+            "FROM Abastecimento a " +
+            "JOIN a.registroSaida rs " +
+            "JOIN rs.veiculo v " +
+            "WHERE a.dataHora >= :dataInicio " +
+            "GROUP BY v.placa")
+    List<Object[]> buscarConsumoPorVeiculo(@Param("dataInicio") LocalDateTime dataInicio);
 
-// Ranking de usuários
-@Query("SELECT u.nome, COUNT(a), SUM(a.valorTotal) " +
-        "FROM Abastecimento a " +
-        "JOIN a.registroSaida rs " +
-        "JOIN rs.usuario u " +
-        "WHERE a.dataHora >= :dataInicio " +
-        "GROUP BY u.nome " +
-        "ORDER BY COUNT(a) DESC")
-List<Object[]> buscarRankingUsuarios(@Param("dataInicio") LocalDateTime dataInicio);
+    @Query("SELECT u.nome, COUNT(a), SUM(a.valorTotal) " +
+            "FROM Abastecimento a " +
+            "JOIN a.registroSaida rs " +
+            "JOIN rs.usuario u " +
+            "WHERE a.dataHora >= :dataInicio " +
+            "GROUP BY u.nome " +
+            "ORDER BY COUNT(a) DESC")
+    List<Object[]> buscarRankingUsuarios(@Param("dataInicio") LocalDateTime dataInicio);
 }

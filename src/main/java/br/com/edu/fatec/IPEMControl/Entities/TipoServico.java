@@ -22,4 +22,10 @@ public class TipoServico {
 
     @Column(name = "descricao", columnDefinition = "TEXT")
     private String descricao;
+
+    @Column(name = "habilitado")
+    private Boolean habilitado = true;
+
+    @Column(name = "eh_troca_oleo")
+    private Boolean ehTrocaOleo = false;
 }

@@ -14,13 +14,14 @@ import java.util.Optional;
 @Repository
 public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, Integer> {
 
+    // NOVO MÉTODO: Essencial para o HistoricoUsoService (Item 11)
+    List<RegistroSaida> findByVeiculoIdVeiculo(Integer idVeiculo);
+
     // 1. Relatórios de Dashboard e Uso Mensal
     List<RegistroSaida> findByDataRetornoBetween(LocalDateTime inicio, LocalDateTime fim);
 
-    // MÉTODO ATUALIZADO: Busca pela DataHoraSaida para garantir que os dados apareçam no relatório
     List<RegistroSaida> findByVeiculoIdVeiculoAndDataHoraSaidaBetween(Integer idVeiculo, LocalDateTime inicio, LocalDateTime fim);
 
-    // Este método precisa seguir exatamente a ordem: Matricula, DataInicio, DataFim
     List<RegistroSaida> findByUsuarioMatriculaAndDataHoraSaidaBetween(Integer matricula, LocalDateTime inicio, LocalDateTime fim);
 
     // 2. Controle de Fluxo e Status

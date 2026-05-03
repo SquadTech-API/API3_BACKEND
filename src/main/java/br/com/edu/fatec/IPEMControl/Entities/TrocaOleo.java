@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -25,6 +26,9 @@ public class TrocaOleo {
     @Column(name = "km_proxima_troca", precision = 10, scale = 2)
     private BigDecimal kmProximaTroca;
 
+    @Column(name = "data_troca")
+    private LocalDateTime dataTroca;
+
     @ManyToOne
     @JoinColumn(name = "id_saida")
     private RegistroSaida registroSaida;
@@ -39,6 +43,9 @@ public class TrocaOleo {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        if (this.dataTroca == null) {
+            this.dataTroca = LocalDateTime.now();
+        }
     }
 
     @PreUpdate

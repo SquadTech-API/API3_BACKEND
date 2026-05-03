@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VeiculoResumoDTO {
 
-    private Integer idVeiculo;
-    private String modelo;
+    private Integer id;
+    private String nome;
     private String prefixo;
     private String ultimoUso;
     private String ultimoMotorista;
     private String ultimoAbastecimento;
-    private String km;
+    private String kmRodados;
     private String status;
 }

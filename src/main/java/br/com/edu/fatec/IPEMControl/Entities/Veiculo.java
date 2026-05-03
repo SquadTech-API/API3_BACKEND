@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -48,6 +49,12 @@ public class Veiculo {
 
     @Column(name = "disponivel", nullable = false)
     private Boolean disponivel = true;
+
+    @Column(name = "ativo")
+    private Boolean ativo = true;
+
+    @Column(name = "numero_fl", length = 50)
+    private String numeroFl;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
