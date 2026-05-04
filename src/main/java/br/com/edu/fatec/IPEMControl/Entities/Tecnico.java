@@ -3,7 +3,7 @@ package br.com.edu.fatec.IPEMControl.Entities;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "técnicos")
+@Table(name = "tecnicos") // CORRIGIDO: era "técnicos" com acento — MySQL não aceita
 public class Tecnico {
 
     @Id

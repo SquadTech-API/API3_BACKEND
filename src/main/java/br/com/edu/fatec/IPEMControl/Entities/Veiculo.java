@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -50,6 +49,19 @@ public class Veiculo {
     @Column(name = "disponivel", nullable = false)
     private Boolean disponivel = true;
 
+    // CORRIGIDO: campos ausentes mapeados do banco
+    @Column(name = "ativo", nullable = false)
+    private Boolean ativo = true;
+
+    @Column(name = "numero_fl", length = 30)
+    private String numeroFl;
+
+    @Column(name = "intervalo_troca_oleo_km", precision = 10, scale = 2)
+    private BigDecimal intervaloTrocaOleoKm;
+
+    @Column(name = "alerta_troca_oleo_enviado", nullable = false)
+    private Boolean alertaTrocaOleoEnviado = false;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
@@ -60,6 +72,9 @@ public class Veiculo {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        if (this.ativo == null) this.ativo = true;
+        if (this.disponivel == null) this.disponivel = true;
+        if (this.alertaTrocaOleoEnviado == null) this.alertaTrocaOleoEnviado = false;
     }
 
     @PreUpdate
