@@ -13,8 +13,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * CORRIGIDO: adicionado endpoint para saídas com troca de óleo por veículo.
+ * Usado pelo editar-troca-de-oleo.js ao popular o select de saídas.
+ */
 @RestController
 @RequestMapping("/registro-saidas")
+@CrossOrigin(origins = "*")
 public class RegistroSaidaController {
 
     @Autowired
@@ -52,10 +57,7 @@ public class RegistroSaidaController {
         return ResponseEntity.ok(registroSaidaService.buscarPorId(id));
     }
 
-    /**
-     * Busca saída em andamento de um veículo específico.
-     * GET /registro-saidas/ativo?veiculoId={id}
-     */
+    // Busca saída ativa de um veículo
     @GetMapping("/ativo")
     public ResponseEntity<RegistroSaida> buscarSaidaAtivaPorVeiculo(@RequestParam Integer veiculoId) {
         return registroSaidaRepository
@@ -64,18 +66,20 @@ public class RegistroSaidaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Busca saída em andamento do usuário logado pela matrícula.
-     * Usado pelo veiculos.js ao carregar: se o usuário já tem saída ativa,
-     * redireciona automaticamente para nova_entrada.html.
-     * GET /registro-saidas/ativo-usuario?matricula={matricula}
-     * Retorna 404 se não houver saída ativa (comportamento esperado e tratado no JS).
-     */
+    // Busca saída ativa do usuário — usado pelo veiculos.js para redirecionamento automático
     @GetMapping("/ativo-usuario")
     public ResponseEntity<RegistroSaida> buscarSaidaAtivaPorUsuario(@RequestParam Integer matricula) {
         return registroSaidaRepository
                 .findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(matricula, "em_andamento")
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    // NOVO: saídas de troca de óleo por veículo — usado pelo editar-troca-de-oleo.js
+    @GetMapping("/veiculo/{idVeiculo}/troca-oleo")
+    public ResponseEntity<List<RegistroSaida>> buscarSaidasTrocaOleo(@PathVariable Integer idVeiculo) {
+        return ResponseEntity.ok(
+                registroSaidaRepository.findByVeiculoIdVeiculoAndTipoServicoEhTrocaOleoTrue(idVeiculo)
+        );
     }
 }

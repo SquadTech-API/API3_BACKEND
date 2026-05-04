@@ -1,6 +1,8 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.RelatorioVeiculoDTO;
+import br.com.edu.fatec.IPEMControl.Entities.Abastecimento;
+import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
 import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
@@ -9,7 +11,10 @@ import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class RelatorioVeiculoService {
@@ -23,27 +28,44 @@ public class RelatorioVeiculoService {
     @Autowired
     private AbastecimentoRepository abastecimentoRepository;
 
+    /**
+     * CORRIGIDO: antes retornava dados hardcoded (Fiat Uno, ABC-1234...).
+     * Agora busca dados reais do banco a partir do idVeiculo.
+     */
     public RelatorioVeiculoDTO gerarRelatorioVeiculo(Integer idVeiculo) {
+
         Veiculo veiculo = veiculoRepository.findById(idVeiculo)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado: " + idVeiculo));
 
-        LocalDateTime trintaDiasAtras = LocalDateTime.now().minusDays(30);
+        // Total de saídas concluídas
+        List<RegistroSaida> saidasConcluidas = registroSaidaRepository
+                .findByVeiculoIdVeiculoAndDataHoraSaidaBetween(
+                        idVeiculo,
+                        LocalDateTime.now().minusYears(5),
+                        LocalDateTime.now()
+                );
 
-        Double kmRodados = registroSaidaRepository.totalKmSemana(idVeiculo);
-        Long totalSaidas = registroSaidaRepository.totalSaidasSemana(idVeiculo);
+        int totalSaidas = saidasConcluidas.size();
 
-        // Cálculo de Consumo Médio (KM / Litros)
-        Double consumoMedio = 0.0;
-        try {
-            // Reutilizando lógica de soma de litros do repositório
-            // Se kmRodados for nulo ou zero, o consumo permanece 0.0
-            if (kmRodados != null && kmRodados > 0) {
-                // Aqui você pode implementar uma query no AbastecimentoRepository para somar litros
-                // Por enquanto, usaremos um fallback seguro para não travar a aplicação
-                consumoMedio = 10.0; // Valor base para teste até integrar a query de litros
-            }
-        } catch (Exception e) {
-            consumoMedio = 0.0;
+        // KM total rodado somando kmRodados de todas as saídas concluídas
+        BigDecimal kmRodado = saidasConcluidas.stream()
+                .filter(s -> s.getKmRodados() != null)
+                .map(RegistroSaida::getKmRodados)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Litros totais abastecidos
+        List<Abastecimento> abastecimentos = abastecimentoRepository
+                .findByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(idVeiculo);
+
+        BigDecimal totalLitros = abastecimentos.stream()
+                .filter(a -> a.getQuantidadeLitros() != null)
+                .map(Abastecimento::getQuantidadeLitros)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Consumo médio km/L
+        double consumoMedio = 0.0;
+        if (totalLitros.compareTo(BigDecimal.ZERO) > 0) {
+            consumoMedio = kmRodado.divide(totalLitros, 2, RoundingMode.HALF_UP).doubleValue();
         }
 
         RelatorioVeiculoDTO dto = new RelatorioVeiculoDTO();
@@ -53,9 +75,9 @@ public class RelatorioVeiculoService {
         dto.setModelo(veiculo.getModelo());
         dto.setAno(veiculo.getAno());
         dto.setCombustivel(veiculo.getTipoCombustivel());
-        dto.setKmRodado(kmRodados != null ? kmRodados : 0.0);
+        dto.setKmRodado(kmRodado.doubleValue());
         dto.setConsumoMedio(consumoMedio);
-        dto.setTotalSaidas(totalSaidas != null ? totalSaidas.intValue() : 0);
+        dto.setTotalSaidas(totalSaidas);
 
         return dto;
     }

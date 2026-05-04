@@ -1,6 +1,9 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.*;
+import br.com.edu.fatec.IPEMControl.DTO.DestinoFrequenteDTO;
+import br.com.edu.fatec.IPEMControl.DTO.RelatorioGeralDTO;
+import br.com.edu.fatec.IPEMControl.DTO.RelatorioTecnicoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.TecnicoResumoDTO;
 import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
 import br.com.edu.fatec.IPEMControl.Entities.Usuario;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
@@ -62,10 +65,8 @@ public class RelatorioTecnicoService {
     public RelatorioGeralDTO gerarVisaoGeral(String periodo) {
         LocalDateTime inicio = dataInicio(periodo);
 
-        // Saídas e KM por técnico (Query 3.1)
         List<Object[]> saidasKm = saidaRepo.buscarSaidasKmPorTecnico(inicio);
 
-        // Custo por técnico (Query 3.2)
         List<Object[]> custos = abastRepo.buscarCustoPorTecnico(inicio);
         Map<Integer, BigDecimal> gastoMap = new HashMap<>();
         for (Object[] row : custos) {
@@ -102,8 +103,7 @@ public class RelatorioTecnicoService {
             custoTotal   = custoTotal.add(gasto);
         }
 
-        // kmPorSemana — últimas 4 semanas, ordem cronológica
-        List<Object[]>  semanasRaw  = saidaRepo.buscarKmPorSemana(inicio);
+        List<Object[]>   semanasRaw  = saidaRepo.buscarKmPorSemana(inicio);
         List<BigDecimal> kmPorSemana = new ArrayList<>();
         for (Object[] row : semanasRaw) {
             BigDecimal val = row[1] != null
@@ -146,12 +146,12 @@ public class RelatorioTecnicoService {
         dto.setMatricula(usuario.getMatricula());
         dto.setNome(usuario.getNome());
         dto.setCargo(usuario.getCargo());
-        dto.setTipo(usuario.getTipoUsuario().name());
+        dto.setTipo(usuario.getTipoUsuario() != null ? usuario.getTipoUsuario().name() : null);
         dto.setCnh(usuario.getTipoHabilitacao() != null ? usuario.getTipoHabilitacao().name() : null);
         dto.setNumHabilitacao(usuario.getNumeroHabilitacao());
         dto.setCpf(usuario.getCpf());
         dto.setEmail(usuario.getEmail());
-        dto.setTelefone(null); // campo não existe na entidade — adicionar futuramente
+        dto.setTelefone(null);
         dto.setDataNascimento(usuario.getDataNascimento() != null
                 ? usuario.getDataNascimento().format(FMT_DATE) : null);
 
@@ -167,14 +167,14 @@ public class RelatorioTecnicoService {
         dto.setSaidaEmAberto(saidaAberta.isPresent());
         dto.setIdSaidaAberta(saidaAberta.map(RegistroSaida::getIdSaida).orElse(null));
 
-        // Seção 3 — Uso: mapas por todos os períodos
+        // Seção 3 — Uso por período
         List<String> periodos = List.of("hoje", "7", "30", "ano");
         Map<String, Long>       saidasMap = new LinkedHashMap<>();
         Map<String, BigDecimal> kmMap     = new LinkedHashMap<>();
         for (String p : periodos) {
             LocalDateTime ini = dataInicio(p);
             saidasMap.put(p, saidaRepo.countPorMatriculaEPeriodo(matricula, ini));
-            kmMap.put(p,     saidaRepo.sumKmPorMatriculaEPeriodo(matricula, ini));
+            kmMap.put(p,     safe(saidaRepo.sumKmPorMatriculaEPeriodo(matricula, ini)));
         }
         dto.setSaidasPorPeriodo(saidasMap);
         dto.setKmPorPeriodo(kmMap);
@@ -194,9 +194,9 @@ public class RelatorioTecnicoService {
         long saidasNoPeriodo = saidasMap.getOrDefault(periodo, 0L);
         dto.setFrequenciaSaidasPorSemana(saidasNoPeriodo / numeroSemanas(periodo));
 
-        // Seção 5 — Financeiro: mapas por todos os períodos
-        Map<String, BigDecimal> gastoMap = new LinkedHashMap<>();
-        Map<String, Long>       abastMap = new LinkedHashMap<>();
+        // Seção 5 — Financeiro por período
+        Map<String, BigDecimal> gastoMap  = new LinkedHashMap<>();
+        Map<String, Long>       abastMap  = new LinkedHashMap<>();
         for (String p : periodos) {
             LocalDateTime ini = dataInicio(p);
             gastoMap.put(p, safe(abastRepo.sumGastoPorMatriculaEPeriodo(matricula, ini)));
@@ -219,13 +219,14 @@ public class RelatorioTecnicoService {
         documentos.setBaixados(docRepo.countByUsuarioMatriculaAndBaixadoTrue(matricula));
         dto.setDocumentos(documentos);
 
-        // Destinos (top 5) e serviços
+        // Destinos (top 5)
         List<DestinoFrequenteDTO> destinos = new ArrayList<>();
         for (Object[] row : saidaRepo.buscarDestinosMaisFrequentes(matricula)) {
             destinos.add(new DestinoFrequenteDTO((String) row[0], ((Number) row[1]).longValue()));
         }
         dto.setDestinos(destinos);
 
+        // Serviços
         Map<String, Long> servicos = new LinkedHashMap<>();
         for (Object[] row : saidaRepo.buscarServicosDoTecnico(matricula, inicio)) {
             servicos.put(row[0] != null ? (String) row[0] : "Outros",

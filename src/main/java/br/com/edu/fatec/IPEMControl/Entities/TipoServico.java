@@ -23,9 +23,10 @@ public class TipoServico {
     @Column(name = "descricao", columnDefinition = "TEXT")
     private String descricao;
 
-    @Column(name = "habilitado")
+    // CORRIGIDO: campos ausentes que existem no banco de dados
+    @Column(name = "habilitado", nullable = false)
     private Boolean habilitado = true;
 
-    @Column(name = "eh_troca_oleo")
+    @Column(name = "eh_troca_oleo", nullable = false)
     private Boolean ehTrocaOleo = false;
 }

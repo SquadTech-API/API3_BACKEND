@@ -3,15 +3,12 @@ package br.com.edu.fatec.IPEMControl.Entities;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "técnicos") // Nome exato com acento como está no seu MySQL
+@Table(name = "tecnicos") // CORRIGIDO: era "técnicos" com acento — MySQL não aceita
 public class Tecnico {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false, unique = true)
-    private Integer matricula; // Adicionado para bater com a busca do relatório
 
     @Column(nullable = false)
     private String nome;
@@ -23,18 +20,13 @@ public class Tecnico {
 
     public Tecnico() {}
 
-    public Tecnico(Integer matricula, String nome, String cnh, String telefone) {
-        this.matricula = matricula;
+    public Tecnico(String nome, String cnh, String telefone) {
         this.nome = nome;
         this.cnh = cnh;
         this.telefone = telefone;
     }
 
-    // Getters e Setters
     public Long getId() { return id; }
-
-    public Integer getMatricula() { return matricula; }
-    public void setMatricula(Integer matricula) { this.matricula = matricula; }
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }

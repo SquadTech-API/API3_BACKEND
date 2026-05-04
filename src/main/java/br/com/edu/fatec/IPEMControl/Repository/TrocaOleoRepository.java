@@ -13,21 +13,23 @@ import java.util.Optional;
 @Repository
 public interface TrocaOleoRepository extends JpaRepository<TrocaOleo, Integer> {
 
-    /** Total de trocas de óleo vinculadas a saídas deste usuário */
+    // Total de trocas de óleo vinculadas a saídas do técnico
     long countByRegistroSaidaUsuarioMatricula(Integer matricula);
 
-    /** Última troca de óleo do técnico */
+    // Última troca do técnico (para relatório de técnicos)
     Optional<TrocaOleo> findTopByRegistroSaidaUsuarioMatriculaOrderByCreatedAtDesc(Integer matricula);
 
-    // Última troca de óleo de um veículo específico
-    @Query("SELECT t FROM TrocaOleo t " +
-            "JOIN t.registroSaida rs " +
-            "JOIN rs.veiculo v " +
-            "WHERE v.idVeiculo = :idVeiculo " +
-            "ORDER BY t.createdAt DESC")
+    // Última troca de um veículo específico
+    @Query("SELECT t FROM TrocaOleo t WHERE t.veiculo.idVeiculo = :idVeiculo ORDER BY t.createdAt DESC")
     Optional<TrocaOleo> buscarUltimaPorVeiculo(@Param("idVeiculo") Integer idVeiculo);
 
-    // Trocas de óleo após uma determinada data
+    // NOVO: lista trocas por veículo ordenadas da mais recente
+    // Usado pelo TrocaOleoService.listarPorVeiculo()
+    List<TrocaOleo> findByVeiculoIdVeiculoOrderByCreatedAtDesc(Integer idVeiculo);
+
+    // Trocas após uma determinada data (para relatório de abastecimento)
     List<TrocaOleo> findByCreatedAtAfterOrderByCreatedAtDesc(LocalDateTime dataInicio);
 
+    // CORRIGIDO: busca trocas vinculadas a uma saída específica
+    Optional<TrocaOleo> findTopByRegistroSaidaIdSaidaOrderByCreatedAtDesc(Integer idSaida);
 }

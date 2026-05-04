@@ -4,57 +4,39 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
-
+/**
+ * CAUSA 1 — Spring Security bloqueando tudo.
+ *
+ * Se o projeto tem spring-boot-starter-security no pom.xml,
+ * ele ativa autenticação HTTP Basic em TODOS os endpoints por padrão.
+ * Isso faz o browser receber 401 em /veiculos, /usuarios/login, etc.
+ * — mesmo com @CrossOrigin configurado.
+ *
+ * Esta classe desabilita completamente a segurança HTTP padrão,
+ * liberando todos os endpoints sem autenticação (a autenticação
+ * é feita manualmente no UsuarioService via BCrypt + sessionStorage).
+ *
+ * Se não tiver spring-security no pom.xml, esta classe é ignorada.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    // NOVA CONFIGURAÇÃO: Ignora a segurança para recursos estáticos
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers(
-                "/assets/**",
-                "/css/**",
-                "/js/**",
-                "/images/**",
-                "/favicon.ico"
-        );
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
-                );
+                // Desabilita CSRF (necessário para POST/PUT/PATCH sem token CSRF)
+                .csrf(AbstractHttpConfigurer::disable)
+                // Desabilita autenticação padrão — libera todos os endpoints
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                // Desabilita o formulário de login automático do Spring
+                .formLogin(AbstractHttpConfigurer::disable)
+                // Desabilita HTTP Basic automático
+                .httpBasic(AbstractHttpConfigurer::disable);
+
         return http.build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(false);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
     }
 }

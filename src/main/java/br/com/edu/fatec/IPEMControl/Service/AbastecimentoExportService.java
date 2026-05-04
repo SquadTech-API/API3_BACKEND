@@ -34,25 +34,23 @@ public class AbastecimentoExportService {
         try (ByteArrayOutputStream saida = new ByteArrayOutputStream();
              CSVWriter escritor = new CSVWriter(new OutputStreamWriter(saida))) {
 
-            //Cabeçalho
             escritor.writeNext(new String[]{
                     "Data/Hora", "Veículo", "Responsável", "Combustível",
                     "Litros", "Valor Total", "KM", "Posto", "Cidade", "NF"
             });
 
-            //Linhas
             for (AbastecimentoItemDTO item : relatorio.getAbastecimentos()) {
                 escritor.writeNext(new String[]{
-                        item.getDataHora()           != null ? item.getDataHora().toString()           : "",
-                        item.getVeiculo()             != null ? item.getVeiculo()                      : "",
-                        item.getResponsavel()         != null ? item.getResponsavel()                  : "",
-                        item.getTipoCombustivel()     != null ? item.getTipoCombustivel()              : "",
-                        item.getQuantidadeLitros()    != null ? item.getQuantidadeLitros().toString()  : "",
-                        item.getValorTotal()          != null ? item.getValorTotal().toString()        : "",
-                        item.getKmAbastecimento()     != null ? item.getKmAbastecimento().toString()   : "",
-                        item.getPostoNome()           != null ? item.getPostoNome()                    : "",
-                        item.getPostoCidade()         != null ? item.getPostoCidade()                  : "",
-                        item.getNotaFiscal()          != null ? item.getNotaFiscal()                   : "—"
+                        item.getDataHora()           != null ? item.getDataHora().toString()          : "",
+                        item.getVeiculo()             != null ? item.getVeiculo()                     : "",
+                        item.getResponsavel()         != null ? item.getResponsavel()                 : "",
+                        item.getTipoCombustivel()     != null ? item.getTipoCombustivel()             : "",
+                        item.getQuantidadeLitros()    != null ? item.getQuantidadeLitros().toString() : "",
+                        item.getValorTotal()          != null ? item.getValorTotal().toString()       : "",
+                        item.getKmAbastecimento()     != null ? item.getKmAbastecimento().toString()  : "",
+                        item.getPostoNome()           != null ? item.getPostoNome()                   : "",
+                        item.getPostoCidade()         != null ? item.getPostoCidade()                 : "",
+                        item.getNotaFiscal()          != null ? item.getNotaFiscal()                  : "—"
                 });
             }
 
@@ -70,7 +68,6 @@ public class AbastecimentoExportService {
 
             Sheet aba = planilha.createSheet("Abastecimentos");
 
-            //Cabeçalho
             Row cabecalho = aba.createRow(0);
             String[] colunas = {
                     "Data/Hora", "Veículo", "Responsável", "Combustível",
@@ -80,7 +77,6 @@ public class AbastecimentoExportService {
                 cabecalho.createCell(i).setCellValue(colunas[i]);
             }
 
-            //Linhas
             List<AbastecimentoItemDTO> abastecimentos = relatorio.getAbastecimentos();
             for (int i = 0; i < abastecimentos.size(); i++) {
                 AbastecimentoItemDTO item = abastecimentos.get(i);
@@ -90,8 +86,8 @@ public class AbastecimentoExportService {
                 linha.createCell(2).setCellValue(item.getResponsavel()      != null ? item.getResponsavel()                  : "");
                 linha.createCell(3).setCellValue(item.getTipoCombustivel()  != null ? item.getTipoCombustivel()              : "");
                 linha.createCell(4).setCellValue(item.getQuantidadeLitros() != null ? item.getQuantidadeLitros().doubleValue(): 0);
-                linha.createCell(5).setCellValue(item.getValorTotal()       != null ? item.getValorTotal().doubleValue()     : 0);
-                linha.createCell(6).setCellValue(item.getKmAbastecimento()  != null ? item.getKmAbastecimento().doubleValue(): 0);
+                linha.createCell(5).setCellValue(item.getValorTotal()       != null ? item.getValorTotal().doubleValue()      : 0);
+                linha.createCell(6).setCellValue(item.getKmAbastecimento()  != null ? item.getKmAbastecimento().doubleValue() : 0);
                 linha.createCell(7).setCellValue(item.getPostoNome()        != null ? item.getPostoNome()                    : "");
                 linha.createCell(8).setCellValue(item.getPostoCidade()      != null ? item.getPostoCidade()                  : "");
                 linha.createCell(9).setCellValue(item.getNotaFiscal()       != null ? item.getNotaFiscal()                   : "—");
@@ -112,35 +108,31 @@ public class AbastecimentoExportService {
             PdfDocument pdf = new PdfDocument(escritor);
             Document documento = new Document(pdf);
 
-            //Título
             documento.add(new Paragraph("Relatório de Abastecimentos")
                     .setBold()
                     .setFontSize(16));
 
-            //Tabela com 10 colunas
             Table tabela = new Table(10);
             String[] colunas = {
                     "Data/Hora", "Veículo", "Responsável", "Combustível",
                     "Litros", "Valor Total", "KM", "Posto", "Cidade", "NF"
             };
 
-            //Cabeçalho
             for (String coluna : colunas) {
                 tabela.addHeaderCell(new Cell().add(new Paragraph(coluna).setBold()));
             }
 
-            //Linhas
             for (AbastecimentoItemDTO item : relatorio.getAbastecimentos()) {
-                tabela.addCell(item.getDataHora()        != null ? item.getDataHora().toString()           : "");
-                tabela.addCell(item.getVeiculo()          != null ? item.getVeiculo()                      : "");
-                tabela.addCell(item.getResponsavel()      != null ? item.getResponsavel()                  : "");
-                tabela.addCell(item.getTipoCombustivel()  != null ? item.getTipoCombustivel()              : "");
-                tabela.addCell(item.getQuantidadeLitros() != null ? item.getQuantidadeLitros().toString()  : "");
-                tabela.addCell(item.getValorTotal()       != null ? item.getValorTotal().toString()        : "");
-                tabela.addCell(item.getKmAbastecimento()  != null ? item.getKmAbastecimento().toString()   : "");
-                tabela.addCell(item.getPostoNome()        != null ? item.getPostoNome()                    : "");
-                tabela.addCell(item.getPostoCidade()      != null ? item.getPostoCidade()                  : "");
-                tabela.addCell(item.getNotaFiscal()       != null ? item.getNotaFiscal()                   : "—");
+                tabela.addCell(item.getDataHora()        != null ? item.getDataHora().toString()          : "");
+                tabela.addCell(item.getVeiculo()          != null ? item.getVeiculo()                     : "");
+                tabela.addCell(item.getResponsavel()      != null ? item.getResponsavel()                 : "");
+                tabela.addCell(item.getTipoCombustivel()  != null ? item.getTipoCombustivel()             : "");
+                tabela.addCell(item.getQuantidadeLitros() != null ? item.getQuantidadeLitros().toString() : "");
+                tabela.addCell(item.getValorTotal()       != null ? item.getValorTotal().toString()       : "");
+                tabela.addCell(item.getKmAbastecimento()  != null ? item.getKmAbastecimento().toString()  : "");
+                tabela.addCell(item.getPostoNome()        != null ? item.getPostoNome()                   : "");
+                tabela.addCell(item.getPostoCidade()      != null ? item.getPostoCidade()                 : "");
+                tabela.addCell(item.getNotaFiscal()       != null ? item.getNotaFiscal()                  : "—");
             }
 
             documento.add(tabela);
@@ -157,28 +149,24 @@ public class AbastecimentoExportService {
         try (XWPFDocument documento = new XWPFDocument();
              ByteArrayOutputStream saida = new ByteArrayOutputStream()) {
 
-            //Título
             XWPFParagraph titulo = documento.createParagraph();
             XWPFRun textoTitulo = titulo.createRun();
             textoTitulo.setText("Relatório de Abastecimentos");
             textoTitulo.setBold(true);
             textoTitulo.setFontSize(16);
 
-            //Tabela com 10 colunas
             XWPFTable tabela = documento.createTable();
             String[] colunas = {
                     "Data/Hora", "Veículo", "Responsável", "Combustível",
                     "Litros", "Valor Total", "KM", "Posto", "Cidade", "NF"
             };
 
-            //Cabeçalho
             XWPFTableRow linhaCabecalho = tabela.getRow(0);
             linhaCabecalho.getCell(0).setText(colunas[0]);
             for (int i = 1; i < colunas.length; i++) {
                 linhaCabecalho.addNewTableCell().setText(colunas[i]);
             }
 
-            //Linhas
             for (AbastecimentoItemDTO item : relatorio.getAbastecimentos()) {
                 XWPFTableRow linha = tabela.createRow();
                 linha.getCell(0).setText(item.getDataHora()        != null ? item.getDataHora().toString()          : "");
