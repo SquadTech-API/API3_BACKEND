@@ -11,18 +11,18 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Documento {
+public class Document {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_documento")
-    private Integer idDocumento;
+    private Integer documentId;
 
     @Column(name = "nome_arquivo", length = 255)
-    private String nomeArquivo;
+    private String fileName;
 
     @Column(name = "caminho", length = 255)
-    private String caminho;
+    private String filePath;
 
     @ManyToOne
     @JoinColumn(name = "id_saida")

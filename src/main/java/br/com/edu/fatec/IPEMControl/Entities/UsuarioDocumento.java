@@ -33,5 +33,5 @@ public class UsuarioDocumento {
 
     @ManyToOne
     @JoinColumn(name = "id_documento")
-    private Documento documento;
+    private Document document;
 }
