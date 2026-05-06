@@ -181,10 +181,10 @@ public class RegistroSaidaService {
         BigDecimal totalLitros = BigDecimal.ZERO;
 
         for (RegistroSaida viagem : viagens) {
-            List<Abastecimento> abastecimentos = abastecimentoRepository.findByRegistroSaida(viagem);
-            for (Abastecimento a : abastecimentos) {
-                if (a.getValorTotal() != null) totalGasto = totalGasto.add(a.getValorTotal());
-                if (a.getQuantidadeLitros() != null) totalLitros = totalLitros.add(a.getQuantidadeLitros());
+            List<Fueling> fuelings = abastecimentoRepository.findByRegistroSaida(viagem);
+            for (Fueling a : fuelings) {
+                if (a.getTotalValue() != null) totalGasto = totalGasto.add(a.getTotalValue());
+                if (a.getLitersAmount() != null) totalLitros = totalLitros.add(a.getLitersAmount());
             }
         }
 

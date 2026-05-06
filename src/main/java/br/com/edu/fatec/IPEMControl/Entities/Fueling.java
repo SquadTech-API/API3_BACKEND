@@ -12,39 +12,39 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Abastecimento {
+public class Fueling {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_abastecimento")
-    private Integer idAbastecimento;
+    private Integer fuelingId;
 
     @Column(name = "nota_fiscal", length = 100)
-    private String notaFiscal;
+    private String receipt;
 
     @Column(name = "foto", length = 255)
-    private String foto;
+    private String photo;
 
     @Column(name = "tipo_combustivel", length = 50)
-    private String tipoCombustivel;
+    private String fuelType;
 
     @Column(name = "data_hora")
-    private LocalDateTime dataHora;
+    private LocalDateTime dateTime;
 
     @Column(name = "km_abastecimento", precision = 10, scale = 2)
-    private BigDecimal kmAbastecimento;
+    private BigDecimal fuelingKm;
 
     @Column(name = "quantidade_litros", precision = 10, scale = 2)
-    private BigDecimal quantidadeLitros;
+    private BigDecimal litersAmount;
 
     @Column(name = "valor_total", precision = 10, scale = 2)
-    private BigDecimal valorTotal;
+    private BigDecimal totalValue;
 
     @Column(name = "posto_nome", length = 150)
-    private String postoNome;
+    private String gasStationName;
 
     @Column(name = "posto_cidade", length = 150)
-    private String postoCidade;
+    private String gasStationCity;
 
     @ManyToOne
     @JoinColumn(name = "id_saida")

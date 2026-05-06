@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.HistoricoUsoCardDTO;
-import br.com.edu.fatec.IPEMControl.Entities.Abastecimento;
+import br.com.edu.fatec.IPEMControl.Entities.Fueling;
 import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
 import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
 import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
@@ -53,9 +53,9 @@ public class HistoricoUsoService {
                             ? saida.getKmRodados() : BigDecimal.ZERO;
 
                     // Verifica se houve abastecimento nessa saída
-                    List<Abastecimento> abastecimentos =
+                    List<Fueling> fuelings =
                             abastecimentoRepository.findByRegistroSaida(saida);
-                    boolean abasteceu = !abastecimentos.isEmpty();
+                    boolean abasteceu = !fuelings.isEmpty();
 
                     return new HistoricoUsoCardDTO(
                             motorista,

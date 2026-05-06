@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.RelatorioVeiculoDTO;
-import br.com.edu.fatec.IPEMControl.Entities.Abastecimento;
+import br.com.edu.fatec.IPEMControl.Entities.Fueling;
 import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
 import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
@@ -54,12 +54,12 @@ public class RelatorioVeiculoService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Litros totais abastecidos
-        List<Abastecimento> abastecimentos = abastecimentoRepository
+        List<Fueling> fuelings = abastecimentoRepository
                 .findByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(idVeiculo);
 
-        BigDecimal totalLitros = abastecimentos.stream()
-                .filter(a -> a.getQuantidadeLitros() != null)
-                .map(Abastecimento::getQuantidadeLitros)
+        BigDecimal totalLitros = fuelings.stream()
+                .filter(a -> a.getLitersAmount() != null)
+                .map(Fueling::getLitersAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Consumo médio km/L

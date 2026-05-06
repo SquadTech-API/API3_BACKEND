@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.VeiculoResumoDTO;
-import br.com.edu.fatec.IPEMControl.Entities.Abastecimento;
+import br.com.edu.fatec.IPEMControl.Entities.Fueling;
 import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
 import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
@@ -71,12 +71,12 @@ public class VeiculoService {
                     .map(r -> r.getUsuario() != null ? r.getUsuario().getNome() : "—")
                     .orElse("—");
 
-            Optional<Abastecimento> ultimoAbastecimento =
+            Optional<Fueling> ultimoAbastecimento =
                     abastecimentoRepository
                             .findTopByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(veiculo.getIdVeiculo());
 
             String ultimoAbastecimentoStr = ultimoAbastecimento
-                    .map(a -> formatarData(a.getDataHora()))
+                    .map(a -> formatarData(a.getDateTime()))
                     .orElse("—");
 
             String km = veiculo.getKmAtual() != null

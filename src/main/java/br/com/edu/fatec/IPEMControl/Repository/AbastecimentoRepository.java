@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Repository;
 
-import br.com.edu.fatec.IPEMControl.Entities.Abastecimento;
+import br.com.edu.fatec.IPEMControl.Entities.Fueling;
 import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,20 +13,20 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface AbastecimentoRepository extends JpaRepository<Abastecimento, Integer> {
+public interface AbastecimentoRepository extends JpaRepository<Fueling, Integer> {
 
     // NOVO MÉTODO: Essencial para o HistoricoUsoService (Item 11)
-    @Query("SELECT a FROM Abastecimento a JOIN a.registroSaida rs WHERE rs.veiculo.idVeiculo = :idVeiculo")
-    List<Abastecimento> findByVeiculoIdVeiculo(@Param("idVeiculo") Integer idVeiculo);
+    @Query("SELECT a FROM Fueling a JOIN a.registroSaida rs WHERE rs.veiculo.idVeiculo = :idVeiculo")
+    List<Fueling> findByVeiculoIdVeiculo(@Param("idVeiculo") Integer idVeiculo);
 
     // Método essencial para o Relatório Uso Mensal
-    List<Abastecimento> findByRegistroSaida(RegistroSaida registroSaida);
+    List<Fueling> findByRegistroSaida(RegistroSaida registroSaida);
 
-    Optional<Abastecimento> findTopByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(Integer idVeiculo);
+    Optional<Fueling> findTopByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(Integer idVeiculo);
 
-    List<Abastecimento> findByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(Integer idVeiculo);
+    List<Fueling> findByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(Integer idVeiculo);
 
-    List<Abastecimento> findAllByOrderByDataHoraDesc();
+    List<Fueling> findAllByOrderByDataHoraDesc();
 
     @Query(value = """
         SELECT rs.matricula_usuario,
@@ -67,7 +67,7 @@ public interface AbastecimentoRepository extends JpaRepository<Abastecimento, In
         ORDER BY a.data_hora DESC
         LIMIT 1
         """, nativeQuery = true)
-    Optional<Abastecimento> findUltimoAbastecimentoDoTecnico(@Param("matricula") Integer matricula);
+    Optional<Fueling> findUltimoAbastecimentoDoTecnico(@Param("matricula") Integer matricula);
 
     // ── Queries para dashboard de veículos ───────────────────────────────────
 
@@ -90,45 +90,45 @@ public interface AbastecimentoRepository extends JpaRepository<Abastecimento, In
     Double totalLitrosSemana(@Param("idVeiculo") Integer idVeiculo);
 
     // Filtros e Estatísticas
-    List<Abastecimento> findByDataHoraBetweenOrderByDataHoraDesc(LocalDateTime inicio, LocalDateTime fim);
+    List<Fueling> findByDataHoraBetweenOrderByDataHoraDesc(LocalDateTime inicio, LocalDateTime fim);
 
-    List<Abastecimento> findByRegistroSaidaVeiculoPlacaOrderByDataHoraDesc(String placa);
+    List<Fueling> findByRegistroSaidaVeiculoPlacaOrderByDataHoraDesc(String placa);
 
-    List<Abastecimento> findByDataHoraAfterOrderByDataHoraDesc(LocalDateTime inicio);
+    List<Fueling> findByDataHoraAfterOrderByDataHoraDesc(LocalDateTime inicio);
 
-    @Query("SELECT WEEK(a.dataHora), SUM(a.valorTotal), SUM(a.quantidadeLitros) " +
-            "FROM Abastecimento a WHERE a.dataHora >= :dataInicio " +
-            "GROUP BY WEEK(a.dataHora) ORDER BY WEEK(a.dataHora)")
+    @Query("SELECT WEEK(a.dateTime), SUM(a.totalValue), SUM(a.litersAmount) " +
+            "FROM Fueling a WHERE a.dateTime >= :dataInicio " +
+            "GROUP BY WEEK(a.dateTime) ORDER BY WEEK(a.dateTime)")
     List<Object[]> buscarEstatisticasSemanas(@Param("dataInicio") LocalDateTime dataInicio);
 
-    @Query("SELECT a.postoNome, a.postoCidade, COUNT(a) " +
-            "FROM Abastecimento a WHERE a.dataHora >= :dataInicio " +
-            "GROUP BY a.postoNome, a.postoCidade " +
+    @Query("SELECT a.gasStationName, a.gasStationCity, COUNT(a) " +
+            "FROM Fueling a WHERE a.dateTime >= :dataInicio " +
+            "GROUP BY a.gasStationName, a.gasStationCity " +
             "ORDER BY COUNT(a) DESC")
     List<Object[]> buscarRankingPostos(@Param("dataInicio") LocalDateTime dataInicio);
 
-    @Query("SELECT a.tipoCombustivel, COUNT(a) " +
-            "FROM Abastecimento a WHERE a.dataHora >= :dataInicio " +
-            "GROUP BY a.tipoCombustivel " +
+    @Query("SELECT a.fuelType, COUNT(a) " +
+            "FROM Fueling a WHERE a.dateTime >= :dataInicio " +
+            "GROUP BY a.fuelType " +
             "ORDER BY COUNT(a) DESC")
     List<Object[]> buscarDistribuicaoCombustivel(@Param("dataInicio") LocalDateTime dataInicio);
 
-    @Query("SELECT v.placa, SUM(a.quantidadeLitros), SUM(rs.kmRodados), " +
-            "CASE WHEN SUM(a.quantidadeLitros) > 0 " +
-            "THEN SUM(rs.kmRodados) / SUM(a.quantidadeLitros) ELSE 0 END, " +
-            "SUM(a.valorTotal) " +
-            "FROM Abastecimento a " +
+    @Query("SELECT v.placa, SUM(a.litersAmount), SUM(rs.kmRodados), " +
+            "CASE WHEN SUM(a.litersAmount) > 0 " +
+            "THEN SUM(rs.kmRodados) / SUM(a.litersAmount) ELSE 0 END, " +
+            "SUM(a.totalValue) " +
+            "FROM Fueling a " +
             "JOIN a.registroSaida rs " +
             "JOIN rs.veiculo v " +
-            "WHERE a.dataHora >= :dataInicio " +
+            "WHERE a.dateTime >= :dataInicio " +
             "GROUP BY v.placa")
     List<Object[]> buscarConsumoPorVeiculo(@Param("dataInicio") LocalDateTime dataInicio);
 
-    @Query("SELECT u.nome, COUNT(a), SUM(a.valorTotal) " +
-            "FROM Abastecimento a " +
+    @Query("SELECT u.nome, COUNT(a), SUM(a.totalValue) " +
+            "FROM Fueling a " +
             "JOIN a.registroSaida rs " +
             "JOIN rs.usuario u " +
-            "WHERE a.dataHora >= :dataInicio " +
+            "WHERE a.dateTime >= :dataInicio " +
             "GROUP BY u.nome " +
             "ORDER BY COUNT(a) DESC")
     List<Object[]> buscarRankingUsuarios(@Param("dataInicio") LocalDateTime dataInicio);
