@@ -182,8 +182,8 @@ public class RelatorioTecnicoService {
         saidaRepo.findTopByUsuarioMatriculaOrderByDataHoraSaidaDesc(matricula).ifPresent(s -> {
             dto.setUltimaSaidaData(s.getDataHoraSaida() != null
                     ? s.getDataHoraSaida().format(FMT_DATETIME) : null);
-            dto.setUltimaSaidaVeiculo(s.getVeiculo() != null
-                    ? s.getVeiculo().getPrefixo() + " — " + s.getVeiculo().getPlaca() : null);
+            dto.setUltimaSaidaVeiculo(s.getVehicle() != null
+                    ? s.getVehicle().getPrefix() + " — " + s.getVehicle().getLicensePlate() : null);
             dto.setUltimaSaidaDestino(s.getLocalDestino());
         });
 

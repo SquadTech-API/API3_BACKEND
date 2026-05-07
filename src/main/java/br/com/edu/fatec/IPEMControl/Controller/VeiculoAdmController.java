@@ -1,9 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
+import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,12 +18,12 @@ public class VeiculoAdmController {
     }
 
     @PostMapping
-    public Veiculo cadastrar(@RequestBody Veiculo veiculo) {
-        return repository.save(veiculo);
+    public Vehicle cadastrar(@RequestBody Vehicle vehicle) {
+        return repository.save(vehicle);
     }
 
     @GetMapping
-    public List<Veiculo> listarTodos() {
+    public List<Vehicle> listarTodos() {
         return repository.findAll();
     }
 
@@ -35,22 +33,22 @@ public class VeiculoAdmController {
     }
 
     @PutMapping("/{id}")
-    public Veiculo editar(@PathVariable Integer id, @RequestBody Veiculo atualizado) {
+    public Vehicle editar(@PathVariable Integer id, @RequestBody Vehicle atualizado) {
         return repository.findById(id)
                 .map(v -> {
-                    v.setPlaca(atualizado.getPlaca());
-                    v.setMarca(atualizado.getMarca());
-                    v.setModelo(atualizado.getModelo());
-                    v.setAno(atualizado.getAno());
-                    v.setKmAtual(atualizado.getKmAtual());
-                    v.setTipoCombustivel(atualizado.getTipoCombustivel());
-                    v.setDisponivel(atualizado.getDisponivel());
-                    v.setPrefixo(atualizado.getPrefixo());
+                    v.setLicensePlate(atualizado.getLicensePlate());
+                    v.setBrand(atualizado.getBrand());
+                    v.setModel(atualizado.getModel());
+                    v.setYear(atualizado.getYear());
+                    v.setCurrentKm(atualizado.getCurrentKm());
+                    v.setFuelType(atualizado.getFuelType());
+                    v.setAvailable(atualizado.getAvailable());
+                    v.setPrefix(atualizado.getPrefix());
                     v.setNucleoDar(atualizado.getNucleoDar());
-                    v.setHabilitacaoCategoria(atualizado.getHabilitacaoCategoria());
+                    v.setLicenseCategory(atualizado.getLicenseCategory());
                     return repository.save(v);
                 }).orElseGet(() -> {
-                    atualizado.setIdVeiculo(id);
+                    atualizado.setVehicleId(id);
                     return repository.save(atualizado);
                 });
     }

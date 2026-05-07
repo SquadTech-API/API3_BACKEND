@@ -3,7 +3,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 import br.com.edu.fatec.IPEMControl.DTO.TrocaOleoDTO;
 import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
 import br.com.edu.fatec.IPEMControl.Entities.TrocaOleo;
-import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
+import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
 import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
@@ -41,11 +41,11 @@ public class TrocaOleoService {
         if (dto.getDataTroca() == null)
             throw new RegraDeNegocioException("Informe a data da troca.");
 
-        Veiculo veiculo = veiculoRepository.findById(dto.getIdVeiculo())
+        Vehicle vehicle = veiculoRepository.findById(dto.getIdVeiculo())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
 
         TrocaOleo troca = new TrocaOleo();
-        troca.setVeiculo(veiculo);
+        troca.setVehicle(vehicle);
         troca.setKmTroca(dto.getKmTroca());
         troca.setDataTroca(dto.getDataTroca());
         troca.setObservacoes(dto.getObservacoes());
@@ -53,8 +53,8 @@ public class TrocaOleoService {
         // Intervalo: usa o informado ou o padrão do veículo
         BigDecimal intervalo = dto.getIntervaloKm() != null
                 ? dto.getIntervaloKm()
-                : (veiculo.getIntervaloTrocaOleoKm() != null
-                ? veiculo.getIntervaloTrocaOleoKm()
+                : (vehicle.getOilChangeIntervalKm() != null
+                ? vehicle.getOilChangeIntervalKm()
                 : new BigDecimal("5000"));
         troca.setIntervaloKm(intervalo);
 
@@ -72,9 +72,9 @@ public class TrocaOleoService {
         }
 
         // Atualiza intervalo padrão no veículo para futuros alertas
-        veiculo.setIntervaloTrocaOleoKm(intervalo);
-        veiculo.setAlertaTrocaOleoEnviado(false);
-        veiculoRepository.save(veiculo);
+        vehicle.setOilChangeIntervalKm(intervalo);
+        vehicle.setOilChangeAlertSent(false);
+        veiculoRepository.save(vehicle);
 
         return trocaOleoRepository.save(troca);
     }

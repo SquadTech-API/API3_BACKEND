@@ -3,7 +3,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 import br.com.edu.fatec.IPEMControl.DTO.RelatorioVeiculoDTO;
 import br.com.edu.fatec.IPEMControl.Entities.Fueling;
 import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
-import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
+import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
 import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
@@ -34,7 +34,7 @@ public class RelatorioVeiculoService {
      */
     public RelatorioVeiculoDTO gerarRelatorioVeiculo(Integer idVeiculo) {
 
-        Veiculo veiculo = veiculoRepository.findById(idVeiculo)
+        Vehicle vehicle = veiculoRepository.findById(idVeiculo)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado: " + idVeiculo));
 
         // Total de saídas concluídas
@@ -69,12 +69,12 @@ public class RelatorioVeiculoService {
         }
 
         RelatorioVeiculoDTO dto = new RelatorioVeiculoDTO();
-        dto.setPrefixo(veiculo.getPrefixo());
-        dto.setPlaca(veiculo.getPlaca());
-        dto.setMarca(veiculo.getMarca());
-        dto.setModelo(veiculo.getModelo());
-        dto.setAno(veiculo.getAno());
-        dto.setCombustivel(veiculo.getTipoCombustivel());
+        dto.setPrefixo(vehicle.getPrefix());
+        dto.setPlaca(vehicle.getLicensePlate());
+        dto.setMarca(vehicle.getBrand());
+        dto.setModelo(vehicle.getModel());
+        dto.setAno(vehicle.getYear());
+        dto.setCombustivel(vehicle.getFuelType());
         dto.setKmRodado(kmRodado.doubleValue());
         dto.setConsumoMedio(consumoMedio);
         dto.setTotalSaidas(totalSaidas);

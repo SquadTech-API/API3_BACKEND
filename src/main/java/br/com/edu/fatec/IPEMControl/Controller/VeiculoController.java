@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.VeiculoResumoDTO;
-import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
+import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import br.com.edu.fatec.IPEMControl.Service.VeiculoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class VeiculoController {
 
     // GET /veiculos/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<Veiculo> buscarPorId(@PathVariable Integer id) {
+    public ResponseEntity<Vehicle> buscarPorId(@PathVariable Integer id) {
         return veiculoRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -50,27 +50,27 @@ public class VeiculoController {
 
     // POST /veiculos
     @PostMapping
-    public ResponseEntity<Veiculo> criar(@RequestBody Veiculo veiculo) {
-        return ResponseEntity.status(201).body(veiculoRepository.save(veiculo));
+    public ResponseEntity<Vehicle> criar(@RequestBody Vehicle vehicle) {
+        return ResponseEntity.status(201).body(veiculoRepository.save(vehicle));
     }
 
     // PUT /veiculos/{id} — NOVO: edição completa de veículo
     @PutMapping("/{id}")
-    public ResponseEntity<Veiculo> atualizar(
+    public ResponseEntity<Vehicle> atualizar(
             @PathVariable Integer id,
-            @RequestBody Veiculo atualizado) {
+            @RequestBody Vehicle atualizado) {
         return ResponseEntity.ok(veiculoService.atualizar(id, atualizado));
     }
 
     // PATCH /veiculos/{id}/desativar — NOVO
     @PatchMapping("/{id}/desativar")
-    public ResponseEntity<Veiculo> desativar(@PathVariable Integer id) {
+    public ResponseEntity<Vehicle> desativar(@PathVariable Integer id) {
         return ResponseEntity.ok(veiculoService.toggleAtivo(id, false));
     }
 
     // PATCH /veiculos/{id}/ativar — NOVO
     @PatchMapping("/{id}/ativar")
-    public ResponseEntity<Veiculo> ativar(@PathVariable Integer id) {
+    public ResponseEntity<Vehicle> ativar(@PathVariable Integer id) {
         return ResponseEntity.ok(veiculoService.toggleAtivo(id, true));
     }
 }

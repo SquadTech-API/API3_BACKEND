@@ -50,7 +50,7 @@ public class TrocaOleo {
     // CORRIGIDO: vínculo direto com o veículo (campo id_veiculo no banco)
     @ManyToOne
     @JoinColumn(name = "id_veiculo")
-    private Veiculo veiculo;
+    private Vehicle vehicle;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

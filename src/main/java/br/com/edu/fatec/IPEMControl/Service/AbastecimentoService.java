@@ -4,7 +4,7 @@ import br.com.edu.fatec.IPEMControl.DTO.*;
 import br.com.edu.fatec.IPEMControl.Entities.Fueling;
 import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
 import br.com.edu.fatec.IPEMControl.Entities.TrocaOleo;
-import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
+import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
 import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
 import br.com.edu.fatec.IPEMControl.Repository.TrocaOleoRepository;
@@ -82,17 +82,17 @@ public class AbastecimentoService {
 
     private AbastecimentoHistoricoDTO paraHistoricoDTO(Fueling a) {
         RegistroSaida rs    = a.getRegistroSaida();
-        Veiculo veiculo     = rs != null ? rs.getVeiculo() : null;
+        Vehicle vehicle = rs != null ? rs.getVehicle() : null;
         String responsavel  = rs != null && rs.getUsuario() != null ? rs.getUsuario().getNome() : null;
 
         return new AbastecimentoHistoricoDTO(
                 a.getFuelingId(), a.getDateTime(), a.getFuelType(),
                 a.getLitersAmount(), a.getTotalValue(), a.getFuelingKm(),
                 a.getGasStationName(), a.getGasStationCity(), a.getReceipt(),
-                veiculo != null ? veiculo.getIdVeiculo() : null,
-                veiculo != null ? veiculo.getModelo()    : null,
-                veiculo != null ? veiculo.getPrefixo()   : null,
-                veiculo != null ? veiculo.getPlaca()     : null,
+                vehicle != null ? vehicle.getVehicleId() : null,
+                vehicle != null ? vehicle.getModel()    : null,
+                vehicle != null ? vehicle.getPrefix()   : null,
+                vehicle != null ? vehicle.getLicensePlate()     : null,
                 responsavel
         );
     }
@@ -116,18 +116,18 @@ public class AbastecimentoService {
         List<TrocaOleo> trocasOleo = trocaOleoRepository
                 .findByCreatedAtAfterOrderByCreatedAtDesc(dataInicio);
 
-        List<Veiculo> todosVeiculos = veiculoRepository.findAll();
+        List<Vehicle> allVehicles = veiculoRepository.findAll();
         int quantidadeAtrasada = 0;
-        for (Veiculo v : todosVeiculos) {
-            Optional<TrocaOleo> ultimaTroca = trocaOleoRepository.buscarUltimaPorVeiculo(v.getIdVeiculo());
-            if (ultimaTroca.isPresent() && v.getKmAtual() != null &&
-                    v.getKmAtual().compareTo(ultimaTroca.get().getKmProximaTroca()) >= 0) {
+        for (Vehicle v : allVehicles) {
+            Optional<TrocaOleo> ultimaTroca = trocaOleoRepository.buscarUltimaPorVeiculo(v.getVehicleId());
+            if (ultimaTroca.isPresent() && v.getCurrentKm() != null &&
+                    v.getCurrentKm().compareTo(ultimaTroca.get().getKmProximaTroca()) >= 0) {
                 quantidadeAtrasada++;
             }
         }
 
         List<Object[]> linhasConsumo = abastecimentoRepository.buscarConsumoPorVeiculo(dataInicio);
-        List<ConsumoVeiculoDTO> consumoVeiculos = construirConsumoVeiculos(linhasConsumo, todosVeiculos);
+        List<ConsumoVeiculoDTO> consumoVeiculos = construirConsumoVeiculos(linhasConsumo, allVehicles);
 
         double mediaConsumo = consumoVeiculos.stream()
                 .filter(v -> v.getConsumoKmL() != null).mapToDouble(ConsumoVeiculoDTO::getConsumoKmL)
@@ -152,7 +152,7 @@ public class AbastecimentoService {
         List<AbastecimentoItemDTO> itensAbastecimento = fuelings.stream()
                 .map(this::paraItemDTO).collect(Collectors.toList());
 
-        // CORRIGIDO: usa getVeiculo() direto da entidade TrocaOleo
+        // CORRIGIDO: usa getVehicle() direto da entidade TrocaOleo
         List<ItemTrocaOleoDTO> itensTrocaOleo = trocasOleo.stream()
                 .map(this::paraItemTrocaOleoDTO).collect(Collectors.toList());
 
@@ -223,11 +223,11 @@ public class AbastecimentoService {
 
     private AbastecimentoItemDTO paraItemDTO(Fueling a) {
         RegistroSaida rs   = a.getRegistroSaida();
-        Veiculo veiculo    = rs != null ? rs.getVeiculo() : null;
+        Vehicle vehicle = rs != null ? rs.getVehicle() : null;
         String responsavel = rs != null && rs.getUsuario() != null ? rs.getUsuario().getNome() : null;
         return new AbastecimentoItemDTO(
                 a.getDateTime(),
-                veiculo != null ? veiculo.getPrefixo() : null,
+                vehicle != null ? vehicle.getPrefix() : null,
                 responsavel, a.getFuelType(), a.getLitersAmount(),
                 a.getTotalValue(), a.getFuelingKm(), a.getGasStationName(),
                 a.getGasStationCity(), a.getReceipt()
@@ -235,32 +235,32 @@ public class AbastecimentoService {
     }
 
     /**
-     * CORRIGIDO: agora resolve o Veiculo pelo campo direto t.getVeiculo()
-     * em vez de t.getRegistroSaida().getVeiculo() (que falha quando registroSaida é null
+     * CORRIGIDO: agora resolve o Vehicle pelo campo direto t.getVehicle()
+     * em vez de t.getRegistroSaida().getVehicle() (que falha quando registroSaida é null
      * em trocas avulsas não vinculadas a uma saída).
      *
      * CORRIGIDO: ItemTrocaOleoDTO espera LocalDateTime — usa createdAt (timestamp do registro)
      * como aproximação aceitável enquanto dataTroca (LocalDate) não é adicionado ao DTO.
      */
     private ItemTrocaOleoDTO paraItemTrocaOleoDTO(TrocaOleo t) {
-        // Usa o vínculo direto com Veiculo adicionado na entidade corrigida
-        Veiculo veiculo = t.getVeiculo();
+        // Usa o vínculo direto com Vehicle adicionado na entidade corrigida
+        Vehicle vehicle = t.getVehicle();
 
         // Se por algum motivo o vínculo direto for null, tenta via registroSaida
-        if (veiculo == null && t.getRegistroSaida() != null) {
-            veiculo = t.getRegistroSaida().getVeiculo();
+        if (vehicle == null && t.getRegistroSaida() != null) {
+            vehicle = t.getRegistroSaida().getVehicle();
         }
 
         return new ItemTrocaOleoDTO(
                 t.getCreatedAt(),                                        // LocalDateTime — timestamp
-                veiculo != null ? veiculo.getPlaca()     : null,
+                vehicle != null ? vehicle.getLicensePlate()     : null,
                 t.getKmTroca(),
                 t.getKmProximaTroca(),
-                veiculo != null ? veiculo.getKmAtual()   : null
+                vehicle != null ? vehicle.getCurrentKm()   : null
         );
     }
 
-    private List<ConsumoVeiculoDTO> construirConsumoVeiculos(List<Object[]> linhas, List<Veiculo> todos) {
+    private List<ConsumoVeiculoDTO> construirConsumoVeiculos(List<Object[]> linhas, List<Vehicle> todos) {
         return linhas.stream().map(linha -> {
             String placa          = (String) linha[0];
             BigDecimal litros     = paraBigDecimal(linha[1]);
@@ -271,16 +271,16 @@ public class AbastecimentoService {
             double custoPorKm = (totalKm != null && totalKm.compareTo(BigDecimal.ZERO) > 0)
                     ? totalGasto.divide(totalKm, 4, RoundingMode.HALF_UP).doubleValue() : 0;
 
-            Veiculo veiculo = todos.stream()
-                    .filter(v -> v.getPlaca().equals(placa)).findFirst().orElse(null);
+            Vehicle vehicle = todos.stream()
+                    .filter(v -> v.getLicensePlate().equals(placa)).findFirst().orElse(null);
 
-            Optional<TrocaOleo> ultimaTroca = veiculo != null
-                    ? trocaOleoRepository.buscarUltimaPorVeiculo(veiculo.getIdVeiculo())
+            Optional<TrocaOleo> ultimaTroca = vehicle != null
+                    ? trocaOleoRepository.buscarUltimaPorVeiculo(vehicle.getVehicleId())
                     : Optional.empty();
 
             return new ConsumoVeiculoDTO(
                     placa,
-                    veiculo != null ? veiculo.getKmAtual() : null,
+                    vehicle != null ? vehicle.getCurrentKm() : null,
                     ultimaTroca.map(TrocaOleo::getKmProximaTroca).orElse(null),
                     ultimaTroca.map(TrocaOleo::getKmTroca).orElse(null),
                     ultimaTroca.map(t -> t.getCreatedAt().toLocalDate().toString()).orElse(null),

@@ -3,7 +3,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 import br.com.edu.fatec.IPEMControl.DTO.VeiculoResumoDTO;
 import br.com.edu.fatec.IPEMControl.Entities.Fueling;
 import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
-import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
+import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
 import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
@@ -48,16 +48,16 @@ public class VeiculoService {
      */
     public List<VeiculoResumoDTO> listarVeiculosResumo(boolean todos) {
 
-        List<Veiculo> veiculos = veiculoRepository.findAll().stream()
+        List<Vehicle> vehicles = veiculoRepository.findAll().stream()
                 // CORRIGIDO: técnico não vê veículos inativos
-                .filter(v -> todos || Boolean.TRUE.equals(v.getAtivo()))
+                .filter(v -> todos || Boolean.TRUE.equals(v.getActive()))
                 .collect(Collectors.toList());
 
-        return veiculos.stream().map(veiculo -> {
+        return vehicles.stream().map(veiculo -> {
 
             Optional<RegistroSaida> ultimoRegistro =
                     registroSaidaRepository
-                            .findTopByVeiculoIdVeiculoOrderByDataHoraSaidaDesc(veiculo.getIdVeiculo());
+                            .findTopByVeiculoIdVeiculoOrderByDataHoraSaidaDesc(veiculo.getVehicleId());
 
             boolean emUso = ultimoRegistro
                     .map(r -> "em_andamento".equalsIgnoreCase(r.getStatus()))
@@ -73,31 +73,31 @@ public class VeiculoService {
 
             Optional<Fueling> ultimoAbastecimento =
                     abastecimentoRepository
-                            .findTopByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(veiculo.getIdVeiculo());
+                            .findTopByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(veiculo.getVehicleId());
 
             String ultimoAbastecimentoStr = ultimoAbastecimento
                     .map(a -> formatarData(a.getDateTime()))
                     .orElse("—");
 
-            String km = veiculo.getKmAtual() != null
-                    ? FMT_KM.format(veiculo.getKmAtual().longValue())
+            String km = veiculo.getCurrentKm() != null
+                    ? FMT_KM.format(veiculo.getCurrentKm().longValue())
                     : "—";
 
             String status = emUso ? "em_uso" : "disponivel";
 
             // CORRIGIDO: VeiculoResumoDTO agora inclui habilitacaoCategoria e ativo
             VeiculoResumoDTO dto = new VeiculoResumoDTO(
-                    veiculo.getIdVeiculo(),
-                    veiculo.getModelo(),
-                    veiculo.getPrefixo(),
+                    veiculo.getVehicleId(),
+                    veiculo.getModel(),
+                    veiculo.getPrefix(),
                     ultimoUso,
                     ultimoMotorista,
                     ultimoAbastecimentoStr,
                     km,
                     status
             );
-            dto.setHabilitacaoCategoria(veiculo.getHabilitacaoCategoria());
-            dto.setAtivo(veiculo.getAtivo());
+            dto.setHabilitacaoCategoria(veiculo.getLicenseCategory());
+            dto.setAtivo(veiculo.getActive());
             return dto;
 
         }).collect(Collectors.toList());
@@ -107,39 +107,39 @@ public class VeiculoService {
      * Ativa ou desativa um veículo.
      * NOVO: endpoint /veiculos/{id}/ativar e /veiculos/{id}/desativar
      */
-    public Veiculo toggleAtivo(Integer id, boolean ativo) {
-        Veiculo veiculo = veiculoRepository.findById(id)
+    public Vehicle toggleAtivo(Integer id, boolean ativo) {
+        Vehicle vehicle = veiculoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
-        veiculo.setAtivo(ativo);
-        return veiculoRepository.save(veiculo);
+        vehicle.setActive(ativo);
+        return veiculoRepository.save(vehicle);
     }
 
     /**
      * Atualiza dados de um veículo (PUT completo).
      * NOVO: endpoint /veiculos/{id} PUT
      */
-    public Veiculo atualizar(Integer id, Veiculo atualizado) {
-        Veiculo veiculo = veiculoRepository.findById(id)
+    public Vehicle atualizar(Integer id, Vehicle atualizado) {
+        Vehicle vehicle = veiculoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
 
-        veiculo.setPrefixo(atualizado.getPrefixo());
-        veiculo.setPlaca(atualizado.getPlaca());
-        veiculo.setMarca(atualizado.getMarca());
-        veiculo.setModelo(atualizado.getModelo());
-        veiculo.setAno(atualizado.getAno());
-        veiculo.setKmAtual(atualizado.getKmAtual());
-        veiculo.setTipoCombustivel(atualizado.getTipoCombustivel());
-        veiculo.setHabilitacaoCategoria(atualizado.getHabilitacaoCategoria());
-        veiculo.setNucleoDar(atualizado.getNucleoDar());
+        vehicle.setPrefix(atualizado.getPrefix());
+        vehicle.setLicensePlate(atualizado.getLicensePlate());
+        vehicle.setBrand(atualizado.getBrand());
+        vehicle.setModel(atualizado.getModel());
+        vehicle.setYear(atualizado.getYear());
+        vehicle.setCurrentKm(atualizado.getCurrentKm());
+        vehicle.setFuelType(atualizado.getFuelType());
+        vehicle.setLicenseCategory(atualizado.getLicenseCategory());
+        vehicle.setNucleoDar(atualizado.getNucleoDar());
 
-        if (atualizado.getIntervaloTrocaOleoKm() != null)
-            veiculo.setIntervaloTrocaOleoKm(atualizado.getIntervaloTrocaOleoKm());
-        if (atualizado.getNumeroFl() != null)
-            veiculo.setNumeroFl(atualizado.getNumeroFl());
-        if (atualizado.getAtivo() != null)
-            veiculo.setAtivo(atualizado.getAtivo());
+        if (atualizado.getOilChangeIntervalKm() != null)
+            vehicle.setOilChangeIntervalKm(atualizado.getOilChangeIntervalKm());
+        if (atualizado.getFlNumber() != null)
+            vehicle.setFlNumber(atualizado.getFlNumber());
+        if (atualizado.getActive() != null)
+            vehicle.setActive(atualizado.getActive());
 
-        return veiculoRepository.save(veiculo);
+        return veiculoRepository.save(vehicle);
     }
 
     private String formatarData(LocalDateTime dateTime) {

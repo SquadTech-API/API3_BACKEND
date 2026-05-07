@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.Entities.TipoServico;
-import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
+import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Entities.VeiculoServico;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.TipoServicoRepository;
@@ -36,7 +36,7 @@ public class VeiculoServicoService {
      */
     @Transactional
     public void sincronizar(Integer idVeiculo, List<Integer> idsTipoServico) {
-        Veiculo veiculo = veiculoRepository.findById(idVeiculo)
+        Vehicle vehicle = veiculoRepository.findById(idVeiculo)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
 
         // Remove todos os vínculos atuais do veículo
@@ -49,7 +49,7 @@ public class VeiculoServicoService {
                             "Tipo de serviço não encontrado: " + idTipoServico));
 
             VeiculoServico vs = new VeiculoServico();
-            vs.setVeiculo(veiculo);
+            vs.setVehicle(vehicle);
             vs.setTipoServico(tipoServico);
             vs.setHabilitado(true);
             veiculoServicoRepository.save(vs);

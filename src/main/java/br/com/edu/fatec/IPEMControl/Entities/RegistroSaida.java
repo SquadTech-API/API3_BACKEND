@@ -45,7 +45,7 @@ public class RegistroSaida {
 
     @ManyToOne
     @JoinColumn(name = "id_veiculo")
-    private Veiculo veiculo;
+    private Vehicle vehicle;
 
     @ManyToOne
     @JoinColumn(name = "matricula_usuario")

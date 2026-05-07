@@ -20,5 +20,5 @@ public class VehicleUsageHistory {
 
     @ManyToOne
     @JoinColumn(name = "veiculo_id")
-    private Veiculo veiculo;
+    private Vehicle vehicle;
 }

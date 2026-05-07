@@ -12,55 +12,54 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Veiculo {
+public class Vehicle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_veiculo")
-    private Integer idVeiculo;
+    private Integer vehicleId;
 
     @Column(name = "prefixo", nullable = false, length = 20)
-    private String prefixo;
+    private String prefix;
 
     @Column(name = "nucleo_dar", nullable = false, length = 100)
     private String nucleoDar;
 
     @Column(name = "placa", nullable = false, unique = true, length = 10)
-    private String placa;
+    private String licensePlate;
 
     @Column(name = "modelo", nullable = false, length = 100)
-    private String modelo;
+    private String model;
 
     @Column(name = "marca", nullable = false, length = 100)
-    private String marca;
+    private String brand;
 
     @Column(name = "ano", nullable = false)
-    private Integer ano;
+    private Integer year;
 
     @Column(name = "tipo_combustivel", nullable = false, length = 50)
-    private String tipoCombustivel;
+    private String fuelType;
 
     @Column(name = "habilitacao_categoria", nullable = false, length = 10)
-    private String habilitacaoCategoria;
+    private String licenseCategory;
 
     @Column(name = "km_atual", nullable = false, precision = 10, scale = 2)
-    private BigDecimal kmAtual;
+    private BigDecimal currentKm;
 
     @Column(name = "disponivel", nullable = false)
-    private Boolean disponivel = true;
+    private Boolean available = true;
 
-    // CORRIGIDO: campos ausentes mapeados do banco
     @Column(name = "ativo", nullable = false)
-    private Boolean ativo = true;
+    private Boolean active = true;
 
     @Column(name = "numero_fl", length = 30)
-    private String numeroFl;
+    private String flNumber;
 
     @Column(name = "intervalo_troca_oleo_km", precision = 10, scale = 2)
-    private BigDecimal intervaloTrocaOleoKm;
+    private BigDecimal oilChangeIntervalKm;
 
     @Column(name = "alerta_troca_oleo_enviado", nullable = false)
-    private Boolean alertaTrocaOleoEnviado = false;
+    private Boolean oilChangeAlertSent = false;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -72,9 +71,9 @@ public class Veiculo {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        if (this.ativo == null) this.ativo = true;
-        if (this.disponivel == null) this.disponivel = true;
-        if (this.alertaTrocaOleoEnviado == null) this.alertaTrocaOleoEnviado = false;
+        if (this.active == null) this.active = true;
+        if (this.available == null) this.available = true;
+        if (this.oilChangeAlertSent == null) this.oilChangeAlertSent = false;
     }
 
     @PreUpdate

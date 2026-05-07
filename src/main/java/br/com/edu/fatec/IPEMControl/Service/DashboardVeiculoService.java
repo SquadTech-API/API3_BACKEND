@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.*;
-import br.com.edu.fatec.IPEMControl.Entities.Veiculo;
+import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
 import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
@@ -51,7 +51,7 @@ public class DashboardVeiculoService {
 
     private VeiculoDashboardDTO montarVeiculo(Integer idVeiculo) {
 
-        Veiculo v = veiculoRepository.findById(idVeiculo).orElseThrow();
+        Vehicle v = veiculoRepository.findById(idVeiculo).orElseThrow();
 
         Double gasto = abastecimentoRepository.totalGastoSemana(idVeiculo);
         Double litros = abastecimentoRepository.totalLitrosSemana(idVeiculo);
@@ -64,12 +64,12 @@ public class DashboardVeiculoService {
                 new DadosVeiculoDashboardDTO(gasto, litros, km, saidas, consumo);
 
         return new VeiculoDashboardDTO(
-                v.getIdVeiculo(),
-                v.getModelo(),
-                v.getPrefixo(),
+                v.getVehicleId(),
+                v.getModel(),
+                v.getPrefix(),
                 Map.of("semana", dados),
                 new ManutencaoVeiculoDTO(
-                        v.getKmAtual() != null ? v.getKmAtual().doubleValue() : 0.0,
+                        v.getCurrentKm() != null ? v.getCurrentKm().doubleValue() : 0.0,
                         100000.0
                 )
         );
