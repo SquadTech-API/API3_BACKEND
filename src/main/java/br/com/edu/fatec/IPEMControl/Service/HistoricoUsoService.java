@@ -41,8 +41,8 @@ public class HistoricoUsoService {
                 .map(saida -> {
 
                     // Motorista
-                    String motorista = saida.getUsuario() != null
-                            ? saida.getUsuario().getNome() : "—";
+                    String motorista = saida.getUser() != null
+                            ? saida.getUser().getName() : "—";
 
                     // Tipo de serviço
                     String tipoServico = saida.getTipoServico() != null

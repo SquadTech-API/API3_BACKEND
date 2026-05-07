@@ -83,7 +83,7 @@ public class AbastecimentoService {
     private AbastecimentoHistoricoDTO paraHistoricoDTO(Fueling a) {
         RegistroSaida rs    = a.getRegistroSaida();
         Vehicle vehicle = rs != null ? rs.getVehicle() : null;
-        String responsavel  = rs != null && rs.getUsuario() != null ? rs.getUsuario().getNome() : null;
+        String responsavel  = rs != null && rs.getUser() != null ? rs.getUser().getName() : null;
 
         return new AbastecimentoHistoricoDTO(
                 a.getFuelingId(), a.getDateTime(), a.getFuelType(),
@@ -224,7 +224,7 @@ public class AbastecimentoService {
     private AbastecimentoItemDTO paraItemDTO(Fueling a) {
         RegistroSaida rs   = a.getRegistroSaida();
         Vehicle vehicle = rs != null ? rs.getVehicle() : null;
-        String responsavel = rs != null && rs.getUsuario() != null ? rs.getUsuario().getNome() : null;
+        String responsavel = rs != null && rs.getUser() != null ? rs.getUser().getName() : null;
         return new AbastecimentoItemDTO(
                 a.getDateTime(),
                 vehicle != null ? vehicle.getPrefix() : null,

@@ -49,7 +49,7 @@ public class RegistroSaida {
 
     @ManyToOne
     @JoinColumn(name = "matricula_usuario")
-    private Usuario usuario;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "id_tipo_servico")

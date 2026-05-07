@@ -61,10 +61,10 @@ public class RegistroSaidaService {
             throw new RegraDeNegocioException("KM inicial (" + dto.getKmInicial() + ") não pode ser menor que o KM atual do veículo (" + vehicle.getCurrentKm() + ").");
         }
 
-        Usuario usuario = usuarioRepository.findByMatricula(dto.getMatriculaUsuario())
+        User user = usuarioRepository.findByMatricula(dto.getMatriculaUsuario())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
 
-        if (Boolean.FALSE.equals(usuario.getColaboradorAtivo()))
+        if (Boolean.FALSE.equals(user.getActiveColaborator()))
             throw new RegraDeNegocioException("Colaborador inativo.");
 
         TipoServico tipoServico = tipoServicoRepository.findById(dto.getIdTipoServico())
@@ -72,7 +72,7 @@ public class RegistroSaidaService {
 
         RegistroSaida registro = new RegistroSaida();
         registro.setVehicle(vehicle);
-        registro.setUsuario(usuario);
+        registro.setUser(user);
         registro.setTipoServico(tipoServico);
         registro.setLocalDestino(dto.getLocalDestino());
         registro.setObservacoes(dto.getObservacoes());
@@ -123,7 +123,7 @@ public class RegistroSaidaService {
                 registro.getIdSaida(), registro.getStatus(), registro.getKmInicial(),
                 registro.getKmFinal(), kmRodados, registro.getDataHoraSaida(),
                 registro.getDataRetorno(), vehicle.getModel(), vehicle.getPrefix(),
-                registro.getUsuario().getNome()
+                registro.getUser().getName()
         );
     }
 
@@ -223,7 +223,7 @@ public class RegistroSaidaService {
         if (dados.getDetalhes() != null && !dados.getDetalhes().isEmpty()) {
             for (RegistroSaida v : dados.getDetalhes()) {
                 relatorio.append("Data: ").append(v.getDataHoraSaida().toLocalDate())
-                        .append(" | Usuario: ").append(v.getUsuario() != null ? v.getUsuario().getNome() : "N/I")
+                        .append(" | User: ").append(v.getUser() != null ? v.getUser().getName() : "N/I")
                         .append(" | Destino: ").append(v.getLocalDestino() != null ? v.getLocalDestino() : "N/I")
                         .append(" | KM Rodados: ").append(v.getKmRodados() != null ? v.getKmRodados() : "0").append("\n");
             }
@@ -257,12 +257,12 @@ public class RegistroSaidaService {
 
             if (dados.getDetalhes() != null && !dados.getDetalhes().isEmpty()) {
                 for (RegistroSaida v : dados.getDetalhes()) {
-                    String user = v.getUsuario() != null ? v.getUsuario().getNome() : "N/I";
+                    String user = v.getUser() != null ? v.getUser().getName() : "N/I";
                     String dest = v.getLocalDestino() != null ? v.getLocalDestino() : "N/I";
                     String km = v.getKmRodados() != null ? v.getKmRodados().toString() : "0";
 
                     document.add(new Paragraph("Data: " + v.getDataHoraSaida().toLocalDate() +
-                            " | Usuario: " + user +
+                            " | User: " + user +
                             " | Destino: " + dest +
                             " | KM Rodados: " + km));
                 }

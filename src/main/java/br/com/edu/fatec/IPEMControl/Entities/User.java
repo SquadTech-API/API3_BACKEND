@@ -11,45 +11,45 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Usuario {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "matricula")
-    private Integer matricula;
+    private Integer registration;
 
     @Column(name = "cpf", nullable = false, unique = true, length = 11)
     private String cpf;
 
     @Column(name = "numero_habilitacao", unique = true, length = 20)
-    private String numeroHabilitacao;
+    private String driverLicenseNumber;
 
     @Column(name = "nome", nullable = false, length = 120)
-    private String nome;
+    private String name;
 
     @Column(name = "data_nascimento", nullable = false)
-    private LocalDate dataNascimento;
+    private LocalDate birthDate;
 
     @Column(name = "email", nullable = false, unique = true, length = 150)
     private String email;
 
     @JsonIgnore
     @Column(name = "senha", nullable = false, length = 255)
-    private String senha;
+    private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_usuario", nullable = false, length = 10)
-    private TipoUsuario tipoUsuario = TipoUsuario.tecnico;
+    private UserType userType = UserType.technician;
 
     @Column(name = "cargo", length = 80)
-    private String cargo;
+    private String position;
 
     @Column(name = "colaborador_ativo", nullable = false)
-    private Boolean colaboradorAtivo = true;
+    private Boolean activeColaborator = true;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_habilitacao", length = 2)
-    private TipoHabilitacao tipoHabilitacao;
+    private DriverLicenseType driverLicenseType;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -59,11 +59,11 @@ public class Usuario {
 
     // ── Enums internos ────────────────────────────────────────────────────────
 
-    public enum TipoUsuario {
-        adm, tecnico
+    public enum UserType {
+        adm, technician
     }
 
-    public enum TipoHabilitacao {
+    public enum DriverLicenseType {
         B, C, D, E, AB, AC, AD, AE
     }
 

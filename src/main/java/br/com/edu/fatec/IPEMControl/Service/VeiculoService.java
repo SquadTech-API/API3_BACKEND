@@ -68,7 +68,7 @@ public class VeiculoService {
                     .orElse("—");
 
             String ultimoMotorista = ultimoRegistro
-                    .map(r -> r.getUsuario() != null ? r.getUsuario().getNome() : "—")
+                    .map(r -> r.getUser() != null ? r.getUser().getName() : "—")
                     .orElse("—");
 
             Optional<Fueling> ultimoAbastecimento =

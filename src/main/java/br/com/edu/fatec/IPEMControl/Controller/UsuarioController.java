@@ -4,7 +4,7 @@ import br.com.edu.fatec.IPEMControl.DTO.AtualizarSenhaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.LoginDTO;
 import br.com.edu.fatec.IPEMControl.DTO.LoginRespostaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.UsuarioDTO;
-import br.com.edu.fatec.IPEMControl.Entities.Usuario;
+import br.com.edu.fatec.IPEMControl.Entities.User;
 import br.com.edu.fatec.IPEMControl.Service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,19 +28,19 @@ public class UsuarioController {
 
     // POST /usuarios — cadastrar
     @PostMapping
-    public ResponseEntity<Usuario> criar(@RequestBody UsuarioDTO dto) {
+    public ResponseEntity<User> criar(@RequestBody UsuarioDTO dto) {
         return ResponseEntity.status(201).body(service.salvar(dto));
     }
 
     // GET /usuarios — listar todos
     @GetMapping
-    public ResponseEntity<List<Usuario>> listar() {
+    public ResponseEntity<List<User>> listar() {
         return ResponseEntity.ok(service.listarTodos());
     }
 
     // GET /usuarios/{matricula}
     @GetMapping("/{matricula}")
-    public ResponseEntity<Usuario> buscar(@PathVariable Integer matricula) {
+    public ResponseEntity<User> buscar(@PathVariable Integer matricula) {
         return service.buscarPorMatricula(matricula)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -59,7 +59,7 @@ public class UsuarioController {
 
     // PUT /usuarios/{matricula} — NOVO: editar colaborador (ADM)
     @PutMapping("/{matricula}")
-    public ResponseEntity<Usuario> atualizar(
+    public ResponseEntity<User> atualizar(
             @PathVariable Integer matricula,
             @RequestBody UsuarioDTO dto) {
         return ResponseEntity.ok(service.atualizar(matricula, dto));
@@ -67,13 +67,13 @@ public class UsuarioController {
 
     // PATCH /usuarios/{matricula}/desativar — NOVO
     @PatchMapping("/{matricula}/desativar")
-    public ResponseEntity<Usuario> desativar(@PathVariable Integer matricula) {
+    public ResponseEntity<User> desativar(@PathVariable Integer matricula) {
         return ResponseEntity.ok(service.desativar(matricula));
     }
 
     // PATCH /usuarios/{matricula}/ativar — NOVO
     @PatchMapping("/{matricula}/ativar")
-    public ResponseEntity<Usuario> ativar(@PathVariable Integer matricula) {
+    public ResponseEntity<User> ativar(@PathVariable Integer matricula) {
         return ResponseEntity.ok(service.ativar(matricula));
     }
 

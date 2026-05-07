@@ -5,7 +5,7 @@ import br.com.edu.fatec.IPEMControl.DTO.RelatorioGeralDTO;
 import br.com.edu.fatec.IPEMControl.DTO.RelatorioTecnicoDTO;
 import br.com.edu.fatec.IPEMControl.DTO.TecnicoResumoDTO;
 import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
-import br.com.edu.fatec.IPEMControl.Entities.Usuario;
+import br.com.edu.fatec.IPEMControl.Entities.User;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,31 +136,31 @@ public class RelatorioTecnicoService {
 
     public RelatorioTecnicoDTO gerarRelatorioIndividual(Integer matricula, String periodo) {
 
-        Usuario usuario = usuarioRepo.findByMatricula(matricula)
+        User user = usuarioRepo.findByMatricula(matricula)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Técnico não encontrado."));
 
         LocalDateTime inicio = dataInicio(periodo);
         RelatorioTecnicoDTO dto = new RelatorioTecnicoDTO();
 
         // Seção 1 — Identificação
-        dto.setMatricula(usuario.getMatricula());
-        dto.setNome(usuario.getNome());
-        dto.setCargo(usuario.getCargo());
-        dto.setTipo(usuario.getTipoUsuario() != null ? usuario.getTipoUsuario().name() : null);
-        dto.setCnh(usuario.getTipoHabilitacao() != null ? usuario.getTipoHabilitacao().name() : null);
-        dto.setNumHabilitacao(usuario.getNumeroHabilitacao());
-        dto.setCpf(usuario.getCpf());
-        dto.setEmail(usuario.getEmail());
+        dto.setMatricula(user.getRegistration());
+        dto.setNome(user.getName());
+        dto.setCargo(user.getPosition());
+        dto.setTipo(user.getUserType() != null ? user.getUserType().name() : null);
+        dto.setCnh(user.getTipoHabilitacao() != null ? user.getTipoHabilitacao().name() : null);
+        dto.setNumHabilitacao(user.getDriverLicenseNumber());
+        dto.setCpf(user.getCpf());
+        dto.setEmail(user.getEmail());
         dto.setTelefone(null);
-        dto.setDataNascimento(usuario.getDataNascimento() != null
-                ? usuario.getDataNascimento().format(FMT_DATE) : null);
+        dto.setDataNascimento(user.getBirthDate() != null
+                ? user.getBirthDate().format(FMT_DATE) : null);
 
         // Seção 2 — Status operacional
-        dto.setAtivo(usuario.getColaboradorAtivo());
-        dto.setDataCadastro(usuario.getCreatedAt() != null
-                ? usuario.getCreatedAt().format(FMT_DATETIME) : null);
-        dto.setUltimaAtualizacao(usuario.getUpdatedAt() != null
-                ? usuario.getUpdatedAt().format(FMT_DATETIME) : null);
+        dto.setAtivo(user.getActiveColaborator());
+        dto.setDataCadastro(user.getCreatedAt() != null
+                ? user.getCreatedAt().format(FMT_DATETIME) : null);
+        dto.setUltimaAtualizacao(user.getUpdatedAt() != null
+                ? user.getUpdatedAt().format(FMT_DATETIME) : null);
 
         Optional<RegistroSaida> saidaAberta = saidaRepo
                 .findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(matricula, "em_andamento");

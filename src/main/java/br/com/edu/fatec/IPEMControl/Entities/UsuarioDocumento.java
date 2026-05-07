@@ -29,7 +29,7 @@ public class UsuarioDocumento {
 
     @ManyToOne
     @JoinColumn(name = "matricula")
-    private Usuario usuario;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "id_documento")

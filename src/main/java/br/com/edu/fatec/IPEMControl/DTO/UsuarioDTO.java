@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.DTO;
 
-import br.com.edu.fatec.IPEMControl.Entities.Usuario;
+import br.com.edu.fatec.IPEMControl.Entities.User;
 import lombok.Data;
 import java.time.LocalDate;
 
@@ -14,8 +14,8 @@ public class UsuarioDTO {
     private LocalDate dataNascimento;
     private String email;
     private String senha;
-    private Usuario.TipoUsuario tipoUsuario;
+    private User.UserType userType;
     private String cargo;
     private Boolean colaboradorAtivo;
-    private Usuario.TipoHabilitacao tipoHabilitacao;
+    private User.DriverLicenseType driverLicenseType;
 }
