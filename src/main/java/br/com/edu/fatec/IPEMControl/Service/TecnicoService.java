@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.Entities.Tecnico;
+import br.com.edu.fatec.IPEMControl.Entities.Technician;
 import br.com.edu.fatec.IPEMControl.Repository.TecnicoRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,23 +16,23 @@ public class TecnicoService {
         this.repository = repository;
     }
 
-    public Tecnico salvar(Tecnico motorista) {
+    public Technician salvar(Technician motorista) {
         return repository.save(motorista);
     }
 
-    public List<Tecnico> listarTodos() {
+    public List<Technician> listarTodos() {
         return repository.findAll();
     }
 
-    public Optional<Tecnico> buscarPorId(Long id) {
+    public Optional<Technician> buscarPorId(Long id) {
         return repository.findById(id);
     }
 
-    public Tecnico atualizar(Long id, Tecnico tecnicoAtualizado) {
+    public Technician atualizar(Long id, Technician updatedTechnician) {
         return repository.findById(id).map(m -> {
-            m.setNome(tecnicoAtualizado.getNome());
-            m.setCnh(tecnicoAtualizado.getCnh());
-            m.setTelefone(tecnicoAtualizado.getTelefone());
+            m.setName(updatedTechnician.getName());
+            m.setDriveLicense(updatedTechnician.getDriveLicense());
+            m.setPhone(updatedTechnician.getPhone());
             return repository.save(m);
         }).orElseThrow(() -> new RuntimeException("Técnico não encontrado"));
     }

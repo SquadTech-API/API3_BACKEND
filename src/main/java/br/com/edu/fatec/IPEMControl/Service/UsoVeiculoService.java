@@ -2,7 +2,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.UsoVeiculoDTO;
 import br.com.edu.fatec.IPEMControl.DTO.UsoAtivoDTO;
-import br.com.edu.fatec.IPEMControl.Entities.Tecnico;
+import br.com.edu.fatec.IPEMControl.Entities.Technician;
 import br.com.edu.fatec.IPEMControl.Entities.UsoVeiculo;
 import br.com.edu.fatec.IPEMControl.Repository.TecnicoRepository;
 import br.com.edu.fatec.IPEMControl.Repository.UsoVeiculoRepository;
@@ -25,7 +25,7 @@ public class UsoVeiculoService {
 
     public UsoVeiculoDTO registrar(UsoVeiculoDTO dto) {
 
-        Tecnico tecnico = tecnicoRepository.findById(dto.getTecnicoId())
+        Technician technician = tecnicoRepository.findById(dto.getTecnicoId())
                 .orElseThrow(() -> new RuntimeException("Technician not found"));
 
         boolean emUso = usoRepository.existsByVeiculoAndDataFimIsNull(dto.getVeiculo());
@@ -35,14 +35,14 @@ public class UsoVeiculoService {
         }
 
         UsoVeiculo uso = new UsoVeiculo();
-        uso.setTecnico(tecnico);
+        uso.setTecnico(technician);
         uso.setVeiculo(dto.getVeiculo());
         uso.setDataInicio(dto.getDataInicio());
 
         uso = usoRepository.save(uso);
 
         UsoVeiculoDTO response = new UsoVeiculoDTO();
-        response.setTecnicoId(uso.getTecnico().getId());
+        response.setTecnicoId(uso.getTecnico().getTechnicianId());
         response.setVeiculo(uso.getVeiculo());
         response.setDataInicio(uso.getDataInicio());
 
@@ -55,7 +55,7 @@ public class UsoVeiculoService {
 
         return ativos.stream()
                 .map(u -> new UsoAtivoDTO(
-                        u.getTecnico().getNome(),
+                        u.getTecnico().getName(),
                         u.getVeiculo()
                 ))
                 .collect(Collectors.toList());

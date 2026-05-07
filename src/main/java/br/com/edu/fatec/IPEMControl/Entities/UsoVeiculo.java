@@ -13,7 +13,7 @@ public class UsoVeiculo {
 
     @ManyToOne
     @JoinColumn(name = "tecnico_id", nullable = false)
-    private Tecnico tecnico;
+    private Technician technician;
 
     @Column(nullable = false)
     private String veiculo;
@@ -26,8 +26,8 @@ public class UsoVeiculo {
 
     public Long getId() { return id; }
 
-    public Tecnico getTecnico() { return tecnico; }
-    public void setTecnico(Tecnico tecnico) { this.tecnico = tecnico; }
+    public Technician getTecnico() { return technician; }
+    public void setTecnico(Technician technician) { this.technician = technician; }
 
     public String getVeiculo() { return veiculo; }
     public void setVeiculo(String veiculo) { this.veiculo = veiculo; }
