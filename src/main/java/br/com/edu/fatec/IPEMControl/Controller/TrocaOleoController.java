@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.TrocaOleoDTO;
-import br.com.edu.fatec.IPEMControl.Entities.TrocaOleo;
+import br.com.edu.fatec.IPEMControl.Entities.OilChange;
 import br.com.edu.fatec.IPEMControl.Service.TrocaOleoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,26 +29,26 @@ public class TrocaOleoController {
 
     // POST /troca-oleo
     @PostMapping
-    public ResponseEntity<TrocaOleo> criar(@RequestBody TrocaOleoDTO dto) {
+    public ResponseEntity<OilChange> criar(@RequestBody TrocaOleoDTO dto) {
         return ResponseEntity.status(201).body(trocaOleoService.salvar(dto));
     }
 
     // GET /troca-oleo?veiculoId={id}
     @GetMapping
-    public ResponseEntity<List<TrocaOleo>> listar(
+    public ResponseEntity<List<OilChange>> listar(
             @RequestParam(required = false) Integer veiculoId) {
         return ResponseEntity.ok(trocaOleoService.listarPorVeiculo(veiculoId));
     }
 
     // GET /troca-oleo/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<TrocaOleo> buscar(@PathVariable Integer id) {
+    public ResponseEntity<OilChange> buscar(@PathVariable Integer id) {
         return ResponseEntity.ok(trocaOleoService.buscarPorId(id));
     }
 
     // PUT /troca-oleo/{id}
     @PutMapping("/{id}")
-    public ResponseEntity<TrocaOleo> atualizar(
+    public ResponseEntity<OilChange> atualizar(
             @PathVariable Integer id,
             @RequestBody TrocaOleoDTO dto) {
         return ResponseEntity.ok(trocaOleoService.atualizar(id, dto));

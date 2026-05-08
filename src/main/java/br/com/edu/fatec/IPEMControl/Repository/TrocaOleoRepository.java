@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Repository;
 
-import br.com.edu.fatec.IPEMControl.Entities.TrocaOleo;
+import br.com.edu.fatec.IPEMControl.Entities.OilChange;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,25 +11,25 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TrocaOleoRepository extends JpaRepository<TrocaOleo, Integer> {
+public interface TrocaOleoRepository extends JpaRepository<OilChange, Integer> {
 
     // Total de trocas de óleo vinculadas a saídas do técnico
     long countByRegistroSaidaUsuarioMatricula(Integer matricula);
 
     // Última troca do técnico (para relatório de técnicos)
-    Optional<TrocaOleo> findTopByRegistroSaidaUsuarioMatriculaOrderByCreatedAtDesc(Integer matricula);
+    Optional<OilChange> findTopByRegistroSaidaUsuarioMatriculaOrderByCreatedAtDesc(Integer matricula);
 
     // Última troca de um veículo específico
-    @Query("SELECT t FROM TrocaOleo t WHERE t.veiculo.idVeiculo = :idVeiculo ORDER BY t.createdAt DESC")
-    Optional<TrocaOleo> buscarUltimaPorVeiculo(@Param("idVeiculo") Integer idVeiculo);
+    @Query("SELECT t FROM OilChange t WHERE t.veiculo.idVeiculo = :idVeiculo ORDER BY t.createdAt DESC")
+    Optional<OilChange> buscarUltimaPorVeiculo(@Param("idVeiculo") Integer idVeiculo);
 
     // NOVO: lista trocas por veículo ordenadas da mais recente
     // Usado pelo TrocaOleoService.listarPorVeiculo()
-    List<TrocaOleo> findByVeiculoIdVeiculoOrderByCreatedAtDesc(Integer idVeiculo);
+    List<OilChange> findByVeiculoIdVeiculoOrderByCreatedAtDesc(Integer idVeiculo);
 
     // Trocas após uma determinada data (para relatório de abastecimento)
-    List<TrocaOleo> findByCreatedAtAfterOrderByCreatedAtDesc(LocalDateTime dataInicio);
+    List<OilChange> findByCreatedAtAfterOrderByCreatedAtDesc(LocalDateTime dataInicio);
 
     // CORRIGIDO: busca trocas vinculadas a uma saída específica
-    Optional<TrocaOleo> findTopByRegistroSaidaIdSaidaOrderByCreatedAtDesc(Integer idSaida);
+    Optional<OilChange> findTopByRegistroSaidaIdSaidaOrderByCreatedAtDesc(Integer idSaida);
 }

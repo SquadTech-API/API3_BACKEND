@@ -13,41 +13,35 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrocaOleo {
+public class OilChange {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_troca_oleo")
-    private Integer idTrocaOleo;
+    private Integer oilChangeId;
 
     @Column(name = "km_troca", precision = 10, scale = 2)
-    private BigDecimal kmTroca;
+    private BigDecimal changeKm;
 
-    // CORRIGIDO: campo ausente — intervalo entre trocas em km
     @Column(name = "intervalo_km", precision = 10, scale = 2)
-    private BigDecimal intervaloKm;
+    private BigDecimal intervalKm;
 
     @Column(name = "km_proxima_troca", precision = 10, scale = 2)
-    private BigDecimal kmProximaTroca;
+    private BigDecimal nextChangeKm;
 
-    // CORRIGIDO: campo ausente — data efetiva da troca
     @Column(name = "data_troca")
-    private LocalDate dataTroca;
+    private LocalDate changeDate;
 
-    // CORRIGIDO: campo ausente — observações sobre a troca
     @Column(name = "observacoes", columnDefinition = "TEXT")
-    private String observacoes;
+    private String observation;
 
-    // CORRIGIDO: campo ausente — se alerta de troca foi enviado
     @Column(name = "alerta_enviado", nullable = false)
-    private Boolean alertaEnviado = false;
+    private Boolean sendAlert = false;
 
-    // Vínculo com a saída (pode ser nulo — troca avulsa)
     @ManyToOne
     @JoinColumn(name = "id_saida")
     private DepartureLog departureLog;
 
-    // CORRIGIDO: vínculo direto com o veículo (campo id_veiculo no banco)
     @ManyToOne
     @JoinColumn(name = "id_veiculo")
     private Vehicle vehicle;
@@ -62,7 +56,7 @@ public class TrocaOleo {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        if (this.alertaEnviado == null) this.alertaEnviado = false;
+        if (this.sendAlert == null) this.sendAlert = false;
     }
 
     @PreUpdate

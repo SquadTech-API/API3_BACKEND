@@ -3,7 +3,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 import br.com.edu.fatec.IPEMControl.DTO.*;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.Fueling;
-import br.com.edu.fatec.IPEMControl.Entities.TrocaOleo;
+import br.com.edu.fatec.IPEMControl.Entities.OilChange;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
 import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
@@ -113,15 +113,15 @@ public class AbastecimentoService {
                 .map(a -> a.getLitersAmount() != null ? a.getLitersAmount() : BigDecimal.ZERO)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        List<TrocaOleo> trocasOleo = trocaOleoRepository
+        List<OilChange> trocasOleo = trocaOleoRepository
                 .findByCreatedAtAfterOrderByCreatedAtDesc(dataInicio);
 
         List<Vehicle> allVehicles = veiculoRepository.findAll();
         int quantidadeAtrasada = 0;
         for (Vehicle v : allVehicles) {
-            Optional<TrocaOleo> ultimaTroca = trocaOleoRepository.buscarUltimaPorVeiculo(v.getVehicleId());
+            Optional<OilChange> ultimaTroca = trocaOleoRepository.buscarUltimaPorVeiculo(v.getVehicleId());
             if (ultimaTroca.isPresent() && v.getCurrentKm() != null &&
-                    v.getCurrentKm().compareTo(ultimaTroca.get().getKmProximaTroca()) >= 0) {
+                    v.getCurrentKm().compareTo(ultimaTroca.get().getNextChangeKm()) >= 0) {
                 quantidadeAtrasada++;
             }
         }
@@ -152,7 +152,7 @@ public class AbastecimentoService {
         List<AbastecimentoItemDTO> itensAbastecimento = fuelings.stream()
                 .map(this::paraItemDTO).collect(Collectors.toList());
 
-        // CORRIGIDO: usa getVehicle() direto da entidade TrocaOleo
+        // CORRIGIDO: usa getVehicle() direto da entidade OilChange
         List<ItemTrocaOleoDTO> itensTrocaOleo = trocasOleo.stream()
                 .map(this::paraItemTrocaOleoDTO).collect(Collectors.toList());
 
@@ -242,7 +242,7 @@ public class AbastecimentoService {
      * CORRIGIDO: ItemTrocaOleoDTO espera LocalDateTime — usa createdAt (timestamp do registro)
      * como aproximação aceitável enquanto dataTroca (LocalDate) não é adicionado ao DTO.
      */
-    private ItemTrocaOleoDTO paraItemTrocaOleoDTO(TrocaOleo t) {
+    private ItemTrocaOleoDTO paraItemTrocaOleoDTO(OilChange t) {
         // Usa o vínculo direto com Vehicle adicionado na entidade corrigida
         Vehicle vehicle = t.getVehicle();
 
@@ -254,8 +254,8 @@ public class AbastecimentoService {
         return new ItemTrocaOleoDTO(
                 t.getCreatedAt(),                                        // LocalDateTime — timestamp
                 vehicle != null ? vehicle.getLicensePlate()     : null,
-                t.getKmTroca(),
-                t.getKmProximaTroca(),
+                t.getChangeKm(),
+                t.getNextChangeKm(),
                 vehicle != null ? vehicle.getCurrentKm()   : null
         );
     }
@@ -274,15 +274,15 @@ public class AbastecimentoService {
             Vehicle vehicle = todos.stream()
                     .filter(v -> v.getLicensePlate().equals(placa)).findFirst().orElse(null);
 
-            Optional<TrocaOleo> ultimaTroca = vehicle != null
+            Optional<OilChange> ultimaTroca = vehicle != null
                     ? trocaOleoRepository.buscarUltimaPorVeiculo(vehicle.getVehicleId())
                     : Optional.empty();
 
             return new ConsumoVeiculoDTO(
                     placa,
                     vehicle != null ? vehicle.getCurrentKm() : null,
-                    ultimaTroca.map(TrocaOleo::getKmProximaTroca).orElse(null),
-                    ultimaTroca.map(TrocaOleo::getKmTroca).orElse(null),
+                    ultimaTroca.map(OilChange::getNextChangeKm).orElse(null),
+                    ultimaTroca.map(OilChange::getChangeKm).orElse(null),
                     ultimaTroca.map(t -> t.getCreatedAt().toLocalDate().toString()).orElse(null),
                     consumoKmL, custoPorKm, totalGasto, litros
             );
