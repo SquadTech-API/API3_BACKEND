@@ -12,15 +12,15 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegistroSaida {
+public class DepartureLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_saida")
-    private Integer idSaida;
+    private Integer departureLogId;
 
     @Column(name = "local_destino", length = 200)
-    private String localDestino;
+    private String destination;
 
     @Column(name = "status", length = 50)
     private String status;
@@ -29,19 +29,19 @@ public class RegistroSaida {
     private String observacoes;
 
     @Column(name = "data_hora_saida")
-    private LocalDateTime dataHoraSaida;
+    private LocalDateTime dateTimeDeparture;
 
     @Column(name = "data_retorno")
-    private LocalDateTime dataRetorno;
+    private LocalDateTime returnDate;
 
     @Column(name = "km_inicial", precision = 10, scale = 2)
-    private BigDecimal kmInicial;
+    private BigDecimal startingKm;
 
     @Column(name = "km_final", precision = 10, scale = 2)
-    private BigDecimal kmFinal;
+    private BigDecimal finishingKm;
 
     @Column(name = "km_rodados", precision = 10, scale = 2)
-    private BigDecimal kmRodados;
+    private BigDecimal drivenKm;
 
     @ManyToOne
     @JoinColumn(name = "id_veiculo")

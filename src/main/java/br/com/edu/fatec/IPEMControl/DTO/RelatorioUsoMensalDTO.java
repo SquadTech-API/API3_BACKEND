@@ -1,6 +1,7 @@
 package br.com.edu.fatec.IPEMControl.DTO;
 
-import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
+import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -10,12 +11,12 @@ public class RelatorioUsoMensalDTO {
     private Integer totalDeViagens;
     private BigDecimal gastoTotal;   // Adicionado para o R$ do Dashboard
     private BigDecimal litrosTotal;  // Adicionado para o L do Dashboard
-    private List<RegistroSaida> detalhes;
+    private List<DepartureLog> detalhes;
 
     public RelatorioUsoMensalDTO() {}
 
     // Construtor atualizado
-    public RelatorioUsoMensalDTO(BigDecimal quilometragemTotal, Integer totalDeViagens, BigDecimal gastoTotal, BigDecimal litrosTotal, List<RegistroSaida> detalhes) {
+    public RelatorioUsoMensalDTO(BigDecimal quilometragemTotal, Integer totalDeViagens, BigDecimal gastoTotal, BigDecimal litrosTotal, List<DepartureLog> detalhes) {
         this.quilometragemTotal = quilometragemTotal;
         this.totalDeViagens = totalDeViagens;
         this.gastoTotal = gastoTotal;
@@ -36,6 +37,6 @@ public class RelatorioUsoMensalDTO {
     public BigDecimal getLitrosTotal() { return litrosTotal; }
     public void setLitrosTotal(BigDecimal litrosTotal) { this.litrosTotal = litrosTotal; }
 
-    public List<RegistroSaida> getDetalhes() { return detalhes; }
-    public void setDetalhes(List<RegistroSaida> detalhes) { this.detalhes = detalhes; }
+    public List<DepartureLog> getDetalhes() { return detalhes; }
+    public void setDetalhes(List<DepartureLog> detalhes) { this.detalhes = detalhes; }
 }

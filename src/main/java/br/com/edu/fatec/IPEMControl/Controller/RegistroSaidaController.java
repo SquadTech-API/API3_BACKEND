@@ -4,7 +4,7 @@ import br.com.edu.fatec.IPEMControl.DTO.FecharSaidaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.RegistroSaidaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.RetornoDTO;
 import br.com.edu.fatec.IPEMControl.DTO.RetornoRespostaDTO;
-import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
+import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
 import br.com.edu.fatec.IPEMControl.Service.RegistroSaidaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class RegistroSaidaController {
     private RegistroSaidaRepository registroSaidaRepository;
 
     @PostMapping
-    public ResponseEntity<RegistroSaida> abrirSaida(@RequestBody RegistroSaidaDTO dto) {
+    public ResponseEntity<DepartureLog> abrirSaida(@RequestBody RegistroSaidaDTO dto) {
         return ResponseEntity.status(201).body(registroSaidaService.abrirSaida(dto));
     }
 
@@ -41,25 +41,25 @@ public class RegistroSaidaController {
     }
 
     @PatchMapping("/{id}/fechar")
-    public ResponseEntity<RegistroSaida> fecharSaida(
+    public ResponseEntity<DepartureLog> fecharSaida(
             @PathVariable Integer id,
             @RequestBody FecharSaidaDTO dto) {
         return ResponseEntity.ok(registroSaidaService.fecharSaida(id, dto));
     }
 
     @GetMapping
-    public ResponseEntity<List<RegistroSaida>> listar() {
+    public ResponseEntity<List<DepartureLog>> listar() {
         return ResponseEntity.ok(registroSaidaService.listarTodos());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RegistroSaida> buscar(@PathVariable Integer id) {
+    public ResponseEntity<DepartureLog> buscar(@PathVariable Integer id) {
         return ResponseEntity.ok(registroSaidaService.buscarPorId(id));
     }
 
     // Busca saída ativa de um veículo
     @GetMapping("/ativo")
-    public ResponseEntity<RegistroSaida> buscarSaidaAtivaPorVeiculo(@RequestParam Integer veiculoId) {
+    public ResponseEntity<DepartureLog> buscarSaidaAtivaPorVeiculo(@RequestParam Integer veiculoId) {
         return registroSaidaRepository
                 .findTopByVeiculoIdVeiculoAndStatusOrderByDataHoraSaidaDesc(veiculoId, "em_andamento")
                 .map(ResponseEntity::ok)
@@ -68,7 +68,7 @@ public class RegistroSaidaController {
 
     // Busca saída ativa do usuário — usado pelo veiculos.js para redirecionamento automático
     @GetMapping("/ativo-usuario")
-    public ResponseEntity<RegistroSaida> buscarSaidaAtivaPorUsuario(@RequestParam Integer matricula) {
+    public ResponseEntity<DepartureLog> buscarSaidaAtivaPorUsuario(@RequestParam Integer matricula) {
         return registroSaidaRepository
                 .findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(matricula, "em_andamento")
                 .map(ResponseEntity::ok)
@@ -77,7 +77,7 @@ public class RegistroSaidaController {
 
     // NOVO: saídas de troca de óleo por veículo — usado pelo editar-troca-de-oleo.js
     @GetMapping("/veiculo/{idVeiculo}/troca-oleo")
-    public ResponseEntity<List<RegistroSaida>> buscarSaidasTrocaOleo(@PathVariable Integer idVeiculo) {
+    public ResponseEntity<List<DepartureLog>> buscarSaidasTrocaOleo(@PathVariable Integer idVeiculo) {
         return ResponseEntity.ok(
                 registroSaidaRepository.findByVeiculoIdVeiculoAndTipoServicoEhTrocaOleoTrue(idVeiculo)
         );

@@ -1,8 +1,8 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.*;
+import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.Fueling;
-import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
 import br.com.edu.fatec.IPEMControl.Entities.TrocaOleo;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
@@ -41,11 +41,11 @@ public class AbastecimentoService {
     // ── POST /abastecimento ──────────────────────────────────────────────────
 
     public AbastecimentoSalvoDTO salvar(AbastecimentoDTO dto) {
-        RegistroSaida registroSaida = registroSaidaRepository.findById(dto.getIdSaida())
+        DepartureLog departureLog = registroSaidaRepository.findById(dto.getIdSaida())
                 .orElseThrow(() -> new RuntimeException("Registro de saída não encontrado."));
 
         Fueling ab = new Fueling();
-        ab.setRegistroSaida(registroSaida);
+        ab.setDepartureLog(departureLog);
         ab.setDateTime(dto.getDataHora());
         ab.setFuelType(dto.getTipoCombustivel());
         ab.setLitersAmount(dto.getQuantidadeLitros());
@@ -67,7 +67,7 @@ public class AbastecimentoService {
                 salvo.getGasStationName(),
                 salvo.getGasStationCity(),
                 salvo.getReceipt(),
-                registroSaida.getIdSaida()
+                departureLog.getDepartureLogId()
         );
     }
 
@@ -81,7 +81,7 @@ public class AbastecimentoService {
     }
 
     private AbastecimentoHistoricoDTO paraHistoricoDTO(Fueling a) {
-        RegistroSaida rs    = a.getRegistroSaida();
+        DepartureLog rs    = a.getDepartureLog();
         Vehicle vehicle = rs != null ? rs.getVehicle() : null;
         String responsavel  = rs != null && rs.getUser() != null ? rs.getUser().getName() : null;
 
@@ -222,7 +222,7 @@ public class AbastecimentoService {
     }
 
     private AbastecimentoItemDTO paraItemDTO(Fueling a) {
-        RegistroSaida rs   = a.getRegistroSaida();
+        DepartureLog rs   = a.getDepartureLog();
         Vehicle vehicle = rs != null ? rs.getVehicle() : null;
         String responsavel = rs != null && rs.getUser() != null ? rs.getUser().getName() : null;
         return new AbastecimentoItemDTO(
@@ -236,7 +236,7 @@ public class AbastecimentoService {
 
     /**
      * CORRIGIDO: agora resolve o Vehicle pelo campo direto t.getVehicle()
-     * em vez de t.getRegistroSaida().getVehicle() (que falha quando registroSaida é null
+     * em vez de t.getDepartureLog().getVehicle() (que falha quando registroSaida é null
      * em trocas avulsas não vinculadas a uma saída).
      *
      * CORRIGIDO: ItemTrocaOleoDTO espera LocalDateTime — usa createdAt (timestamp do registro)
@@ -247,8 +247,8 @@ public class AbastecimentoService {
         Vehicle vehicle = t.getVehicle();
 
         // Se por algum motivo o vínculo direto for null, tenta via registroSaida
-        if (vehicle == null && t.getRegistroSaida() != null) {
-            vehicle = t.getRegistroSaida().getVehicle();
+        if (vehicle == null && t.getDepartureLog() != null) {
+            vehicle = t.getDepartureLog().getVehicle();
         }
 
         return new ItemTrocaOleoDTO(

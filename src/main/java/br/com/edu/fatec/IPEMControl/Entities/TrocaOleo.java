@@ -45,7 +45,7 @@ public class TrocaOleo {
     // Vínculo com a saída (pode ser nulo — troca avulsa)
     @ManyToOne
     @JoinColumn(name = "id_saida")
-    private RegistroSaida registroSaida;
+    private DepartureLog departureLog;
 
     // CORRIGIDO: vínculo direto com o veículo (campo id_veiculo no banco)
     @ManyToOne

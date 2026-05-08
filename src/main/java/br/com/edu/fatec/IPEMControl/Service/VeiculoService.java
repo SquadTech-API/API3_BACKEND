@@ -1,8 +1,8 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.VeiculoResumoDTO;
+import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.Fueling;
-import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
@@ -55,7 +55,7 @@ public class VeiculoService {
 
         return vehicles.stream().map(veiculo -> {
 
-            Optional<RegistroSaida> ultimoRegistro =
+            Optional<DepartureLog> ultimoRegistro =
                     registroSaidaRepository
                             .findTopByVeiculoIdVeiculoOrderByDataHoraSaidaDesc(veiculo.getVehicleId());
 
@@ -64,7 +64,7 @@ public class VeiculoService {
                     .orElse(false);
 
             String ultimoUso = ultimoRegistro
-                    .map(r -> formatarData(r.getDataHoraSaida()))
+                    .map(r -> formatarData(r.getDateTimeDeparture()))
                     .orElse("—");
 
             String ultimoMotorista = ultimoRegistro

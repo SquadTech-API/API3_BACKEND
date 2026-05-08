@@ -2,7 +2,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.AtividadeDiariaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.RelatorioDiarioDTO;
-import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
+import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.User;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
@@ -36,22 +36,22 @@ public class RelatorioService {
         LocalDateTime fimDia = data.atTime(LocalTime.MAX);
 
 
-        List<RegistroSaida> saidasDoDia = registroSaidaRepository
+        List<DepartureLog> saidasDoDia = registroSaidaRepository
                 .findByUsuarioMatriculaAndDataHoraSaidaBetween(matricula, inicioDia, fimDia);
 
 
         BigDecimal kmTotal = saidasDoDia.stream()
-                .map(saida -> saida.getKmRodados() != null ? saida.getKmRodados() : BigDecimal.ZERO)
+                .map(saida -> saida.getDrivenKm() != null ? saida.getDrivenKm() : BigDecimal.ZERO)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Mapeia as entidades para o AtividadeDiariaDTO
         List<AtividadeDiariaDTO> atividades = saidasDoDia.stream()
                 .map(saida -> new AtividadeDiariaDTO(
                         saida.getVehicle().getPrefix(),
-                        saida.getLocalDestino(),
-                        saida.getDataHoraSaida(),
-                        saida.getDataRetorno(),
-                        saida.getKmRodados(),
+                        saida.getDestination(),
+                        saida.getDateTimeDeparture(),
+                        saida.getReturnDate(),
+                        saida.getDrivenKm(),
                         saida.getStatus()
                 ))
                 .collect(Collectors.toList());

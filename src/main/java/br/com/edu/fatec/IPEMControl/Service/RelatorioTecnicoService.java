@@ -4,7 +4,7 @@ import br.com.edu.fatec.IPEMControl.DTO.DestinoFrequenteDTO;
 import br.com.edu.fatec.IPEMControl.DTO.RelatorioGeralDTO;
 import br.com.edu.fatec.IPEMControl.DTO.RelatorioTecnicoDTO;
 import br.com.edu.fatec.IPEMControl.DTO.TecnicoResumoDTO;
-import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
+import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.User;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.*;
@@ -162,10 +162,10 @@ public class RelatorioTecnicoService {
         dto.setUltimaAtualizacao(user.getUpdatedAt() != null
                 ? user.getUpdatedAt().format(FMT_DATETIME) : null);
 
-        Optional<RegistroSaida> saidaAberta = saidaRepo
+        Optional<DepartureLog> saidaAberta = saidaRepo
                 .findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(matricula, "em_andamento");
         dto.setSaidaEmAberto(saidaAberta.isPresent());
-        dto.setIdSaidaAberta(saidaAberta.map(RegistroSaida::getIdSaida).orElse(null));
+        dto.setIdSaidaAberta(saidaAberta.map(DepartureLog::getDepartureLogId).orElse(null));
 
         // Seção 3 — Uso por período
         List<String> periodos = List.of("hoje", "7", "30", "ano");
@@ -180,11 +180,11 @@ public class RelatorioTecnicoService {
         dto.setKmPorPeriodo(kmMap);
 
         saidaRepo.findTopByUsuarioMatriculaOrderByDataHoraSaidaDesc(matricula).ifPresent(s -> {
-            dto.setUltimaSaidaData(s.getDataHoraSaida() != null
-                    ? s.getDataHoraSaida().format(FMT_DATETIME) : null);
+            dto.setUltimaSaidaData(s.getDateTimeDeparture() != null
+                    ? s.getDateTimeDeparture().format(FMT_DATETIME) : null);
             dto.setUltimaSaidaVeiculo(s.getVehicle() != null
                     ? s.getVehicle().getPrefix() + " — " + s.getVehicle().getLicensePlate() : null);
-            dto.setUltimaSaidaDestino(s.getLocalDestino());
+            dto.setUltimaSaidaDestino(s.getDestination());
         });
 
         // Seção 4 — Comportamento operacional

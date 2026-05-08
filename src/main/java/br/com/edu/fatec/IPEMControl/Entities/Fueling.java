@@ -48,7 +48,7 @@ public class Fueling {
 
     @ManyToOne
     @JoinColumn(name = "id_saida")
-    private RegistroSaida registroSaida;
+    private DepartureLog departureLog;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

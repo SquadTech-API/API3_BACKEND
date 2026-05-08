@@ -1,8 +1,8 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.RelatorioVeiculoDTO;
+import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.Fueling;
-import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
@@ -38,7 +38,7 @@ public class RelatorioVeiculoService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado: " + idVeiculo));
 
         // Total de saídas concluídas
-        List<RegistroSaida> saidasConcluidas = registroSaidaRepository
+        List<DepartureLog> saidasConcluidas = registroSaidaRepository
                 .findByVeiculoIdVeiculoAndDataHoraSaidaBetween(
                         idVeiculo,
                         LocalDateTime.now().minusYears(5),
@@ -49,8 +49,8 @@ public class RelatorioVeiculoService {
 
         // KM total rodado somando kmRodados de todas as saídas concluídas
         BigDecimal kmRodado = saidasConcluidas.stream()
-                .filter(s -> s.getKmRodados() != null)
-                .map(RegistroSaida::getKmRodados)
+                .filter(s -> s.getDrivenKm() != null)
+                .map(DepartureLog::getDrivenKm)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Litros totais abastecidos

@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Repository;
 
-import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
+import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,24 +12,24 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, Integer> {
+public interface RegistroSaidaRepository extends JpaRepository<DepartureLog, Integer> {
 
     // Relatório de uso mensal
-    List<RegistroSaida> findByDataRetornoBetween(LocalDateTime inicio, LocalDateTime fim);
+    List<DepartureLog> findByDataRetornoBetween(LocalDateTime inicio, LocalDateTime fim);
 
-    List<RegistroSaida> findByVeiculoIdVeiculoAndDataHoraSaidaBetween(
+    List<DepartureLog> findByVeiculoIdVeiculoAndDataHoraSaidaBetween(
             Integer idVeiculo, LocalDateTime inicio, LocalDateTime fim);
 
-    List<RegistroSaida> findByUsuarioMatriculaAndDataHoraSaidaBetween(
+    List<DepartureLog> findByUsuarioMatriculaAndDataHoraSaidaBetween(
             Integer matricula, LocalDateTime inicio, LocalDateTime fim);
 
     // Controle de fluxo
-    Optional<RegistroSaida> findTopByVeiculoIdVeiculoOrderByDataHoraSaidaDesc(Integer idVeiculo);
-    Optional<RegistroSaida> findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(Integer matricula, String status);
-    Optional<RegistroSaida> findTopByVeiculoIdVeiculoAndStatusOrderByDataHoraSaidaDesc(Integer idVeiculo, String status);
-    Optional<RegistroSaida> findTopByUsuarioMatriculaOrderByDataHoraSaidaDesc(Integer matricula);
+    Optional<DepartureLog> findTopByVeiculoIdVeiculoOrderByDataHoraSaidaDesc(Integer idVeiculo);
+    Optional<DepartureLog> findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(Integer matricula, String status);
+    Optional<DepartureLog> findTopByVeiculoIdVeiculoAndStatusOrderByDataHoraSaidaDesc(Integer idVeiculo, String status);
+    Optional<DepartureLog> findTopByUsuarioMatriculaOrderByDataHoraSaidaDesc(Integer matricula);
 
-    List<RegistroSaida> findByStatus(String status);
+    List<DepartureLog> findByStatus(String status);
 
     // Dashboard veículos
     @Query(value = "SELECT v.id_veiculo, v.modelo, SUM(rs.km_rodados) as total_km " +
@@ -93,5 +93,5 @@ public interface RegistroSaidaRepository extends JpaRepository<RegistroSaida, In
             "JOIN tipo_servico ts ON ts.id_tipo_servico = rs.id_tipo_servico " +
             "WHERE rs.id_veiculo = :idVeiculo AND ts.eh_troca_oleo = true " +
             "ORDER BY rs.data_hora_saida DESC", nativeQuery = true)
-    List<RegistroSaida> findByVeiculoIdVeiculoAndTipoServicoEhTrocaOleoTrue(@Param("idVeiculo") Integer idVeiculo);
+    List<DepartureLog> findByVeiculoIdVeiculoAndTipoServicoEhTrocaOleoTrue(@Param("idVeiculo") Integer idVeiculo);
 }

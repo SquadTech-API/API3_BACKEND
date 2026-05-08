@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.TrocaOleoDTO;
-import br.com.edu.fatec.IPEMControl.Entities.RegistroSaida;
+import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.TrocaOleo;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
@@ -66,9 +66,9 @@ public class TrocaOleoService {
 
         // Vínculo com saída (opcional)
         if (dto.getIdSaida() != null) {
-            RegistroSaida saida = registroSaidaRepository.findById(dto.getIdSaida())
+            DepartureLog saida = registroSaidaRepository.findById(dto.getIdSaida())
                     .orElseThrow(() -> new RecursoNaoEncontradoException("Saída não encontrada."));
-            troca.setRegistroSaida(saida);
+            troca.setDepartureLog(saida);
         }
 
         // Atualiza intervalo padrão no veículo para futuros alertas
