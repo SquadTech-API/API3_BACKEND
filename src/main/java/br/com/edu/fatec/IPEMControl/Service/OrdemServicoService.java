@@ -2,7 +2,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.OrdemServicoDTO;
 import br.com.edu.fatec.IPEMControl.DTO.OrdemServicoRespostaDTO;
-import br.com.edu.fatec.IPEMControl.Entities.OrdemServico;
+import br.com.edu.fatec.IPEMControl.Entities.ServiceOrder;
 import br.com.edu.fatec.IPEMControl.Entities.TipoServico;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
@@ -38,10 +38,10 @@ public class OrdemServicoService {
         TipoServico tipoServico = tipoServicoRepository.findById(dto.getIdTipoServico())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
 
-        OrdemServico ordem = new OrdemServico();
+        ServiceOrder ordem = new ServiceOrder();
         ordem.setVehicle(vehicle);
-        ordem.setTipoServico(tipoServico);
-        ordem.setObservacoes(dto.getObservacoes());
+        ordem.setServiceType(tipoServico);
+        ordem.setObservation(dto.getObservacoes());
 
         ordem = ordemServicoRepository.save(ordem);
 
@@ -54,15 +54,15 @@ public class OrdemServicoService {
                 .collect(Collectors.toList());
     }
 
-    private OrdemServicoRespostaDTO mapearParaDTO(OrdemServico ordem) {
+    private OrdemServicoRespostaDTO mapearParaDTO(ServiceOrder ordem) {
         return new OrdemServicoRespostaDTO(
-                ordem.getIdOrdemServico(),
+                ordem.getServiceOrderId(),
                 ordem.getVehicle().getLicensePlate(),
                 ordem.getVehicle().getModel(),
-                ordem.getTipoServico().getNomeServico(),
+                ordem.getServiceType().getNomeServico(),
                 ordem.getStatus(),
-                ordem.getDataAbertura(),
-                ordem.getObservacoes()
+                ordem.getOpeningDate(),
+                ordem.getObservation()
         );
     }
 }

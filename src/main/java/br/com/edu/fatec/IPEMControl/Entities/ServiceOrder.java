@@ -11,12 +11,12 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrdemServico {
+public class ServiceOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_ordem_servico")
-    private Integer idOrdemServico;
+    private Integer serviceOrderId;
 
     @ManyToOne
     @JoinColumn(name = "id_veiculo", nullable = false)
@@ -24,23 +24,23 @@ public class OrdemServico {
 
     @ManyToOne
     @JoinColumn(name = "id_tipo_servico", nullable = false)
-    private TipoServico tipoServico;
+    private TipoServico serviceType;
 
     @Column(name = "status", length = 50)
     private String status;
 
     @Column(name = "observacoes", columnDefinition = "TEXT")
-    private String observacoes;
+    private String observation;
 
     @Column(name = "data_abertura", nullable = false)
-    private LocalDateTime dataAbertura;
+    private LocalDateTime openingDate;
 
     @Column(name = "data_conclusao")
-    private LocalDateTime dataConclusao;
+    private LocalDateTime completionDate;
 
     @PrePersist
     public void prePersist() {
-        this.dataAbertura = LocalDateTime.now();
+        this.openingDate = LocalDateTime.now();
         if (this.status == null) {
             this.status = "ABERTA";
         }
