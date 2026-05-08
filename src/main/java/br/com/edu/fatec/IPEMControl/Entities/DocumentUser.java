@@ -11,21 +11,21 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioDocumento {
+public class DocumentUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario_doc")
-    private Integer idUsuarioDoc;
+    private Integer userDocId;
 
     @Column(name = "data_acesso")
-    private LocalDateTime dataAcesso;
+    private LocalDateTime accessDate;
 
     @Column(name = "baixado")
-    private Boolean baixado = false;
+    private Boolean isDownloaded = false;
 
     @Column(name = "lido")
-    private Boolean lido = false;
+    private Boolean isRead = false;
 
     @ManyToOne
     @JoinColumn(name = "matricula")

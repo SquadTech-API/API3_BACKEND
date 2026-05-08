@@ -1,11 +1,11 @@
 package br.com.edu.fatec.IPEMControl.Repository;
 
-import br.com.edu.fatec.IPEMControl.Entities.UsuarioDocumento;
+import br.com.edu.fatec.IPEMControl.Entities.DocumentUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UsuarioDocumentoRepository extends JpaRepository<UsuarioDocumento, Integer> {
+public interface UsuarioDocumentoRepository extends JpaRepository<DocumentUser, Integer> {
 
     /** Total de documentos atribuídos ao técnico */
     long countByUsuarioMatricula(Integer matricula);
