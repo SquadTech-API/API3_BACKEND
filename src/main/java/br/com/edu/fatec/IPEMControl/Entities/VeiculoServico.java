@@ -30,7 +30,7 @@ public class VeiculoServico {
 
     @ManyToOne
     @JoinColumn(name = "id_tipo_servico")
-    private TipoServico tipoServico;
+    private ServiceType serviceType;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

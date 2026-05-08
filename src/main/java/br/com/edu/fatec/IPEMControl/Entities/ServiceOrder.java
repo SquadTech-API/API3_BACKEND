@@ -24,7 +24,7 @@ public class ServiceOrder {
 
     @ManyToOne
     @JoinColumn(name = "id_tipo_servico", nullable = false)
-    private TipoServico serviceType;
+    private ServiceType serviceType;
 
     @Column(name = "status", length = 50)
     private String status;

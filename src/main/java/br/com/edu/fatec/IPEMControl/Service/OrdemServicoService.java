@@ -3,7 +3,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 import br.com.edu.fatec.IPEMControl.DTO.OrdemServicoDTO;
 import br.com.edu.fatec.IPEMControl.DTO.OrdemServicoRespostaDTO;
 import br.com.edu.fatec.IPEMControl.Entities.ServiceOrder;
-import br.com.edu.fatec.IPEMControl.Entities.TipoServico;
+import br.com.edu.fatec.IPEMControl.Entities.ServiceType;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
@@ -35,12 +35,12 @@ public class OrdemServicoService {
         Vehicle vehicle = veiculoRepository.findById(dto.getIdVeiculo())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
 
-        TipoServico tipoServico = tipoServicoRepository.findById(dto.getIdTipoServico())
+        ServiceType serviceType = tipoServicoRepository.findById(dto.getIdTipoServico())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
 
         ServiceOrder ordem = new ServiceOrder();
         ordem.setVehicle(vehicle);
-        ordem.setServiceType(tipoServico);
+        ordem.setServiceType(serviceType);
         ordem.setObservation(dto.getObservacoes());
 
         ordem = ordemServicoRepository.save(ordem);

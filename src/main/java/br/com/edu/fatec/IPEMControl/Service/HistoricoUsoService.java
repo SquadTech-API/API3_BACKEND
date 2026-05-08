@@ -45,8 +45,8 @@ public class HistoricoUsoService {
                             ? saida.getUser().getName() : "—";
 
                     // Tipo de serviço
-                    String tipoServico = saida.getTipoServico() != null
-                            ? saida.getTipoServico().getNomeServico() : "—";
+                    String tipoServico = saida.getServiceType() != null
+                            ? saida.getServiceType().getNomeServico() : "—";
 
                     // KM rodados
                     BigDecimal kmRodados = saida.getDrivenKm() != null

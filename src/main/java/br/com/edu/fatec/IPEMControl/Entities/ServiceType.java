@@ -10,23 +10,22 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TipoServico {
+public class ServiceType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tipo_servico")
-    private Integer idTipoServico;
+    private Integer serviceTypeId;
 
     @Column(name = "nome_servico", nullable = false, length = 100)
     private String nomeServico;
 
     @Column(name = "descricao", columnDefinition = "TEXT")
-    private String descricao;
+    private String description;
 
-    // CORRIGIDO: campos ausentes que existem no banco de dados
     @Column(name = "habilitado", nullable = false)
-    private Boolean habilitado = true;
+    private Boolean licensed = true;
 
     @Column(name = "eh_troca_oleo", nullable = false)
-    private Boolean ehTrocaOleo = false;
+    private Boolean oilChangeST = false;
 }

@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.Entities.TipoServico;
+import br.com.edu.fatec.IPEMControl.Entities.ServiceType;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Entities.VeiculoServico;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
@@ -44,13 +44,13 @@ public class VeiculoServicoService {
 
         // Cria novos vínculos apenas para os serviços informados
         for (Integer idTipoServico : idsTipoServico) {
-            TipoServico tipoServico = tipoServicoRepository.findById(idTipoServico)
+            ServiceType serviceType = tipoServicoRepository.findById(idTipoServico)
                     .orElseThrow(() -> new RecursoNaoEncontradoException(
                             "Tipo de serviço não encontrado: " + idTipoServico));
 
             VeiculoServico vs = new VeiculoServico();
             vs.setVehicle(vehicle);
-            vs.setTipoServico(tipoServico);
+            vs.setServiceType(serviceType);
             vs.setHabilitado(true);
             veiculoServicoRepository.save(vs);
         }
@@ -60,12 +60,12 @@ public class VeiculoServicoService {
      * Retorna os tipos de serviço ativos habilitados para um veículo.
      * GET /tipo-servicos/veiculo/{idVeiculo}/ativos
      */
-    public List<TipoServico> listarServicosAtivosDoVeiculo(Integer idVeiculo) {
+    public List<ServiceType> listarServicosAtivosDoVeiculo(Integer idVeiculo) {
         return veiculoServicoRepository
                 .findByVeiculoIdVeiculoAndHabilitadoTrue(idVeiculo)
                 .stream()
-                .map(VeiculoServico::getTipoServico)
-                .filter(ts -> Boolean.TRUE.equals(ts.getHabilitado()))
+                .map(VeiculoServico::getServiceType)
+                .filter(ts -> Boolean.TRUE.equals(ts.getLicensed()))
                 .toList();
     }
 }

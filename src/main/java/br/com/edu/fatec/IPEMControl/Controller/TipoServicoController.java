@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.Entities.TipoServico;
+import br.com.edu.fatec.IPEMControl.Entities.ServiceType;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.TipoServicoRepository;
 import br.com.edu.fatec.IPEMControl.Service.VeiculoServicoService;
@@ -32,19 +32,19 @@ public class TipoServicoController {
 
     // GET /tipo-servicos — listar todos
     @GetMapping
-    public ResponseEntity<List<TipoServico>> listar() {
+    public ResponseEntity<List<ServiceType>> listar() {
         return ResponseEntity.ok(tipoServicoRepository.findAll());
     }
 
     // GET /tipo-servicos/ativos — NOVO: apenas os habilitados
     @GetMapping("/ativos")
-    public ResponseEntity<List<TipoServico>> listarAtivos() {
+    public ResponseEntity<List<ServiceType>> listarAtivos() {
         return ResponseEntity.ok(tipoServicoRepository.findByHabilitadoTrue());
     }
 
     // GET /tipo-servicos/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<TipoServico> buscar(@PathVariable Integer id) {
+    public ResponseEntity<ServiceType> buscar(@PathVariable Integer id) {
         return tipoServicoRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -53,42 +53,42 @@ public class TipoServicoController {
     // GET /tipo-servicos/veiculo/{idVeiculo}/ativos — NOVO
     // Retorna serviços habilitados para um veículo específico
     @GetMapping("/veiculo/{idVeiculo}/ativos")
-    public ResponseEntity<List<TipoServico>> listarAtivosDoVeiculo(@PathVariable Integer idVeiculo) {
+    public ResponseEntity<List<ServiceType>> listarAtivosDoVeiculo(@PathVariable Integer idVeiculo) {
         return ResponseEntity.ok(veiculoServicoService.listarServicosAtivosDoVeiculo(idVeiculo));
     }
 
     // POST /tipo-servicos — NOVO: cadastrar
     @PostMapping
-    public ResponseEntity<TipoServico> criar(@RequestBody TipoServico tipoServico) {
-        tipoServico.setHabilitado(true); // padrão ao criar
-        return ResponseEntity.status(201).body(tipoServicoRepository.save(tipoServico));
+    public ResponseEntity<ServiceType> criar(@RequestBody ServiceType serviceType) {
+        serviceType.setLicensed(true); // padrão ao criar
+        return ResponseEntity.status(201).body(tipoServicoRepository.save(serviceType));
     }
 
     // PUT /tipo-servicos/{id} — NOVO: editar
     @PutMapping("/{id}")
-    public ResponseEntity<TipoServico> atualizar(
+    public ResponseEntity<ServiceType> atualizar(
             @PathVariable Integer id,
-            @RequestBody TipoServico atualizado) {
+            @RequestBody ServiceType atualizado) {
 
-        TipoServico existente = tipoServicoRepository.findById(id)
+        ServiceType existente = tipoServicoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
 
         if (atualizado.getNomeServico() != null && !atualizado.getNomeServico().isBlank())
             existente.setNomeServico(atualizado.getNomeServico());
-        if (atualizado.getDescricao() != null)
-            existente.setDescricao(atualizado.getDescricao());
-        if (atualizado.getEhTrocaOleo() != null)
-            existente.setEhTrocaOleo(atualizado.getEhTrocaOleo());
+        if (atualizado.getDescription() != null)
+            existente.setDescription(atualizado.getDescription());
+        if (atualizado.getOilChangeST() != null)
+            existente.setOilChangeST(atualizado.getOilChangeST());
 
         return ResponseEntity.ok(tipoServicoRepository.save(existente));
     }
 
     // PATCH /tipo-servicos/{id}/toggle — NOVO: habilitar/desabilitar
     @PatchMapping("/{id}/toggle")
-    public ResponseEntity<TipoServico> toggle(@PathVariable Integer id) {
-        TipoServico ts = tipoServicoRepository.findById(id)
+    public ResponseEntity<ServiceType> toggle(@PathVariable Integer id) {
+        ServiceType ts = tipoServicoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
-        ts.setHabilitado(!Boolean.TRUE.equals(ts.getHabilitado()));
+        ts.setLicensed(!Boolean.TRUE.equals(ts.getLicensed()));
         return ResponseEntity.ok(tipoServicoRepository.save(ts));
     }
 }

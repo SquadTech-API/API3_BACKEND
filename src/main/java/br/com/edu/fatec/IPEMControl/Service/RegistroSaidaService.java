@@ -67,13 +67,13 @@ public class RegistroSaidaService {
         if (Boolean.FALSE.equals(user.getActiveColaborator()))
             throw new RegraDeNegocioException("Colaborador inativo.");
 
-        TipoServico tipoServico = tipoServicoRepository.findById(dto.getIdTipoServico())
+        ServiceType serviceType = tipoServicoRepository.findById(dto.getIdTipoServico())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
 
         DepartureLog registro = new DepartureLog();
         registro.setVehicle(vehicle);
         registro.setUser(user);
-        registro.setTipoServico(tipoServico);
+        registro.setServiceType(serviceType);
         registro.setDestination(dto.getLocalDestino());
         registro.setObservacoes(dto.getObservacoes());
         registro.setStartingKm(dto.getKmInicial());

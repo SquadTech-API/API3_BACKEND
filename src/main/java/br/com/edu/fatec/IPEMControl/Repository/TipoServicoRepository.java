@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Repository;
 
-import br.com.edu.fatec.IPEMControl.Entities.TipoServico;
+import br.com.edu.fatec.IPEMControl.Entities.ServiceType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,8 +11,8 @@ import java.util.List;
  * Antes não tinha esse método — TipoServicoController não conseguia filtrar.
  */
 @Repository
-public interface TipoServicoRepository extends JpaRepository<TipoServico, Integer> {
+public interface TipoServicoRepository extends JpaRepository<ServiceType, Integer> {
 
     // NOVO: filtra apenas serviços habilitados
-    List<TipoServico> findByHabilitadoTrue();
+    List<ServiceType> findByHabilitadoTrue();
 }
