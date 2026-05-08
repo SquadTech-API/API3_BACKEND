@@ -1,16 +1,16 @@
 package br.com.edu.fatec.IPEMControl.Repository;
 
-import br.com.edu.fatec.IPEMControl.Entities.UsoVeiculo;
+import br.com.edu.fatec.IPEMControl.Entities.VehicleUsage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface UsoVeiculoRepository extends JpaRepository<UsoVeiculo, Long> {
+public interface UsoVeiculoRepository extends JpaRepository<VehicleUsage, Long> {
 
     boolean existsByVeiculoAndDataFimIsNull(String vehicle);
 
-    List<UsoVeiculo> findByDataFimIsNull();
+    List<VehicleUsage> findByDataFimIsNull();
 
     @Query(value = """
         SELECT 

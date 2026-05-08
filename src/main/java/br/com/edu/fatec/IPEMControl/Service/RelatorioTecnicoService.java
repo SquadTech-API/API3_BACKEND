@@ -147,7 +147,7 @@ public class RelatorioTecnicoService {
         dto.setNome(user.getName());
         dto.setCargo(user.getPosition());
         dto.setTipo(user.getUserType() != null ? user.getUserType().name() : null);
-        dto.setCnh(user.getTipoHabilitacao() != null ? user.getTipoHabilitacao().name() : null);
+        dto.setCnh(user.getDriverLicenseType() != null ? user.getDriverLicenseType().name() : null);
         dto.setNumHabilitacao(user.getDriverLicenseNumber());
         dto.setCpf(user.getCpf());
         dto.setEmail(user.getEmail());

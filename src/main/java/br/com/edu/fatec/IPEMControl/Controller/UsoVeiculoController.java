@@ -2,7 +2,6 @@ package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.UsoAtivoDTO;
 import br.com.edu.fatec.IPEMControl.DTO.UsoVeiculoDTO;
-import br.com.edu.fatec.IPEMControl.Entities.UsoVeiculo;
 import br.com.edu.fatec.IPEMControl.Service.UsoVeiculoService;
 import org.springframework.web.bind.annotation.*;
 

@@ -3,7 +3,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 import br.com.edu.fatec.IPEMControl.DTO.UsoVeiculoDTO;
 import br.com.edu.fatec.IPEMControl.DTO.UsoAtivoDTO;
 import br.com.edu.fatec.IPEMControl.Entities.Technician;
-import br.com.edu.fatec.IPEMControl.Entities.UsoVeiculo;
+import br.com.edu.fatec.IPEMControl.Entities.VehicleUsage;
 import br.com.edu.fatec.IPEMControl.Repository.TecnicoRepository;
 import br.com.edu.fatec.IPEMControl.Repository.UsoVeiculoRepository;
 import org.springframework.stereotype.Service;
@@ -34,29 +34,29 @@ public class UsoVeiculoService {
             throw new RuntimeException("Vehicle already in use");
         }
 
-        UsoVeiculo uso = new UsoVeiculo();
+        VehicleUsage uso = new VehicleUsage();
         uso.setTecnico(technician);
-        uso.setVeiculo(dto.getVeiculo());
-        uso.setDataInicio(dto.getDataInicio());
+        uso.setVehicle(dto.getVeiculo());
+        uso.setStartDate(dto.getDataInicio());
 
         uso = usoRepository.save(uso);
 
         UsoVeiculoDTO response = new UsoVeiculoDTO();
         response.setTecnicoId(uso.getTecnico().getTechnicianId());
-        response.setVeiculo(uso.getVeiculo());
-        response.setDataInicio(uso.getDataInicio());
+        response.setVeiculo(uso.getVehicle());
+        response.setDataInicio(uso.getStartDate());
 
         return response;
     }
 
     public List<UsoAtivoDTO> listarEmUso() {
 
-        List<UsoVeiculo> ativos = usoRepository.findByDataFimIsNull();
+        List<VehicleUsage> ativos = usoRepository.findByDataFimIsNull();
 
         return ativos.stream()
                 .map(u -> new UsoAtivoDTO(
                         u.getTecnico().getName(),
-                        u.getVeiculo()
+                        u.getVehicle()
                 ))
                 .collect(Collectors.toList());
     }
