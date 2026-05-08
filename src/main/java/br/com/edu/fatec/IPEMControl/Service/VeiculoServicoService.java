@@ -2,7 +2,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.Entities.ServiceType;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
-import br.com.edu.fatec.IPEMControl.Entities.VeiculoServico;
+import br.com.edu.fatec.IPEMControl.Entities.ServiceVehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.TipoServicoRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
@@ -48,10 +48,10 @@ public class VeiculoServicoService {
                     .orElseThrow(() -> new RecursoNaoEncontradoException(
                             "Tipo de serviço não encontrado: " + idTipoServico));
 
-            VeiculoServico vs = new VeiculoServico();
+            ServiceVehicle vs = new ServiceVehicle();
             vs.setVehicle(vehicle);
             vs.setServiceType(serviceType);
-            vs.setHabilitado(true);
+            vs.setIsLicensed(true);
             veiculoServicoRepository.save(vs);
         }
     }
@@ -64,7 +64,7 @@ public class VeiculoServicoService {
         return veiculoServicoRepository
                 .findByVeiculoIdVeiculoAndHabilitadoTrue(idVeiculo)
                 .stream()
-                .map(VeiculoServico::getServiceType)
+                .map(ServiceVehicle::getServiceType)
                 .filter(ts -> Boolean.TRUE.equals(ts.getLicensed()))
                 .toList();
     }

@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Repository;
 
-import br.com.edu.fatec.IPEMControl.Entities.VeiculoServico;
+import br.com.edu.fatec.IPEMControl.Entities.ServiceVehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,21 +11,21 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * NOVO: Repository para VeiculoServico.
+ * NOVO: Repository para ServiceVehicle.
  * Antes não existia — o VeiculoServicoService não tinha como persistir vínculos.
  */
 @Repository
-public interface VeiculoServicoRepository extends JpaRepository<VeiculoServico, Integer> {
+public interface VeiculoServicoRepository extends JpaRepository<ServiceVehicle, Integer> {
 
     // Retorna todos os vínculos habilitados de um veículo
-    List<VeiculoServico> findByVeiculoIdVeiculoAndHabilitadoTrue(Integer idVeiculo);
+    List<ServiceVehicle> findByVeiculoIdVeiculoAndHabilitadoTrue(Integer idVeiculo);
 
     // Retorna todos os vínculos de um veículo (habilitados ou não)
-    List<VeiculoServico> findByVeiculoIdVeiculo(Integer idVeiculo);
+    List<ServiceVehicle> findByVeiculoIdVeiculo(Integer idVeiculo);
 
     // Remove todos os vínculos de um veículo (usado na sincronização)
     @Modifying
     @Transactional
-    @Query("DELETE FROM VeiculoServico vs WHERE vs.veiculo.idVeiculo = :idVeiculo")
+    @Query("DELETE FROM ServiceVehicle vs WHERE vs.veiculo.idVeiculo = :idVeiculo")
     void deleteByVeiculoIdVeiculo(@Param("idVeiculo") Integer idVeiculo);
 }

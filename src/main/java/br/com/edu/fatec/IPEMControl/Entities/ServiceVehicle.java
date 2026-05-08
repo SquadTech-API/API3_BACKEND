@@ -11,18 +11,18 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class VeiculoServico {
+public class ServiceVehicle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_servico_veiculo")
-    private Integer idServicoVeiculo;
+    private Integer serviceVehicleId;
 
     @Column(name = "habilitado")
-    private Boolean habilitado;
+    private Boolean isLicensed;
 
     @Column(name = "descricao", columnDefinition = "TEXT")
-    private String descricao;
+    private String descriptionSV;
 
     @ManyToOne
     @JoinColumn(name = "id_veiculo")
