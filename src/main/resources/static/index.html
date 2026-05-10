@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="PT-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ipem</title>
+    <link rel="stylesheet" href="assets/styles/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <header>
+      <div class="logo">
+        <img src="assets/images/logo_ipem.png" alt="Logo Ipem" />
+      </div>
+
+      <button class="btn_menu">
+        <img src="assets/images/icon_menu.png" alt="Menu" />
+      </button>
+
+      <nav class="nav">
+        <ul class="menu">
+          <li class="dropdown">
+            <div class="dropdown-btn">
+              Veículos <span class="arrow">▼</span>
+            </div>
+
+            <ul class="submenu">
+              <li><a href="">Novo Veículo</a></li>
+              <li><a href="#">Gerenciamento</a></li>
+            </ul>
+          </li>
+
+          <li class="dropdown">
+            <div class="dropdown-btn">
+              Motoristas <span class="arrow">▼</span>
+            </div>
+
+            <ul class="submenu">
+              <li><a href="#">Novo Motorista</a></li>
+              <li><a href="#">Gerenciamento</a></li>
+            </ul>
+          </li>
+
+          <li class="dropdown">
+            <div class="dropdown-btn">
+              Relatórios <span class="arrow">▼</span>
+            </div>
+
+            <ul class="submenu">
+              <li><a href="#">Ver Relatórios</a></li>
+            </ul>
+          </li>
+        </ul>
+
+        <div class="nav_btn">
+          <a href="#">
+            <img src="assets/images/icon_perfil.png" alt="Perfil" />
+          </a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container">
+      <!-- div com titulo e botão-->
+      <div class="header_titulo">
+        <h2>Adicionar um Veículo</h2>
+        <a href="#">
+          <img src="assets/images/icons_cancel.png" alt="Cancelar" />
+        </a>
+      </div>
+
+      <section class="card">
+        <!--card-->
+        <div class="card_body">
+          <!--cabeçalho azul-->
+          <div class="card_titulo">
+            <img src="assets/images/icon_car.png" alt="logo" />
+            <h3>Preencha os dados:</h3>
+          </div>
+
+          <!-- Formulário -->
+          <form class="form" id="form_veic">
+            <div class="form-group">
+              <div class="linha">
+                <label for="txf_marca_add_veic">Marca:</label>
+                <input id="txf_marca_add_veic" name="txf_marca_add_veic" type="text" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="linha">
+                <label for="txf_modelo_add_veic">Modelo:</label>
+                <input id="txf_modelo_add_veic" name="txf_modelo_add_veic" type="text" />
+              </div>
+            </div>
+    
+            <div class="form-group">
+              <div class="linha">
+                <label for="ddl_combustivel_add_veic">Combustível:</label>
+
+                <select id="ddl_combustivel_add_veic" name="ddl_combustivel_add_veic">
+                  <option value="">Selecione...</option>
+                  <option value="G">Gasolina</option>
+                  <option value="E">Etanol</option>
+                  <option value="F">Flex</option>
+                  <option value="EL">Elétrico</option>
+                  <option value="H">Híbrido</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="linha">
+                <label for="txf_placa_add_veic">Placa:</label>
+                <input id="txf_placa_add_veic" name="txf_placa_add_veic" type="text" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="linha">
+                <label for="txf_km_add_veic">KM:</label>
+                <input id="txf_km_add_veic" name="txf_km_add_veic" type="text" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="linha">
+                <label for="txf_prefixo_add_veic">Prefixo:</label>
+                <input id="txf_prefixo_add_veic" name="txf_prefixo_add_veic" type="text" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="linha">
+                <label for="txf_nucleo_add_veic">Núcleo/dar:</label>
+                <input id="txf_nucleo_add_veic" name="txf_nucleo_add_veic" type="text" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="linha"> 
+                <label for="txf_nfi_add_veic">Número FI:</label>
+                  <input id="txf_nfi_add_veic" name="txf_nfi_add_veic" type="text" />
+              </div>
+            </div>
+
+
+            <!--botão salvar-->
+            <div class="form-actions">
+              <button id="btn_salvar_add_veic" name="btn_salvar_add_veic" type="submit" class="btn-save">Salvar</button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <script src="assets/scripts/script.js"></script>
+  </body>
+</html>
