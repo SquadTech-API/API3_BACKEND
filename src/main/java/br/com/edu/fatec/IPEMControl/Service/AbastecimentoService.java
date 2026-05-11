@@ -172,7 +172,7 @@ public class AbastecimentoService {
 
     // ── GET /relatorios/abastecimento/busca ──────────────────────────────────
 
-    public BuscaAbastecimentoDTO buscar(String tipo, String data, String de, String ate,
+    public FuelingSearchDTO buscar(String tipo, String data, String de, String ate,
                                         String placa, String tipoRegistro) {
         List<Fueling> fuelings = new ArrayList<>();
         switch (tipo) {
@@ -206,7 +206,7 @@ public class AbastecimentoService {
                 abastecimentoRepository.buscarConsumoPorVeiculo(resolverDataInicio("30")),
                 veiculoRepository.findAll());
 
-        return new BuscaAbastecimentoDTO(itensAbastecimento, itensTrocaOleo, veiculos);
+        return new FuelingSearchDTO(itensAbastecimento, itensTrocaOleo, veiculos);
     }
 
     // ── Auxiliares ────────────────────────────────────────────────────────────
