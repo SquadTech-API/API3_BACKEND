@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.DTO.AtualizarSenhaDTO;
+import br.com.edu.fatec.IPEMControl.DTO.UpdatePasswordDTO;
 import br.com.edu.fatec.IPEMControl.DTO.LoginDTO;
 import br.com.edu.fatec.IPEMControl.DTO.LoginRespostaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.UserDTO;
@@ -79,7 +79,7 @@ public class UsuarioController {
 
     // POST /usuarios/atualizar-password
     @PostMapping("/atualizar-senha")
-    public ResponseEntity<String> atualizarSenha(@RequestBody AtualizarSenhaDTO dto) {
+    public ResponseEntity<String> atualizarSenha(@RequestBody UpdatePasswordDTO dto) {
         boolean atualizado = service.atualizarSenha(dto);
         if (atualizado) return ResponseEntity.ok("{\"message\":\"Senha atualizada com sucesso!\"}");
         return ResponseEntity.status(400).body("{\"message\":\"E-mail ou password atual incorretos.\"}");

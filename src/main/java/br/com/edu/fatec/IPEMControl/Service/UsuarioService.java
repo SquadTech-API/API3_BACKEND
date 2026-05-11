@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.AtualizarSenhaDTO;
+import br.com.edu.fatec.IPEMControl.DTO.UpdatePasswordDTO;
 import br.com.edu.fatec.IPEMControl.DTO.LoginRespostaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.UserDTO;
 import br.com.edu.fatec.IPEMControl.Entities.User;
@@ -117,7 +117,7 @@ public class UsuarioService {
     }
 
     // ── POST /usuarios/atualizar-password ────────────────────────────────────────
-    public boolean atualizarSenha(AtualizarSenhaDTO dto) {
+    public boolean atualizarSenha(UpdatePasswordDTO dto) {
         Optional<User> optional = repository.findByEmail(dto.getEmail());
         if (optional.isEmpty()) return false;
 
