@@ -29,7 +29,7 @@ public class FuelReportDTO {
     private List<VehicleConsumptionDTO> vehicles;
 
     // Histórico de trocas de óleo
-    private List<ItemTrocaOleoDTO> oilChanges;
+    private List<OilChangeItemDTO> oilChanges;
 
     // Rankings
     private List<UserRankingDTO> userRankings;

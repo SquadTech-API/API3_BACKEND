@@ -153,7 +153,7 @@ public class AbastecimentoService {
                 .map(this::paraItemDTO).collect(Collectors.toList());
 
         // CORRIGIDO: usa getVehicle() direto da entidade OilChange
-        List<ItemTrocaOleoDTO> itensTrocaOleo = trocasOleo.stream()
+        List<OilChangeItemDTO> itensTrocaOleo = trocasOleo.stream()
                 .map(this::paraItemTrocaOleoDTO).collect(Collectors.toList());
 
         List<UserRankingDTO>         rankingUsuarios  = construirRankingUsuarios(abastecimentoRepository.buscarRankingUsuarios(dataInicio));
@@ -191,7 +191,7 @@ public class AbastecimentoService {
         }
 
         List<FuelingItemDTO> itensAbastecimento = List.of();
-        List<ItemTrocaOleoDTO>     itensTrocaOleo     = List.of();
+        List<OilChangeItemDTO>     itensTrocaOleo     = List.of();
 
         if ("ambos".equals(tipoRegistro) || "abast".equals(tipoRegistro)) {
             itensAbastecimento = fuelings.stream().map(this::paraItemDTO).collect(Collectors.toList());
@@ -242,7 +242,7 @@ public class AbastecimentoService {
      * CORRIGIDO: ItemTrocaOleoDTO espera LocalDateTime — usa createdAt (timestamp do registro)
      * como aproximação aceitável enquanto oilChangeDate (LocalDate) não é adicionado ao DTO.
      */
-    private ItemTrocaOleoDTO paraItemTrocaOleoDTO(OilChange t) {
+    private OilChangeItemDTO  paraItemTrocaOleoDTO(OilChange t) {
         // Usa o vínculo direto com Vehicle adicionado na entidade corrigida
         Vehicle vehicle = t.getVehicle();
 
@@ -251,7 +251,7 @@ public class AbastecimentoService {
             vehicle = t.getDepartureLog().getVehicle();
         }
 
-        return new ItemTrocaOleoDTO(
+        return new OilChangeItemDTO(
                 t.getCreatedAt(),                                        // LocalDateTime — timestamp
                 vehicle != null ? vehicle.getLicensePlate()     : null,
                 t.getChangeKm(),

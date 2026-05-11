@@ -8,6 +8,6 @@ import java.util.List;
 @AllArgsConstructor
 public class BuscaAbastecimentoDTO {
     private List<FuelingItemDTO> abastecimentos;
-    private List<ItemTrocaOleoDTO> trocasOleo;
+    private List<OilChangeItemDTO> trocasOleo;
     private List<VehicleConsumptionDTO> veiculos;
 }
