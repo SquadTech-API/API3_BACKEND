@@ -14,5 +14,5 @@ public class DailyReportDTO {
     private LocalDate reportDate;
     private int totalActivities;
     private BigDecimal totalDailyMileage;
-    private List<AtividadeDiariaDTO> activities;
+    private List<DailyActivityDTO > activities;
 }
