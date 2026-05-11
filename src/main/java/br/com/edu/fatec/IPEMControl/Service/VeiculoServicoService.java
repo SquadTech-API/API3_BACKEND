@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * NOVO: Service para gerenciar o vínculo entre veículos e tipos de serviço.
- * Antes não existia — o endpoint /veiculo-servico/sincronizar retornava 404.
+ * Antes não existia — o endpoint /vehicle-servico/sincronizar retornava 404.
  */
 @Service
 public class VeiculoServicoService {
@@ -31,7 +31,7 @@ public class VeiculoServicoService {
 
     /**
      * Sincroniza (substitui) os serviços habilitados para um veículo.
-     * POST /veiculo-servico/sincronizar/{idVeiculo}
+     * POST /vehicle-servico/sincronizar/{vehicleId}
      * Body: lista de IDs de tipo_servico habilitados
      */
     @Transactional
@@ -58,7 +58,7 @@ public class VeiculoServicoService {
 
     /**
      * Retorna os tipos de serviço ativos habilitados para um veículo.
-     * GET /tipo-servicos/veiculo/{idVeiculo}/ativos
+     * GET /type-services/vehicle/{vehicleId}/ativos
      */
     public List<ServiceType> listarServicosAtivosDoVeiculo(Integer idVeiculo) {
         return veiculoServicoRepository

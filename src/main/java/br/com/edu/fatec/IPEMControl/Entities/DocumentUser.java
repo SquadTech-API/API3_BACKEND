@@ -28,7 +28,7 @@ public class DocumentUser {
     private Boolean isRead = false;
 
     @ManyToOne
-    @JoinColumn(name = "matricula")
+    @JoinColumn(name = "registration")
     private User user;
 
     @ManyToOne

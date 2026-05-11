@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.RelatorioVeiculoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.VehicleReportDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.Fueling;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
@@ -30,9 +30,9 @@ public class RelatorioVeiculoService {
 
     /**
      * CORRIGIDO: antes retornava dados hardcoded (Fiat Uno, ABC-1234...).
-     * Agora busca dados reais do banco a partir do idVeiculo.
+     * Agora busca dados reais do banco a partir do vehicleId.
      */
-    public RelatorioVeiculoDTO gerarRelatorioVeiculo(Integer idVeiculo) {
+    public VehicleReportDTO gerarRelatorioVeiculo(Integer idVeiculo) {
 
         Vehicle vehicle = veiculoRepository.findById(idVeiculo)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado: " + idVeiculo));
@@ -47,7 +47,7 @@ public class RelatorioVeiculoService {
 
         int totalSaidas = saidasConcluidas.size();
 
-        // KM total rodado somando kmRodados de todas as saídas concluídas
+        // KM total rodado somando mileageDriven de todas as saídas concluídas
         BigDecimal kmRodado = saidasConcluidas.stream()
                 .filter(s -> s.getDrivenKm() != null)
                 .map(DepartureLog::getDrivenKm)
@@ -62,22 +62,22 @@ public class RelatorioVeiculoService {
                 .map(Fueling::getLitersAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // Consumo médio km/L
+        // Consumo médio mileage/L
         double consumoMedio = 0.0;
         if (totalLitros.compareTo(BigDecimal.ZERO) > 0) {
             consumoMedio = kmRodado.divide(totalLitros, 2, RoundingMode.HALF_UP).doubleValue();
         }
 
-        RelatorioVeiculoDTO dto = new RelatorioVeiculoDTO();
-        dto.setPrefixo(vehicle.getPrefix());
-        dto.setPlaca(vehicle.getLicensePlate());
-        dto.setMarca(vehicle.getBrand());
-        dto.setModelo(vehicle.getModel());
-        dto.setAno(vehicle.getYear());
-        dto.setCombustivel(vehicle.getFuelType());
-        dto.setKmRodado(kmRodado.doubleValue());
-        dto.setConsumoMedio(consumoMedio);
-        dto.setTotalSaidas(totalSaidas);
+        VehicleReportDTO dto = new VehicleReportDTO();
+        dto.setPrefix(vehicle.getPrefix());
+        dto.setLicensePlate(vehicle.getLicensePlate());
+        dto.setBrand(vehicle.getBrand());
+        dto.setModel(vehicle.getModel());
+        dto.setYear(vehicle.getYear());
+        dto.setFuelType(vehicle.getFuelType());
+        dto.setMileageDriven(kmRodado.doubleValue());
+        dto.setAvgConsumption(consumoMedio);
+        dto.setTotalDepartures(totalSaidas);
 
         return dto;
     }

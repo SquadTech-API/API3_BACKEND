@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  * Correções aplicadas:
  * - Cases adicionados para "excel" → .xlsx e "docx" → .docx
  * - Extensão do arquivo corrigida para cada formato
- * - Content-Disposition nome de arquivo correto
+ * - Content-Disposition name de arquivo correto
  */
 @RestController
 @RequestMapping("/relatorios")

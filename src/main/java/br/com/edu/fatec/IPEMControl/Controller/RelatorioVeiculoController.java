@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.DTO.RelatorioVeiculoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.VehicleReportDTO;
 import br.com.edu.fatec.IPEMControl.Service.RelatorioVeiculoExportService;
 import br.com.edu.fatec.IPEMControl.Service.RelatorioVeiculoService;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class RelatorioVeiculoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RelatorioVeiculoDTO> gerar(@PathVariable Integer id) {
+    public ResponseEntity<VehicleReportDTO> gerar(@PathVariable Integer id) {
         return ResponseEntity.ok(service.gerarRelatorioVeiculo(id));
     }
 

@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.DTO.RelatorioDiarioDTO;
+import br.com.edu.fatec.IPEMControl.DTO.DailyReportDTO;
 import br.com.edu.fatec.IPEMControl.Service.RelatorioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,7 +26,7 @@ public class RelatorioController {
             Model model) { // Adicionado o Model aqui
 
         // 1. Busca os dados no serviço
-        RelatorioDiarioDTO relatorio = relatorioService.gerarRelatorioDiarioPorTecnico(matricula, data);
+        DailyReportDTO relatorio = relatorioService.gerarRelatorioDiarioPorTecnico(matricula, data);
 
         // 2. Coloca os dados dentro do "pacote" que o HTML vai abrir
         model.addAttribute("relatorio", relatorio);

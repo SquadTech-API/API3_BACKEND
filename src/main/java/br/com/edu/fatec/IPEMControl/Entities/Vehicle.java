@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "veiculo")
+@Table(name = "vehicle")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,22 +19,22 @@ public class Vehicle {
     @Column(name = "id_veiculo")
     private Integer vehicleId;
 
-    @Column(name = "prefixo", nullable = false, length = 20)
+    @Column(name = "prefix", nullable = false, length = 20)
     private String prefix;
 
     @Column(name = "nucleo_dar", nullable = false, length = 100)
     private String nucleoDar;
 
-    @Column(name = "placa", nullable = false, unique = true, length = 10)
+    @Column(name = "licensePlate", nullable = false, unique = true, length = 10)
     private String licensePlate;
 
-    @Column(name = "modelo", nullable = false, length = 100)
+    @Column(name = "model", nullable = false, length = 100)
     private String model;
 
-    @Column(name = "marca", nullable = false, length = 100)
+    @Column(name = "brand", nullable = false, length = 100)
     private String brand;
 
-    @Column(name = "ano", nullable = false)
+    @Column(name = "year", nullable = false)
     private Integer year;
 
     @Column(name = "tipo_combustivel", nullable = false, length = 50)
@@ -49,7 +49,7 @@ public class Vehicle {
     @Column(name = "disponivel", nullable = false)
     private Boolean available = true;
 
-    @Column(name = "ativo", nullable = false)
+    @Column(name = "active", nullable = false)
     private Boolean active = true;
 
     @Column(name = "numero_fl", length = 30)

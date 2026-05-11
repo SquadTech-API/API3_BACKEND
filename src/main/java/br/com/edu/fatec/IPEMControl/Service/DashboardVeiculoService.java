@@ -41,7 +41,7 @@ public class DashboardVeiculoService {
 
         Integer idVeiculoPadrao = topSemana.get(0).getId();
 
-        VeiculoDashboardDTO veiculoPadrao = montarVeiculo(idVeiculoPadrao);
+        VehicleDashboardDTO veiculoPadrao = montarVeiculo(idVeiculoPadrao);
 
         return new DashboardVeiculoDTO(
                 Map.of("semana", topSemana),
@@ -49,7 +49,7 @@ public class DashboardVeiculoService {
         );
     }
 
-    private VeiculoDashboardDTO montarVeiculo(Integer idVeiculo) {
+    private VehicleDashboardDTO montarVeiculo(Integer idVeiculo) {
 
         Vehicle v = veiculoRepository.findById(idVeiculo).orElseThrow();
 
@@ -63,12 +63,12 @@ public class DashboardVeiculoService {
         DadosVeiculoDashboardDTO dados =
                 new DadosVeiculoDashboardDTO(gasto, litros, km, saidas, consumo);
 
-        return new VeiculoDashboardDTO(
+        return new VehicleDashboardDTO(
                 v.getVehicleId(),
                 v.getModel(),
                 v.getPrefix(),
                 Map.of("semana", dados),
-                new ManutencaoVeiculoDTO(
+                new VehicleMaintenanceDTO(
                         v.getCurrentKm() != null ? v.getCurrentKm().doubleValue() : 0.0,
                         100000.0
                 )

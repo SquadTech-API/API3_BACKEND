@@ -29,7 +29,7 @@ public class ServiceOrder {
     @Column(name = "status", length = 50)
     private String status;
 
-    @Column(name = "observacoes", columnDefinition = "TEXT")
+    @Column(name = "observations", columnDefinition = "TEXT")
     private String observation;
 
     @Column(name = "data_abertura", nullable = false)

@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.OrdemServicoDTO;
-import br.com.edu.fatec.IPEMControl.DTO.OrdemServicoRespostaDTO;
+import br.com.edu.fatec.IPEMControl.DTO.ServiceOrderDTO;
+import br.com.edu.fatec.IPEMControl.DTO.ServiceOrderResponseDTO;
 import br.com.edu.fatec.IPEMControl.Entities.ServiceOrder;
 import br.com.edu.fatec.IPEMControl.Entities.ServiceType;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
@@ -28,34 +28,34 @@ public class OrdemServicoService {
     @Autowired
     private TipoServicoRepository tipoServicoRepository;
 
-    public OrdemServicoRespostaDTO criar(OrdemServicoDTO dto) {
-        if (dto.getIdVeiculo() == null) throw new RegraDeNegocioException("Informe o veículo.");
-        if (dto.getIdTipoServico() == null) throw new RegraDeNegocioException("Informe o tipo de serviço.");
+    public ServiceOrderResponseDTO criar(ServiceOrderDTO dto) {
+        if (dto.getVehicleId() == null) throw new RegraDeNegocioException("Informe o veículo.");
+        if (dto.getServiceTypeId() == null) throw new RegraDeNegocioException("Informe o type de serviço.");
 
-        Vehicle vehicle = veiculoRepository.findById(dto.getIdVeiculo())
+        Vehicle vehicle = veiculoRepository.findById(dto.getVehicleId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
 
-        ServiceType serviceType = tipoServicoRepository.findById(dto.getIdTipoServico())
+        ServiceType serviceType = tipoServicoRepository.findById(dto.getServiceTypeId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
 
         ServiceOrder ordem = new ServiceOrder();
         ordem.setVehicle(vehicle);
         ordem.setServiceType(serviceType);
-        ordem.setObservation(dto.getObservacoes());
+        ordem.setObservation(dto.getObservations());
 
         ordem = ordemServicoRepository.save(ordem);
 
         return mapearParaDTO(ordem);
     }
 
-    public List<OrdemServicoRespostaDTO> listarTodas() {
+    public List<ServiceOrderResponseDTO> listarTodas() {
         return ordemServicoRepository.findAll().stream()
                 .map(this::mapearParaDTO)
                 .collect(Collectors.toList());
     }
 
-    private OrdemServicoRespostaDTO mapearParaDTO(ServiceOrder ordem) {
-        return new OrdemServicoRespostaDTO(
+    private ServiceOrderResponseDTO mapearParaDTO(ServiceOrder ordem) {
+        return new ServiceOrderResponseDTO(
                 ordem.getServiceOrderId(),
                 ordem.getVehicle().getLicensePlate(),
                 ordem.getVehicle().getModel(),

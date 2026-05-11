@@ -27,16 +27,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(400).body(Map.of("message", ex.getMessage()));
     }
 
-    // 409 — Violação de integridade (ex: CPF duplicado, placa duplicada)
+    // 409 — Violação de integridade (ex: CPF duplicado, licensePlate duplicada)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, String>> handleIntegridade(DataIntegrityViolationException ex) {
         String msg = "Dados duplicados ou violação de integridade.";
         String cause = ex.getRootCause() != null ? ex.getRootCause().getMessage() : "";
         if (cause.contains("cpf"))           msg = "CPF já cadastrado no sistema.";
         else if (cause.contains("email"))    msg = "E-mail já cadastrado no sistema.";
-        else if (cause.contains("placa"))    msg = "Placa já cadastrada no sistema.";
+        else if (cause.contains("licensePlate"))    msg = "Placa já cadastrada no sistema.";
         else if (cause.contains("numero_habilitacao")) msg = "Número de habilitação já cadastrado.";
-        else if (cause.contains("nome_servico"))       msg = "Já existe um tipo de serviço com esse nome.";
+        else if (cause.contains("nome_servico"))       msg = "Já existe um type de serviço com esse name.";
         return ResponseEntity.status(409).body(Map.of("message", msg));
     }
 

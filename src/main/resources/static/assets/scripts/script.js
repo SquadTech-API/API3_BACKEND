@@ -76,7 +76,7 @@ form.addEventListener("submit", function(event) {
     }
 
     if (combustivel === "") {
-        alert("Selecione o tipo de combustível!");
+        alert("Selecione o type de combustível!");
         return;
     }
     console.log("Validação OK");

@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.BuscaAbastecimentoDTO;
-import br.com.edu.fatec.IPEMControl.DTO.RelatorioAbastecimentoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.FuelReportDTO;
 import br.com.edu.fatec.IPEMControl.Service.AbastecimentoExportService;
 import br.com.edu.fatec.IPEMControl.Service.AbastecimentoService;
 import org.springframework.http.HttpHeaders;
@@ -23,9 +23,9 @@ public class RelatorioAbastecimentoController {
         this.abastecimentoExportService = abastecimentoExportService;
     }
 
-    // Retorna resumo geral do período informado
+    // Retorna summary geral do período informado
     @GetMapping("/geral")
-    public ResponseEntity<RelatorioAbastecimentoDTO> geral(@RequestParam String periodo) {
+    public ResponseEntity<FuelReportDTO> geral(@RequestParam String periodo) {
         return ResponseEntity.ok(abastecimentoService.gerarRelatorio(periodo));
     }
 
@@ -48,7 +48,7 @@ public class RelatorioAbastecimentoController {
             @RequestParam String formato,
             @RequestParam String periodo) {
 
-        RelatorioAbastecimentoDTO relatorio = abastecimentoService.gerarRelatorio(periodo);
+        FuelReportDTO relatorio = abastecimentoService.gerarRelatorio(periodo);
         byte[] arquivo = abastecimentoExportService.exportar(relatorio, formato);
 
         String nomeArquivo = "relatorio-abastecimento." + formato;

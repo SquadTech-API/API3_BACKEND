@@ -15,7 +15,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "matricula")
+    @Column(name = "registration")
     private Integer registration;
 
     @Column(name = "cpf", nullable = false, unique = true, length = 11)
@@ -24,7 +24,7 @@ public class User {
     @Column(name = "numero_habilitacao", unique = true, length = 20)
     private String driverLicenseNumber;
 
-    @Column(name = "nome", nullable = false, length = 120)
+    @Column(name = "name", nullable = false, length = 120)
     private String name;
 
     @Column(name = "data_nascimento", nullable = false)
@@ -34,14 +34,14 @@ public class User {
     private String email;
 
     @JsonIgnore
-    @Column(name = "senha", nullable = false, length = 255)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_usuario", nullable = false, length = 10)
     private UserType userType = UserType.technician;
 
-    @Column(name = "cargo", length = 80)
+    @Column(name = "role", length = 80)
     private String position;
 
     @Column(name = "colaborador_ativo", nullable = false)

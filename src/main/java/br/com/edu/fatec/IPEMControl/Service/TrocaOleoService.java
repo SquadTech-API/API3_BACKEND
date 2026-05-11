@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.TrocaOleoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.OilChangeDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.OilChange;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
@@ -32,41 +32,41 @@ public class TrocaOleoService {
     private RegistroSaidaRepository registroSaidaRepository;
 
     // ── POST /troca-oleo ──────────────────────────────────────────────────────
-    public OilChange salvar(TrocaOleoDTO dto) {
+    public OilChange salvar(OilChangeDTO dto) {
 
-        if (dto.getIdVeiculo() == null)
+        if (dto.getVehicleId() == null)
             throw new RegraDeNegocioException("Informe o veículo.");
-        if (dto.getKmTroca() == null)
+        if (dto.getOilChangeMileage() == null)
             throw new RegraDeNegocioException("Informe o KM da troca.");
-        if (dto.getDataTroca() == null)
+        if (dto.getOilChangeDate() == null)
             throw new RegraDeNegocioException("Informe a data da troca.");
 
-        Vehicle vehicle = veiculoRepository.findById(dto.getIdVeiculo())
+        Vehicle vehicle = veiculoRepository.findById(dto.getVehicleId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
 
         OilChange troca = new OilChange();
         troca.setVehicle(vehicle);
-        troca.setChangeKm(dto.getKmTroca());
-        troca.setChangeDate(dto.getDataTroca());
-        troca.setObservation(dto.getObservacoes());
+        troca.setChangeKm(dto.getOilChangeMileage());
+        troca.setChangeDate(dto.getOilChangeDate());
+        troca.setObservation(dto.getObservations());
 
         // Intervalo: usa o informado ou o padrão do veículo
-        BigDecimal intervalo = dto.getIntervaloKm() != null
-                ? dto.getIntervaloKm()
+        BigDecimal intervalo = dto.getIntervalKm() != null
+                ? dto.getIntervalKm()
                 : (vehicle.getOilChangeIntervalKm() != null
                 ? vehicle.getOilChangeIntervalKm()
                 : new BigDecimal("5000"));
         troca.setIntervalKm(intervalo);
 
         // Próxima troca: usa o informado ou calcula
-        BigDecimal proxima = dto.getKmProximaTroca() != null
-                ? dto.getKmProximaTroca()
-                : dto.getKmTroca().add(intervalo);
+        BigDecimal proxima = dto.getNextOilChangeMileage() != null
+                ? dto.getNextOilChangeMileage()
+                : dto.getOilChangeMileage().add(intervalo);
         troca.setNextChangeKm(proxima);
 
         // Vínculo com saída (opcional)
-        if (dto.getIdSaida() != null) {
-            DepartureLog saida = registroSaidaRepository.findById(dto.getIdSaida())
+        if (dto.getDepartureId() != null) {
+            DepartureLog saida = registroSaidaRepository.findById(dto.getDepartureId())
                     .orElseThrow(() -> new RecursoNaoEncontradoException("Saída não encontrada."));
             troca.setDepartureLog(saida);
         }
@@ -93,15 +93,15 @@ public class TrocaOleoService {
     }
 
     // ── PUT /troca-oleo/{id} ──────────────────────────────────────────────────
-    public OilChange atualizar(Integer id, TrocaOleoDTO dto) {
+    public OilChange atualizar(Integer id, OilChangeDTO dto) {
         OilChange troca = trocaOleoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Troca de óleo não encontrada."));
 
-        if (dto.getKmTroca() != null)        troca.setChangeKm(dto.getKmTroca());
-        if (dto.getIntervaloKm() != null)    troca.setIntervalKm(dto.getIntervaloKm());
-        if (dto.getKmProximaTroca() != null) troca.setNextChangeKm(dto.getKmProximaTroca());
-        if (dto.getDataTroca() != null)      troca.setChangeDate(dto.getDataTroca());
-        if (dto.getObservacoes() != null)    troca.setObservation(dto.getObservacoes());
+        if (dto.getOilChangeMileage() != null)        troca.setChangeKm(dto.getOilChangeMileage());
+        if (dto.getIntervalKm() != null)    troca.setIntervalKm(dto.getIntervalKm());
+        if (dto.getNextOilChangeMileage() != null) troca.setNextChangeKm(dto.getNextOilChangeMileage());
+        if (dto.getOilChangeDate() != null)      troca.setChangeDate(dto.getOilChangeDate());
+        if (dto.getObservations() != null)    troca.setObservation(dto.getObservations());
 
         return trocaOleoRepository.save(troca);
     }

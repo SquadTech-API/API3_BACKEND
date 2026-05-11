@@ -12,7 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
  *
  * Se o projeto tem spring-boot-starter-security no pom.xml,
  * ele ativa autenticação HTTP Basic em TODOS os endpoints por padrão.
- * Isso faz o browser receber 401 em /veiculos, /usuarios/login, etc.
+ * Isso faz o browser receber 401 em /vehicles, /usuarios/login, etc.
  * — mesmo com @CrossOrigin configurado.
  *
  * Esta classe desabilita completamente a segurança HTTP padrão,

@@ -1,9 +1,9 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.DestinoFrequenteDTO;
-import br.com.edu.fatec.IPEMControl.DTO.RelatorioGeralDTO;
-import br.com.edu.fatec.IPEMControl.DTO.RelatorioTecnicoDTO;
-import br.com.edu.fatec.IPEMControl.DTO.TecnicoResumoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.GeneralReportDTO;
+import br.com.edu.fatec.IPEMControl.DTO.TechnicianReportDTO;
+import br.com.edu.fatec.IPEMControl.DTO.TechnicianSummaryDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.User;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
@@ -39,7 +39,7 @@ public class RelatorioTecnicoService {
             case "hoje" -> LocalDate.now().atStartOfDay();
             case "7"    -> LocalDateTime.now().minusDays(7);
             case "30"   -> LocalDateTime.now().minusDays(30);
-            case "ano"  -> LocalDateTime.now().minusYears(1);
+            case "year"  -> LocalDateTime.now().minusYears(1);
             default     -> LocalDate.now().atStartOfDay();
         };
     }
@@ -49,7 +49,7 @@ public class RelatorioTecnicoService {
             case "hoje" -> 1.0 / 7;
             case "7"    -> 1.0;
             case "30"   -> 4.0;
-            case "ano"  -> 52.0;
+            case "year"  -> 52.0;
             default     -> 1.0;
         };
     }
@@ -59,10 +59,10 @@ public class RelatorioTecnicoService {
     }
 
     // ════════════════════════════════════════════════════════════════════════
-    //  GET /relatorios/tecnicos/geral
+    //  GET /relatorios/technicians/geral
     // ════════════════════════════════════════════════════════════════════════
 
-    public RelatorioGeralDTO gerarVisaoGeral(String periodo) {
+    public GeneralReportDTO gerarVisaoGeral(String periodo) {
         LocalDateTime inicio = dataInicio(periodo);
 
         List<Object[]> saidasKm = saidaRepo.buscarSaidasKmPorTecnico(inicio);
@@ -76,7 +76,7 @@ public class RelatorioTecnicoService {
             gastoMap.put(mat, val);
         }
 
-        List<TecnicoResumoDTO>  tecnicos         = new ArrayList<>();
+        List<TechnicianSummaryDTO>  tecnicos         = new ArrayList<>();
         List<Long>              saidasPorTecnico = new ArrayList<>();
         List<BigDecimal>        kmPorTecnico     = new ArrayList<>();
         List<BigDecimal>        gastoPorTecnico  = new ArrayList<>();
@@ -93,7 +93,7 @@ public class RelatorioTecnicoService {
                     : BigDecimal.valueOf(((Number) row[3]).doubleValue());
             BigDecimal gasto = gastoMap.getOrDefault(mat, BigDecimal.ZERO);
 
-            tecnicos.add(new TecnicoResumoDTO(mat, nome, saidas, km));
+            tecnicos.add(new TechnicianSummaryDTO(mat, nome, saidas, km));
             saidasPorTecnico.add(saidas);
             kmPorTecnico.add(km);
             gastoPorTecnico.add(gasto);
@@ -114,61 +114,61 @@ public class RelatorioTecnicoService {
         while (kmPorSemana.size() < 4) kmPorSemana.add(BigDecimal.ZERO);
         Collections.reverse(kmPorSemana);
 
-        RelatorioGeralDTO.ResumoGeral resumo = new RelatorioGeralDTO.ResumoGeral();
-        resumo.setTotalSaidas(totalSaidas);
-        resumo.setTecnicosAtivos(saidaRepo.countTecnicosAtivos());
-        resumo.setKmTotal(kmTotal);
-        resumo.setCustoTotal(custoTotal);
-        resumo.setSaidasPorTecnico(saidasPorTecnico);
-        resumo.setKmPorTecnico(kmPorTecnico);
-        resumo.setGastoPorTecnico(gastoPorTecnico);
-        resumo.setKmPorSemana(kmPorSemana);
+        GeneralReportDTO.GeneralSummary resumo = new GeneralReportDTO.GeneralSummary();
+        resumo.setTotalDepartures(totalSaidas);
+        resumo.setActiveTechnicians(saidaRepo.countTecnicosAtivos());
+        resumo.setTotalKm(kmTotal);
+        resumo.setTotalCost(custoTotal);
+        resumo.setDeparturesPerTechnician(saidasPorTecnico);
+        resumo.setKmPerTechnician(kmPorTecnico);
+        resumo.setSpendingPerTechnician(gastoPorTecnico);
+        resumo.setKmPerWeek(kmPorSemana);
 
-        RelatorioGeralDTO dto = new RelatorioGeralDTO();
-        dto.setResumo(resumo);
-        dto.setTecnicos(tecnicos);
+        GeneralReportDTO dto = new GeneralReportDTO();
+        dto.setSummary(resumo);
+        dto.setTechnicians(tecnicos);
         return dto;
     }
 
     // ════════════════════════════════════════════════════════════════════════
-    //  GET /relatorios/tecnicos/{matricula}
+    //  GET /relatorios/technicians/{registration}
     // ════════════════════════════════════════════════════════════════════════
 
-    public RelatorioTecnicoDTO gerarRelatorioIndividual(Integer matricula, String periodo) {
+    public TechnicianReportDTO gerarRelatorioIndividual(Integer matricula, String periodo) {
 
         User user = usuarioRepo.findByMatricula(matricula)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Técnico não encontrado."));
 
         LocalDateTime inicio = dataInicio(periodo);
-        RelatorioTecnicoDTO dto = new RelatorioTecnicoDTO();
+        TechnicianReportDTO dto = new TechnicianReportDTO();
 
         // Seção 1 — Identificação
-        dto.setMatricula(user.getRegistration());
-        dto.setNome(user.getName());
-        dto.setCargo(user.getPosition());
-        dto.setTipo(user.getUserType() != null ? user.getUserType().name() : null);
-        dto.setCnh(user.getDriverLicenseType() != null ? user.getDriverLicenseType().name() : null);
-        dto.setNumHabilitacao(user.getDriverLicenseNumber());
+        dto.setRegistration(user.getRegistration());
+        dto.setName(user.getName());
+        dto.setRole(user.getPosition());
+        dto.setType(user.getUserType() != null ? user.getUserType().name() : null);
+        dto.setDriversLicense(user.getDriverLicenseType() != null ? user.getDriverLicenseType().name() : null);
+        dto.setLicenseNumber(user.getDriverLicenseNumber());
         dto.setCpf(user.getCpf());
         dto.setEmail(user.getEmail());
-        dto.setTelefone(null);
-        dto.setDataNascimento(user.getBirthDate() != null
+        dto.setPhone(null);
+        dto.setBirthDate(user.getBirthDate() != null
                 ? user.getBirthDate().format(FMT_DATE) : null);
 
         // Seção 2 — Status operacional
-        dto.setAtivo(user.getActiveColaborator());
-        dto.setDataCadastro(user.getCreatedAt() != null
+        dto.setActive(user.getActiveColaborator());
+        dto.setRegistrationDate(user.getCreatedAt() != null
                 ? user.getCreatedAt().format(FMT_DATETIME) : null);
-        dto.setUltimaAtualizacao(user.getUpdatedAt() != null
+        dto.setLastUpdate(user.getUpdatedAt() != null
                 ? user.getUpdatedAt().format(FMT_DATETIME) : null);
 
         Optional<DepartureLog> saidaAberta = saidaRepo
                 .findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(matricula, "em_andamento");
-        dto.setSaidaEmAberto(saidaAberta.isPresent());
-        dto.setIdSaidaAberta(saidaAberta.map(DepartureLog::getDepartureLogId).orElse(null));
+        dto.setOpenDeparture(saidaAberta.isPresent());
+        dto.setOpenDepartureId(saidaAberta.map(DepartureLog::getDepartureLogId).orElse(null));
 
         // Seção 3 — Uso por período
-        List<String> periodos = List.of("hoje", "7", "30", "ano");
+        List<String> periodos = List.of("hoje", "7", "30", "year");
         Map<String, Long>       saidasMap = new LinkedHashMap<>();
         Map<String, BigDecimal> kmMap     = new LinkedHashMap<>();
         for (String p : periodos) {
@@ -176,23 +176,23 @@ public class RelatorioTecnicoService {
             saidasMap.put(p, saidaRepo.countPorMatriculaEPeriodo(matricula, ini));
             kmMap.put(p,     safe(saidaRepo.sumKmPorMatriculaEPeriodo(matricula, ini)));
         }
-        dto.setSaidasPorPeriodo(saidasMap);
-        dto.setKmPorPeriodo(kmMap);
+        dto.setDeparturesByPeriod(saidasMap);
+        dto.setKmByPeriod(kmMap);
 
         saidaRepo.findTopByUsuarioMatriculaOrderByDataHoraSaidaDesc(matricula).ifPresent(s -> {
-            dto.setUltimaSaidaData(s.getDateTimeDeparture() != null
+            dto.setLastDepartureDate(s.getDateTimeDeparture() != null
                     ? s.getDateTimeDeparture().format(FMT_DATETIME) : null);
-            dto.setUltimaSaidaVeiculo(s.getVehicle() != null
+            dto.setLastDepartureVehicle(s.getVehicle() != null
                     ? s.getVehicle().getPrefix() + " — " + s.getVehicle().getLicensePlate() : null);
-            dto.setUltimaSaidaDestino(s.getDestination());
+            dto.setLastDepartureDestination(s.getDestination());
         });
 
         // Seção 4 — Comportamento operacional
-        dto.setTempoMedioSaidaHoras(saidaRepo.calcularTempoMedioHoras(matricula, inicio));
-        dto.setMaiorSaidaKm(safe(saidaRepo.buscarMaiorKm(matricula, inicio)));
-        dto.setMaiorSaidaDuracaoHoras(saidaRepo.buscarMaiorDuracaoHoras(matricula, inicio));
+        dto.setAvgDepartureDurationHours(saidaRepo.calcularTempoMedioHoras(matricula, inicio));
+        dto.setLongestDepartureKm(safe(saidaRepo.buscarMaiorKm(matricula, inicio)));
+        dto.setLongestDepartureDurationHours(saidaRepo.buscarMaiorDuracaoHoras(matricula, inicio));
         long saidasNoPeriodo = saidasMap.getOrDefault(periodo, 0L);
-        dto.setFrequenciaSaidasPorSemana(saidasNoPeriodo / numeroSemanas(periodo));
+        dto.setDepartureFrequencyPerWeek(saidasNoPeriodo / numeroSemanas(periodo));
 
         // Seção 5 — Financeiro por período
         Map<String, BigDecimal> gastoMap  = new LinkedHashMap<>();
@@ -202,29 +202,29 @@ public class RelatorioTecnicoService {
             gastoMap.put(p, safe(abastRepo.sumGastoPorMatriculaEPeriodo(matricula, ini)));
             abastMap.put(p, abastRepo.countAbastPorMatriculaEPeriodo(matricula, ini));
         }
-        dto.setGastoPorPeriodo(gastoMap);
-        dto.setAbastPorPeriodo(abastMap);
+        dto.setSpendingByPeriod(gastoMap);
+        dto.setRefuelsByPeriod(abastMap);
 
         // Seção 6 — Manutenção
-        dto.setTrocasOleo(trocaOleoRepo.countByRegistroSaidaUsuarioMatricula(matricula));
+        dto.setOilChanges(trocaOleoRepo.countByRegistroSaidaUsuarioMatricula(matricula));
         trocaOleoRepo.findTopByRegistroSaidaUsuarioMatriculaOrderByCreatedAtDesc(matricula)
-                .ifPresent(t -> dto.setUltimaTrocaOleo(
+                .ifPresent(t -> dto.setLastOilChange(
                         t.getCreatedAt() != null ? t.getCreatedAt().format(FMT_DATETIME) : null));
-        dto.setVeiculosUtilizados(saidaRepo.buscarVeiculosUtilizados(matricula));
+        dto.setUsedVehicles(saidaRepo.buscarVeiculosUtilizados(matricula));
 
         // Seção 7 — Documentos
-        RelatorioTecnicoDTO.DocumentosDTO documentos = new RelatorioTecnicoDTO.DocumentosDTO();
-        documentos.setRecebidos(docRepo.countByUsuarioMatricula(matricula));
-        documentos.setLidos(docRepo.countByUsuarioMatriculaAndLidoTrue(matricula));
-        documentos.setBaixados(docRepo.countByUsuarioMatriculaAndBaixadoTrue(matricula));
-        dto.setDocumentos(documentos);
+        TechnicianReportDTO.DocumentosDTO documentos = new TechnicianReportDTO.DocumentosDTO();
+        documentos.setReceived(docRepo.countByUsuarioMatricula(matricula));
+        documentos.setRead(docRepo.countByUsuarioMatriculaAndLidoTrue(matricula));
+        documentos.setDownloaded(docRepo.countByUsuarioMatriculaAndBaixadoTrue(matricula));
+        dto.setDocuments(documentos);
 
         // Destinos (top 5)
         List<DestinoFrequenteDTO> destinos = new ArrayList<>();
         for (Object[] row : saidaRepo.buscarDestinosMaisFrequentes(matricula)) {
             destinos.add(new DestinoFrequenteDTO((String) row[0], ((Number) row[1]).longValue()));
         }
-        dto.setDestinos(destinos);
+        dto.setDestinations(destinos);
 
         // Serviços
         Map<String, Long> servicos = new LinkedHashMap<>();
@@ -232,7 +232,7 @@ public class RelatorioTecnicoService {
             servicos.put(row[0] != null ? (String) row[0] : "Outros",
                     ((Number) row[1]).longValue());
         }
-        dto.setServicos(servicos);
+        dto.setServices(servicos);
 
         return dto;
     }

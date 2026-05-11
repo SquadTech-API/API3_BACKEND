@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.DTO.UsoAtivoDTO;
-import br.com.edu.fatec.IPEMControl.DTO.UsoVeiculoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.ActiveUsageDTO;
+import br.com.edu.fatec.IPEMControl.DTO.VehicleUsageDTO;
 import br.com.edu.fatec.IPEMControl.Service.UsoVeiculoService;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,12 +18,12 @@ public class UsoVeiculoController {
     }
 
     @PostMapping
-    public UsoVeiculoDTO registrar(@RequestBody UsoVeiculoDTO dto) {
+    public VehicleUsageDTO registrar(@RequestBody VehicleUsageDTO dto) {
         return service.registrar(dto);
     }
 
     @GetMapping("/em-uso")
-    public List<UsoAtivoDTO> listarEmUso() {
+    public List<ActiveUsageDTO> listarEmUso() {
         return service.listarEmUso();
     }
 }

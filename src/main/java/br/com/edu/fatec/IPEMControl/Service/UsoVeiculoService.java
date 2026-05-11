@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.UsoVeiculoDTO;
-import br.com.edu.fatec.IPEMControl.DTO.UsoAtivoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.VehicleUsageDTO;
+import br.com.edu.fatec.IPEMControl.DTO.ActiveUsageDTO;
 import br.com.edu.fatec.IPEMControl.Entities.Technician;
 import br.com.edu.fatec.IPEMControl.Entities.VehicleUsage;
 import br.com.edu.fatec.IPEMControl.Repository.TecnicoRepository;
@@ -23,39 +23,39 @@ public class UsoVeiculoService {
         this.tecnicoRepository = tecnicoRepository;
     }
 
-    public UsoVeiculoDTO registrar(UsoVeiculoDTO dto) {
+    public VehicleUsageDTO registrar(VehicleUsageDTO dto) {
 
-        Technician technician = tecnicoRepository.findById(dto.getTecnicoId())
+        Technician technician = tecnicoRepository.findById(dto.getTechnicianId())
                 .orElseThrow(() -> new RuntimeException("Technician not found"));
 
-        boolean emUso = usoRepository.existsByVeiculoAndDataFimIsNull(dto.getVeiculo());
+        boolean emUso = usoRepository.existsByVeiculoAndDataFimIsNull(dto.getVehicle());
 
         if (emUso) {
             throw new RuntimeException("Vehicle already in use");
         }
 
         VehicleUsage uso = new VehicleUsage();
-        uso.setTecnico(technician);
-        uso.setVehicle(dto.getVeiculo());
-        uso.setStartDate(dto.getDataInicio());
+        uso.setTechnician(technician);
+        uso.setVehicle(dto.getVehicle());
+        uso.setStartDate(dto.getStartDatetime());
 
         uso = usoRepository.save(uso);
 
-        UsoVeiculoDTO response = new UsoVeiculoDTO();
-        response.setTecnicoId(uso.getTecnico().getTechnicianId());
-        response.setVeiculo(uso.getVehicle());
-        response.setDataInicio(uso.getStartDate());
+        VehicleUsageDTO response = new VehicleUsageDTO();
+        response.setTechnicianId(uso.getTechnician().getTechnicianId());
+        response.setVehicle(uso.getVehicle());
+        response.setStartDatetime(uso.getStartDate());
 
         return response;
     }
 
-    public List<UsoAtivoDTO> listarEmUso() {
+    public List<ActiveUsageDTO> listarEmUso() {
 
         List<VehicleUsage> ativos = usoRepository.findByDataFimIsNull();
 
         return ativos.stream()
-                .map(u -> new UsoAtivoDTO(
-                        u.getTecnico().getName(),
+                .map(u -> new ActiveUsageDTO(
+                        u.getTechnician().getName(),
                         u.getVehicle()
                 ))
                 .collect(Collectors.toList());

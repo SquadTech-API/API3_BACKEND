@@ -27,5 +27,5 @@ public interface VeiculoServicoRepository extends JpaRepository<ServiceVehicle, 
     @Modifying
     @Transactional
     @Query("DELETE FROM ServiceVehicle vs WHERE vs.veiculo.idVeiculo = :idVeiculo")
-    void deleteByVeiculoIdVeiculo(@Param("idVeiculo") Integer idVeiculo);
+    void deleteByVeiculoIdVeiculo(@Param("vehicleId") Integer idVeiculo);
 }

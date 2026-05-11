@@ -99,7 +99,7 @@ public class AbastecimentoService {
 
     // ── GET /relatorios/abastecimento/geral ──────────────────────────────────
 
-    public RelatorioAbastecimentoDTO gerarRelatorio(String periodo) {
+    public FuelReportDTO gerarRelatorio(String periodo) {
         LocalDateTime dataInicio = resolverDataInicio(periodo);
 
         List<Fueling> fuelings = abastecimentoRepository
@@ -156,11 +156,11 @@ public class AbastecimentoService {
         List<ItemTrocaOleoDTO> itensTrocaOleo = trocasOleo.stream()
                 .map(this::paraItemTrocaOleoDTO).collect(Collectors.toList());
 
-        List<RankingUsuarioDTO>         rankingUsuarios  = construirRankingUsuarios(abastecimentoRepository.buscarRankingUsuarios(dataInicio));
-        List<RankingPostoDTO>           rankingPostos    = construirRankingPostos(abastecimentoRepository.buscarRankingPostos(dataInicio));
+        List<UserRankingDTO>         rankingUsuarios  = construirRankingUsuarios(abastecimentoRepository.buscarRankingUsuarios(dataInicio));
+        List<StationRankingDTO>           rankingPostos    = construirRankingPostos(abastecimentoRepository.buscarRankingPostos(dataInicio));
         List<DistribuicaoCombustivelDTO> distribuicao    = construirDistribuicaoCombustivel(abastecimentoRepository.buscarDistribuicaoCombustivel(dataInicio));
 
-        return new RelatorioAbastecimentoDTO(
+        return new FuelReportDTO(
                 totalGasto, totalLitros, fuelings.size(), trocasOleo.size(),
                 quantidadeAtrasada,
                 BigDecimal.valueOf(mediaConsumo).setScale(2, RoundingMode.HALF_UP),
@@ -186,7 +186,7 @@ public class AbastecimentoService {
                 LocalDateTime fim    = LocalDateTime.parse(ate + "T23:59:59");
                 fuelings = abastecimentoRepository.findByDataHoraBetweenOrderByDataHoraDesc(inicio, fim);
             }
-            case "veiculo" -> fuelings =
+            case "vehicle" -> fuelings =
                     abastecimentoRepository.findByRegistroSaidaVeiculoPlacaOrderByDataHoraDesc(placa);
         }
 
@@ -216,7 +216,7 @@ public class AbastecimentoService {
             case "hoje" -> LocalDateTime.now().toLocalDate().atStartOfDay();
             case "7"    -> LocalDateTime.now().minusDays(7);
             case "30"   -> LocalDateTime.now().minusDays(30);
-            case "ano"  -> LocalDateTime.now().minusYears(1);
+            case "year"  -> LocalDateTime.now().minusYears(1);
             default     -> LocalDateTime.now().minusDays(30);
         };
     }
@@ -240,7 +240,7 @@ public class AbastecimentoService {
      * em trocas avulsas não vinculadas a uma saída).
      *
      * CORRIGIDO: ItemTrocaOleoDTO espera LocalDateTime — usa createdAt (timestamp do registro)
-     * como aproximação aceitável enquanto dataTroca (LocalDate) não é adicionado ao DTO.
+     * como aproximação aceitável enquanto oilChangeDate (LocalDate) não é adicionado ao DTO.
      */
     private ItemTrocaOleoDTO paraItemTrocaOleoDTO(OilChange t) {
         // Usa o vínculo direto com Vehicle adicionado na entidade corrigida
@@ -289,14 +289,14 @@ public class AbastecimentoService {
         }).collect(Collectors.toList());
     }
 
-    private List<RankingUsuarioDTO> construirRankingUsuarios(List<Object[]> linhas) {
-        return linhas.stream().map(l -> new RankingUsuarioDTO(
+    private List<UserRankingDTO> construirRankingUsuarios(List<Object[]> linhas) {
+        return linhas.stream().map(l -> new UserRankingDTO(
                 (String) l[0], ((Number) l[1]).intValue(), paraBigDecimal(l[2])
         )).collect(Collectors.toList());
     }
 
-    private List<RankingPostoDTO> construirRankingPostos(List<Object[]> linhas) {
-        return linhas.stream().map(l -> new RankingPostoDTO(
+    private List<StationRankingDTO> construirRankingPostos(List<Object[]> linhas) {
+        return linhas.stream().map(l -> new StationRankingDTO(
                 (String) l[0], (String) l[1], ((Number) l[2]).longValue()
         )).collect(Collectors.toList());
     }

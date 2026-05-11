@@ -32,7 +32,7 @@ public class OilChange {
     @Column(name = "data_troca")
     private LocalDate changeDate;
 
-    @Column(name = "observacoes", columnDefinition = "TEXT")
+    @Column(name = "observations", columnDefinition = "TEXT")
     private String observation;
 
     @Column(name = "alerta_enviado", nullable = false)

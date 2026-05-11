@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.VeiculoResumoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.VehicleSummaryDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.Fueling;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
@@ -42,11 +42,11 @@ public class VeiculoService {
     private AbastecimentoRepository abastecimentoRepository;
 
     /**
-     * Lista veículos com resumo.
-     * CORRIGIDO: parâmetro "todos" — quando false filtra apenas veículos ativos (ativo=true).
+     * Lista veículos com summary.
+     * CORRIGIDO: parâmetro "todos" — quando false filtra apenas veículos ativos (active=true).
      * ADM usa ?todos=true para ver todos incluindo inativos.
      */
-    public List<VeiculoResumoDTO> listarVeiculosResumo(boolean todos) {
+    public List<VehicleSummaryDTO> listarVeiculosResumo(boolean todos) {
 
         List<Vehicle> vehicles = veiculoRepository.findAll().stream()
                 // CORRIGIDO: técnico não vê veículos inativos
@@ -85,8 +85,8 @@ public class VeiculoService {
 
             String status = emUso ? "em_uso" : "disponivel";
 
-            // CORRIGIDO: VeiculoResumoDTO agora inclui habilitacaoCategoria e ativo
-            VeiculoResumoDTO dto = new VeiculoResumoDTO(
+            // CORRIGIDO: VehicleSummaryDTO agora inclui licenseCategory e active
+            VehicleSummaryDTO dto = new VehicleSummaryDTO(
                     veiculo.getVehicleId(),
                     veiculo.getModel(),
                     veiculo.getPrefix(),
@@ -96,8 +96,8 @@ public class VeiculoService {
                     km,
                     status
             );
-            dto.setHabilitacaoCategoria(veiculo.getLicenseCategory());
-            dto.setAtivo(veiculo.getActive());
+            dto.setLicenseCategory(veiculo.getLicenseCategory());
+            dto.setActive(veiculo.getActive());
             return dto;
 
         }).collect(Collectors.toList());
@@ -105,7 +105,7 @@ public class VeiculoService {
 
     /**
      * Ativa ou desativa um veículo.
-     * NOVO: endpoint /veiculos/{id}/ativar e /veiculos/{id}/desativar
+     * NOVO: endpoint /vehicles/{id}/ativar e /vehicles/{id}/desativar
      */
     public Vehicle toggleAtivo(Integer id, boolean ativo) {
         Vehicle vehicle = veiculoRepository.findById(id)
@@ -116,7 +116,7 @@ public class VeiculoService {
 
     /**
      * Atualiza dados de um veículo (PUT completo).
-     * NOVO: endpoint /veiculos/{id} PUT
+     * NOVO: endpoint /vehicles/{id} PUT
      */
     public Vehicle atualizar(Integer id, Vehicle atualizado) {
         Vehicle vehicle = veiculoRepository.findById(id)

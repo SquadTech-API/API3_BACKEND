@@ -7,12 +7,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UsuarioDocumentoRepository extends JpaRepository<DocumentUser, Integer> {
 
-    /** Total de documentos atribuídos ao técnico */
+    /** Total de documents atribuídos ao técnico */
     long countByUsuarioMatricula(Integer matricula);
 
-    /** Documentos lidos (lido = true) */
+    /** Documentos read (lido = true) */
     long countByUsuarioMatriculaAndLidoTrue(Integer matricula);
 
-    /** Documentos baixados (baixado = true) */
+    /** Documentos downloaded (baixado = true) */
     long countByUsuarioMatriculaAndBaixadoTrue(Integer matricula);
 }

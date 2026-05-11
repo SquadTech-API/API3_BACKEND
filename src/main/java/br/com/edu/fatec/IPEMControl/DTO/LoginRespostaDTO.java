@@ -7,7 +7,7 @@ public class LoginRespostaDTO {
 
     private Integer matricula;
 
-    // CORRIGIDO: campo era "nomeCompleto" mas o frontend espera tanto "nome" quanto "nomeCompleto"
+    // CORRIGIDO: campo era "nomeCompleto" mas o frontend espera tanto "name" quanto "nomeCompleto"
     private String nomeCompleto;
     private String nome; // alias para compatibilidade com o frontend
 
@@ -18,7 +18,7 @@ public class LoginRespostaDTO {
     // CORRIGIDO: campo ausente — o frontend usa tipoHabilitacao para filtrar veículos
     private String tipoHabilitacao;
 
-    // CORRIGIDO: campo ausente — colaboradorAtivo necessário para validação no frontend
+    // CORRIGIDO: campo ausente — activeEmployee necessário para validação no frontend
     private Boolean colaboradorAtivo;
 
     public LoginRespostaDTO() {}

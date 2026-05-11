@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * NOVO: Controller para vínculo veículo ↔ serviço.
- * Antes não existia — o frontend chamava /veiculo-servico/sincronizar e recebia 404.
+ * Antes não existia — o frontend chamava /vehicle-servico/sincronizar e recebia 404.
  */
 @RestController
 @RequestMapping("/veiculo-servico")
@@ -22,7 +22,7 @@ public class VeiculoServicoController {
     /**
      * Sincroniza os serviços habilitados para um veículo.
      * Remove todos os vínculos atuais e cria apenas os enviados.
-     * POST /veiculo-servico/sincronizar/{idVeiculo}
+     * POST /vehicle-servico/sincronizar/{vehicleId}
      * Body: [1, 2, 5, 8] — lista de IDs de tipo_servico
      */
     @PostMapping("/sincronizar/{idVeiculo}")

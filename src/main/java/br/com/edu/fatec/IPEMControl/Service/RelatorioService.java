@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.AtividadeDiariaDTO;
-import br.com.edu.fatec.IPEMControl.DTO.RelatorioDiarioDTO;
+import br.com.edu.fatec.IPEMControl.DTO.DailyReportDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.User;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
@@ -26,7 +26,7 @@ public class RelatorioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public RelatorioDiarioDTO gerarRelatorioDiarioPorTecnico(Integer matricula, LocalDate data) {
+    public DailyReportDTO gerarRelatorioDiarioPorTecnico(Integer matricula, LocalDate data) {
 
         User user = usuarioRepository.findByMatricula(matricula)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
@@ -56,7 +56,7 @@ public class RelatorioService {
                 ))
                 .collect(Collectors.toList());
 
-        return new RelatorioDiarioDTO(
+        return new DailyReportDTO(
                 user.getRegistration(),
                 user.getName(),
                 data,

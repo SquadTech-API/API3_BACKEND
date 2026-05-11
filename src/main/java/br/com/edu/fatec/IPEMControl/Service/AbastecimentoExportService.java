@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.AbastecimentoItemDTO;
-import br.com.edu.fatec.IPEMControl.DTO.RelatorioAbastecimentoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.FuelReportDTO;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
@@ -20,7 +20,7 @@ import java.util.List;
 @Service
 public class AbastecimentoExportService {
 
-    public byte[] exportar(RelatorioAbastecimentoDTO relatorio, String formato) {
+    public byte[] exportar(FuelReportDTO relatorio, String formato) {
         return switch (formato) {
             case "csv"   -> exportarCsv(relatorio);
             case "excel" -> exportarExcel(relatorio);
@@ -30,7 +30,7 @@ public class AbastecimentoExportService {
         };
     }
 
-    private byte[] exportarCsv(RelatorioAbastecimentoDTO relatorio) {
+    private byte[] exportarCsv(FuelReportDTO relatorio) {
         try (ByteArrayOutputStream saida = new ByteArrayOutputStream();
              CSVWriter escritor = new CSVWriter(new OutputStreamWriter(saida))) {
 
@@ -39,7 +39,7 @@ public class AbastecimentoExportService {
                     "Litros", "Valor Total", "KM", "Posto", "Cidade", "NF"
             });
 
-            for (AbastecimentoItemDTO item : relatorio.getAbastecimentos()) {
+            for (AbastecimentoItemDTO item : relatorio.getRefuels()) {
                 escritor.writeNext(new String[]{
                         item.getDataHora()           != null ? item.getDataHora().toString()          : "",
                         item.getVeiculo()             != null ? item.getVeiculo()                     : "",
@@ -62,7 +62,7 @@ public class AbastecimentoExportService {
         }
     }
 
-    private byte[] exportarExcel(RelatorioAbastecimentoDTO relatorio) {
+    private byte[] exportarExcel(FuelReportDTO relatorio) {
         try (Workbook planilha = new XSSFWorkbook();
              ByteArrayOutputStream saida = new ByteArrayOutputStream()) {
 
@@ -77,7 +77,7 @@ public class AbastecimentoExportService {
                 cabecalho.createCell(i).setCellValue(colunas[i]);
             }
 
-            List<AbastecimentoItemDTO> abastecimentos = relatorio.getAbastecimentos();
+            List<AbastecimentoItemDTO> abastecimentos = relatorio.getRefuels();
             for (int i = 0; i < abastecimentos.size(); i++) {
                 AbastecimentoItemDTO item = abastecimentos.get(i);
                 Row linha = aba.createRow(i + 1);
@@ -101,7 +101,7 @@ public class AbastecimentoExportService {
         }
     }
 
-    private byte[] exportarPdf(RelatorioAbastecimentoDTO relatorio) {
+    private byte[] exportarPdf(FuelReportDTO relatorio) {
         try (ByteArrayOutputStream saida = new ByteArrayOutputStream()) {
 
             PdfWriter escritor = new PdfWriter(saida);
@@ -122,7 +122,7 @@ public class AbastecimentoExportService {
                 tabela.addHeaderCell(new Cell().add(new Paragraph(coluna).setBold()));
             }
 
-            for (AbastecimentoItemDTO item : relatorio.getAbastecimentos()) {
+            for (AbastecimentoItemDTO item : relatorio.getRefuels()) {
                 tabela.addCell(item.getDataHora()        != null ? item.getDataHora().toString()          : "");
                 tabela.addCell(item.getVeiculo()          != null ? item.getVeiculo()                     : "");
                 tabela.addCell(item.getResponsavel()      != null ? item.getResponsavel()                 : "");
@@ -145,7 +145,7 @@ public class AbastecimentoExportService {
         }
     }
 
-    private byte[] exportarDocx(RelatorioAbastecimentoDTO relatorio) {
+    private byte[] exportarDocx(FuelReportDTO relatorio) {
         try (XWPFDocument documento = new XWPFDocument();
              ByteArrayOutputStream saida = new ByteArrayOutputStream()) {
 
@@ -167,7 +167,7 @@ public class AbastecimentoExportService {
                 linhaCabecalho.addNewTableCell().setText(colunas[i]);
             }
 
-            for (AbastecimentoItemDTO item : relatorio.getAbastecimentos()) {
+            for (AbastecimentoItemDTO item : relatorio.getRefuels()) {
                 XWPFTableRow linha = tabela.createRow();
                 linha.getCell(0).setText(item.getDataHora()        != null ? item.getDataHora().toString()          : "");
                 linha.getCell(1).setText(item.getVeiculo()          != null ? item.getVeiculo()                     : "");

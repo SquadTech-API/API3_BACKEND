@@ -25,7 +25,7 @@ public class DepartureLog {
     @Column(name = "status", length = 50)
     private String status;
 
-    @Column(name = "observacoes", columnDefinition = "TEXT")
+    @Column(name = "observations", columnDefinition = "TEXT")
     private String observacoes;
 
     @Column(name = "data_hora_saida")

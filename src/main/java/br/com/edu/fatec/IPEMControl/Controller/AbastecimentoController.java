@@ -25,7 +25,7 @@ public class AbastecimentoController {
         return ResponseEntity.status(201).body(abastecimentoService.salvar(dto));
     }
 
-    // Retorna histórico de abastecimentos, com filtro opcional por veículo
+    // Retorna histórico de refuels, com filtro opcional por veículo
     @GetMapping("/historico")
     public ResponseEntity<List<AbastecimentoHistoricoDTO>> historico(
             @RequestParam(required = false) Integer idVeiculo) {

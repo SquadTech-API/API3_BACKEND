@@ -21,7 +21,7 @@ public interface TrocaOleoRepository extends JpaRepository<OilChange, Integer> {
 
     // Última troca de um veículo específico
     @Query("SELECT t FROM OilChange t WHERE t.veiculo.idVeiculo = :idVeiculo ORDER BY t.createdAt DESC")
-    Optional<OilChange> buscarUltimaPorVeiculo(@Param("idVeiculo") Integer idVeiculo);
+    Optional<OilChange> buscarUltimaPorVeiculo(@Param("vehicleId") Integer idVeiculo);
 
     // NOVO: lista trocas por veículo ordenadas da mais recente
     // Usado pelo TrocaOleoService.listarPorVeiculo()

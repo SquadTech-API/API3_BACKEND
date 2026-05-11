@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.DTO.TrocaOleoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.OilChangeDTO;
 import br.com.edu.fatec.IPEMControl.Entities.OilChange;
 import br.com.edu.fatec.IPEMControl.Service.TrocaOleoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class TrocaOleoController {
 
     // POST /troca-oleo
     @PostMapping
-    public ResponseEntity<OilChange> criar(@RequestBody TrocaOleoDTO dto) {
+    public ResponseEntity<OilChange> criar(@RequestBody OilChangeDTO dto) {
         return ResponseEntity.status(201).body(trocaOleoService.salvar(dto));
     }
 
@@ -50,7 +50,7 @@ public class TrocaOleoController {
     @PutMapping("/{id}")
     public ResponseEntity<OilChange> atualizar(
             @PathVariable Integer id,
-            @RequestBody TrocaOleoDTO dto) {
+            @RequestBody OilChangeDTO dto) {
         return ResponseEntity.ok(trocaOleoService.atualizar(id, dto));
     }
 }

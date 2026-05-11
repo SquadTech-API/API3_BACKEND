@@ -2,7 +2,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.AtualizarSenhaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.LoginRespostaDTO;
-import br.com.edu.fatec.IPEMControl.DTO.UsuarioDTO;
+import br.com.edu.fatec.IPEMControl.DTO.UserDTO;
 import br.com.edu.fatec.IPEMControl.Entities.User;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
@@ -24,21 +24,21 @@ public class UsuarioService {
     private BCryptPasswordEncoder passwordEncoder;
 
     // ── POST /usuarios ────────────────────────────────────────────────────────
-    public User salvar(UsuarioDTO dto) {
-        if (dto.getSenha() == null || dto.getSenha().isBlank())
+    public User salvar(UserDTO dto) {
+        if (dto.getPassword() == null || dto.getPassword().isBlank())
             throw new RegraDeNegocioException("Senha é obrigatória.");
 
         User user = new User();
         user.setCpf(dto.getCpf());
-        user.setDriverLicenseNumber(dto.getNumeroHabilitacao());
-        user.setName(dto.getNome());
-        user.setBirthDate(dto.getDataNascimento());
+        user.setDriverLicenseNumber(dto.getLicenseNumber());
+        user.setName(dto.getName());
+        user.setBirthDate(dto.getBirthDate());
         user.setEmail(dto.getEmail());
-        user.setActiveColaborator(dto.getColaboradorAtivo() != null ? dto.getColaboradorAtivo() : true);
+        user.setActiveColaborator(dto.getActiveEmployee() != null ? dto.getActiveEmployee() : true);
         user.setUserType(dto.getUserType() != null ? dto.getUserType() : User.UserType.technician);
-        user.setPosition(dto.getCargo());
+        user.setPosition(dto.getRole());
         user.setTipoHabilitacao(dto.getTipoHabilitacao());
-        user.setPassword(passwordEncoder.encode(dto.getSenha()));
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         return repository.save(user);
     }
 
@@ -56,7 +56,7 @@ public class UsuarioService {
     }
 
     // ── POST /usuarios/login ──────────────────────────────────────────────────
-    // CORRIGIDO: agora retorna tipoHabilitacao e colaboradorAtivo
+    // CORRIGIDO: agora retorna tipoHabilitacao e activeEmployee
     public LoginRespostaDTO autenticar(String email, String senha) {
         Optional<User> optional = repository.findByEmail(email);
 
@@ -75,21 +75,21 @@ public class UsuarioService {
                 user.getUserType().name(),
                 // CORRIGIDO: tipoHabilitacao agora incluído na resposta
                 user.getTipoHabilitacao() != null ? user.getTipoHabilitacao().name() : null,
-                // CORRIGIDO: colaboradorAtivo incluído para validação no frontend
+                // CORRIGIDO: activeEmployee incluído para validação no frontend
                 user.getActiveColaborator()
         );
     }
 
-    // ── PUT /usuarios/{matricula} — edição de dados ───────────────────────────
+    // ── PUT /usuarios/{registration} — edição de dados ───────────────────────────
     // NOVO: endpoint para edição pelo ADM
-    public User atualizar(Integer matricula, UsuarioDTO dto) {
+    public User atualizar(Integer matricula, UserDTO dto) {
         User user = repository.findByMatricula(matricula)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
 
-        if (dto.getNome() != null && !dto.getNome().isBlank())
-            user.setName(dto.getNome());
-        if (dto.getCargo() != null)
-            user.setPosition(dto.getCargo());
+        if (dto.getName() != null && !dto.getName().isBlank())
+            user.setName(dto.getName());
+        if (dto.getRole() != null)
+            user.setPosition(dto.getRole());
         if (dto.getUserType() != null)
             user.setUserType(dto.getUserType());
         if (dto.getTipoHabilitacao() != null)
@@ -98,7 +98,7 @@ public class UsuarioService {
         return repository.save(user);
     }
 
-    // ── PATCH /usuarios/{matricula}/desativar ─────────────────────────────────
+    // ── PATCH /usuarios/{registration}/desativar ─────────────────────────────────
     // NOVO: desativa colaborador
     public User desativar(Integer matricula) {
         User user = repository.findByMatricula(matricula)
@@ -107,7 +107,7 @@ public class UsuarioService {
         return repository.save(user);
     }
 
-    // ── PATCH /usuarios/{matricula}/ativar ────────────────────────────────────
+    // ── PATCH /usuarios/{registration}/ativar ────────────────────────────────────
     // NOVO: reativa colaborador
     public User ativar(Integer matricula) {
         User user = repository.findByMatricula(matricula)
@@ -116,7 +116,7 @@ public class UsuarioService {
         return repository.save(user);
     }
 
-    // ── POST /usuarios/atualizar-senha ────────────────────────────────────────
+    // ── POST /usuarios/atualizar-password ────────────────────────────────────────
     public boolean atualizarSenha(AtualizarSenhaDTO dto) {
         Optional<User> optional = repository.findByEmail(dto.getEmail());
         if (optional.isEmpty()) return false;

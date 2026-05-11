@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.DTO.VeiculoResumoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.VehicleSummaryDTO;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import br.com.edu.fatec.IPEMControl.Service.VeiculoService;
@@ -14,12 +14,12 @@ import java.util.List;
  * CORRIGIDO: controller unificado (era dividido em VeiculoController + VeiculoAdmController).
  *
  * Correções aplicadas:
- * 1. GET /veiculos?todos=true — ADM vê inativos, técnico não
- * 2. PUT /veiculos/{id} — edição completa de veículo pelo ADM
- * 3. PATCH /veiculos/{id}/desativar — desativa veículo
- * 4. PATCH /veiculos/{id}/ativar — reativa veículo
- * 5. GET /veiculos/{id} — busca individual (já existia)
- * 6. POST /veiculos — cadastrar novo (já existia)
+ * 1. GET /vehicles?todos=true — ADM vê inativos, técnico não
+ * 2. PUT /vehicles/{id} — edição completa de veículo pelo ADM
+ * 3. PATCH /vehicles/{id}/desativar — desativa veículo
+ * 4. PATCH /vehicles/{id}/ativar — reativa veículo
+ * 5. GET /vehicles/{id} — busca individual (já existia)
+ * 6. POST /vehicles — cadastrar novo (já existia)
  */
 @RestController
 @RequestMapping("/veiculos")
@@ -32,15 +32,15 @@ public class VeiculoController {
     @Autowired
     private VeiculoRepository veiculoRepository;
 
-    // GET /veiculos?todos=true
+    // GET /vehicles?todos=true
     // CORRIGIDO: parâmetro "todos" — quando false filtra veículos ativos
     @GetMapping
-    public ResponseEntity<List<VeiculoResumoDTO>> listar(
+    public ResponseEntity<List<VehicleSummaryDTO>> listar(
             @RequestParam(required = false, defaultValue = "false") boolean todos) {
         return ResponseEntity.ok(veiculoService.listarVeiculosResumo(todos));
     }
 
-    // GET /veiculos/{id}
+    // GET /vehicles/{id}
     @GetMapping("/{id}")
     public ResponseEntity<Vehicle> buscarPorId(@PathVariable Integer id) {
         return veiculoRepository.findById(id)
@@ -48,13 +48,13 @@ public class VeiculoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // POST /veiculos
+    // POST /vehicles
     @PostMapping
     public ResponseEntity<Vehicle> criar(@RequestBody Vehicle vehicle) {
         return ResponseEntity.status(201).body(veiculoRepository.save(vehicle));
     }
 
-    // PUT /veiculos/{id} — NOVO: edição completa de veículo
+    // PUT /vehicles/{id} — NOVO: edição completa de veículo
     @PutMapping("/{id}")
     public ResponseEntity<Vehicle> atualizar(
             @PathVariable Integer id,
@@ -62,13 +62,13 @@ public class VeiculoController {
         return ResponseEntity.ok(veiculoService.atualizar(id, atualizado));
     }
 
-    // PATCH /veiculos/{id}/desativar — NOVO
+    // PATCH /vehicles/{id}/desativar — NOVO
     @PatchMapping("/{id}/desativar")
     public ResponseEntity<Vehicle> desativar(@PathVariable Integer id) {
         return ResponseEntity.ok(veiculoService.toggleAtivo(id, false));
     }
 
-    // PATCH /veiculos/{id}/ativar — NOVO
+    // PATCH /vehicles/{id}/ativar — NOVO
     @PatchMapping("/{id}/ativar")
     public ResponseEntity<Vehicle> ativar(@PathVariable Integer id) {
         return ResponseEntity.ok(veiculoService.toggleAtivo(id, true));

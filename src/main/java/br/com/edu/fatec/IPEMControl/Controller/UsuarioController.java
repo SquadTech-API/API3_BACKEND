@@ -3,7 +3,7 @@ package br.com.edu.fatec.IPEMControl.Controller;
 import br.com.edu.fatec.IPEMControl.DTO.AtualizarSenhaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.LoginDTO;
 import br.com.edu.fatec.IPEMControl.DTO.LoginRespostaDTO;
-import br.com.edu.fatec.IPEMControl.DTO.UsuarioDTO;
+import br.com.edu.fatec.IPEMControl.DTO.UserDTO;
 import br.com.edu.fatec.IPEMControl.Entities.User;
 import br.com.edu.fatec.IPEMControl.Service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +14,9 @@ import java.util.List;
 
 /**
  * CORRIGIDO: adicionados endpoints ausentes que o frontend chama:
- * - PUT  /usuarios/{matricula}         — editar dados do colaborador (ADM)
- * - PATCH /usuarios/{matricula}/desativar — desativar colaborador (ADM)
- * - PATCH /usuarios/{matricula}/ativar    — reativar colaborador (ADM)
+ * - PUT  /usuarios/{registration}         — editar dados do colaborador (ADM)
+ * - PATCH /usuarios/{registration}/desativar — desativar colaborador (ADM)
+ * - PATCH /usuarios/{registration}/ativar    — reativar colaborador (ADM)
  */
 @RestController
 @RequestMapping("/usuarios")
@@ -28,7 +28,7 @@ public class UsuarioController {
 
     // POST /usuarios — cadastrar
     @PostMapping
-    public ResponseEntity<User> criar(@RequestBody UsuarioDTO dto) {
+    public ResponseEntity<User> criar(@RequestBody UserDTO dto) {
         return ResponseEntity.status(201).body(service.salvar(dto));
     }
 
@@ -38,7 +38,7 @@ public class UsuarioController {
         return ResponseEntity.ok(service.listarTodos());
     }
 
-    // GET /usuarios/{matricula}
+    // GET /usuarios/{registration}
     @GetMapping("/{matricula}")
     public ResponseEntity<User> buscar(@PathVariable Integer matricula) {
         return service.buscarPorMatricula(matricula)
@@ -47,41 +47,41 @@ public class UsuarioController {
     }
 
     // POST /usuarios/login
-    // CORRIGIDO: resposta agora inclui tipoHabilitacao e colaboradorAtivo
+    // CORRIGIDO: resposta agora inclui tipoHabilitacao e activeEmployee
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
         LoginRespostaDTO response = service.autenticar(dto.getEmail(), dto.getSenha());
         if (response != null) {
             return ResponseEntity.ok(response);
         }
-        return ResponseEntity.status(401).body("{\"message\":\"E-mail ou senha inválidos.\"}");
+        return ResponseEntity.status(401).body("{\"message\":\"E-mail ou password inválidos.\"}");
     }
 
-    // PUT /usuarios/{matricula} — NOVO: editar colaborador (ADM)
+    // PUT /usuarios/{registration} — NOVO: editar colaborador (ADM)
     @PutMapping("/{matricula}")
     public ResponseEntity<User> atualizar(
             @PathVariable Integer matricula,
-            @RequestBody UsuarioDTO dto) {
+            @RequestBody UserDTO dto) {
         return ResponseEntity.ok(service.atualizar(matricula, dto));
     }
 
-    // PATCH /usuarios/{matricula}/desativar — NOVO
+    // PATCH /usuarios/{registration}/desativar — NOVO
     @PatchMapping("/{matricula}/desativar")
     public ResponseEntity<User> desativar(@PathVariable Integer matricula) {
         return ResponseEntity.ok(service.desativar(matricula));
     }
 
-    // PATCH /usuarios/{matricula}/ativar — NOVO
+    // PATCH /usuarios/{registration}/ativar — NOVO
     @PatchMapping("/{matricula}/ativar")
     public ResponseEntity<User> ativar(@PathVariable Integer matricula) {
         return ResponseEntity.ok(service.ativar(matricula));
     }
 
-    // POST /usuarios/atualizar-senha
+    // POST /usuarios/atualizar-password
     @PostMapping("/atualizar-senha")
     public ResponseEntity<String> atualizarSenha(@RequestBody AtualizarSenhaDTO dto) {
         boolean atualizado = service.atualizarSenha(dto);
         if (atualizado) return ResponseEntity.ok("{\"message\":\"Senha atualizada com sucesso!\"}");
-        return ResponseEntity.status(400).body("{\"message\":\"E-mail ou senha atual incorretos.\"}");
+        return ResponseEntity.status(400).body("{\"message\":\"E-mail ou password atual incorretos.\"}");
     }
 }
