@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.HistoricoUsoCardDTO;
+import br.com.edu.fatec.IPEMControl.DTO.UsageHistoryCardDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.Fueling;
 import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
@@ -22,7 +22,7 @@ public class HistoricoUsoService {
     @Autowired
     private AbastecimentoRepository abastecimentoRepository;
 
-    public List<HistoricoUsoCardDTO> listarHistoricoPorVeiculo(Integer idVeiculo) {
+    public List<UsageHistoryCardDTO> listarHistoricoPorVeiculo(Integer idVeiculo) {
 
         // Busca todas as saídas do veículo ordenadas da mais recente
         List<DepartureLog> saidas = registroSaidaRepository
@@ -57,7 +57,7 @@ public class HistoricoUsoService {
                             abastecimentoRepository.findByRegistroSaida(saida);
                     boolean abasteceu = !fuelings.isEmpty();
 
-                    return new HistoricoUsoCardDTO(
+                    return new UsageHistoryCardDTO(
                             motorista,
                             saida.getDateTimeDeparture(),
                             tipoServico,
