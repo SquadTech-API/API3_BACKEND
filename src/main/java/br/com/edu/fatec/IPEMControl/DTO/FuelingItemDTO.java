@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class FuelingItemDTO {
     private LocalDateTime dateTime;
-
     private String vehicle;
     private String responsiblePerson;
     private String fuelType;

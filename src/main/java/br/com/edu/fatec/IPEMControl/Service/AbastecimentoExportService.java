@@ -41,16 +41,16 @@ public class AbastecimentoExportService {
 
             for (FuelingItemDTO item : relatorio.getRefuels()) {
                 escritor.writeNext(new String[]{
-                        item.getDataHora()           != null ? item.getDataHora().toString()          : "",
-                        item.getVeiculo()             != null ? item.getVeiculo()                     : "",
-                        item.getResponsavel()         != null ? item.getResponsavel()                 : "",
-                        item.getTipoCombustivel()     != null ? item.getTipoCombustivel()             : "",
-                        item.getQuantidadeLitros()    != null ? item.getQuantidadeLitros().toString() : "",
-                        item.getValorTotal()          != null ? item.getValorTotal().toString()       : "",
-                        item.getKmAbastecimento()     != null ? item.getKmAbastecimento().toString()  : "",
-                        item.getPostoNome()           != null ? item.getPostoNome()                   : "",
-                        item.getPostoCidade()         != null ? item.getPostoCidade()                 : "",
-                        item.getNotaFiscal()          != null ? item.getNotaFiscal()                  : "—"
+                        item.getDateTime()           != null ? item.getDateTime().toString()          : "",
+                        item.getVehicle()             != null ? item.getVehicle()                     : "",
+                        item.getResponsiblePerson()         != null ? item.getResponsiblePerson()                 : "",
+                        item.getFuelType()     != null ? item.getFuelType()             : "",
+                        item.getLitersQuantity()    != null ? item.getLitersQuantity().toString() : "",
+                        item.getTotalAmount()          != null ? item.getTotalAmount().toString()       : "",
+                        item.getFuelingMileage()     != null ? item.getFuelingMileage().toString()  : "",
+                        item.getGasStationName()           != null ? item.getGasStationName()                   : "",
+                        item.getGasStationCity()         != null ? item.getGasStationCity()                 : "",
+                        item.getInvoiceNumber()          != null ? item.getInvoiceNumber()                  : "—"
                 });
             }
 
@@ -81,16 +81,16 @@ public class AbastecimentoExportService {
             for (int i = 0; i < abastecimentos.size(); i++) {
                 FuelingItemDTO item = abastecimentos.get(i);
                 Row linha = aba.createRow(i + 1);
-                linha.createCell(0).setCellValue(item.getDataHora()        != null ? item.getDataHora().toString()           : "");
-                linha.createCell(1).setCellValue(item.getVeiculo()          != null ? item.getVeiculo()                      : "");
-                linha.createCell(2).setCellValue(item.getResponsavel()      != null ? item.getResponsavel()                  : "");
-                linha.createCell(3).setCellValue(item.getTipoCombustivel()  != null ? item.getTipoCombustivel()              : "");
-                linha.createCell(4).setCellValue(item.getQuantidadeLitros() != null ? item.getQuantidadeLitros().doubleValue(): 0);
-                linha.createCell(5).setCellValue(item.getValorTotal()       != null ? item.getValorTotal().doubleValue()      : 0);
-                linha.createCell(6).setCellValue(item.getKmAbastecimento()  != null ? item.getKmAbastecimento().doubleValue() : 0);
-                linha.createCell(7).setCellValue(item.getPostoNome()        != null ? item.getPostoNome()                    : "");
-                linha.createCell(8).setCellValue(item.getPostoCidade()      != null ? item.getPostoCidade()                  : "");
-                linha.createCell(9).setCellValue(item.getNotaFiscal()       != null ? item.getNotaFiscal()                   : "—");
+                linha.createCell(0).setCellValue(item.getDateTime()        != null ? item.getDateTime().toString()           : "");
+                linha.createCell(1).setCellValue(item.getVehicle()          != null ? item.getVehicle()                      : "");
+                linha.createCell(2).setCellValue(item.getResponsiblePerson()      != null ? item.getResponsiblePerson()                  : "");
+                linha.createCell(3).setCellValue(item.getFuelType()  != null ? item.getFuelType()              : "");
+                linha.createCell(4).setCellValue(item.getLitersQuantity() != null ? item.getLitersQuantity().doubleValue(): 0);
+                linha.createCell(5).setCellValue(item.getTotalAmount()       != null ? item.getTotalAmount().doubleValue()      : 0);
+                linha.createCell(6).setCellValue(item.getFuelingMileage()  != null ? item.getFuelingMileage().doubleValue() : 0);
+                linha.createCell(7).setCellValue(item.getGasStationName()        != null ? item.getGasStationName()                    : "");
+                linha.createCell(8).setCellValue(item.getGasStationCity()      != null ? item.getGasStationCity()                  : "");
+                linha.createCell(9).setCellValue(item.getInvoiceNumber()       != null ? item.getInvoiceNumber()                   : "—");
             }
 
             planilha.write(saida);
@@ -123,16 +123,16 @@ public class AbastecimentoExportService {
             }
 
             for (FuelingItemDTO item : relatorio.getRefuels()) {
-                tabela.addCell(item.getDataHora()        != null ? item.getDataHora().toString()          : "");
-                tabela.addCell(item.getVeiculo()          != null ? item.getVeiculo()                     : "");
-                tabela.addCell(item.getResponsavel()      != null ? item.getResponsavel()                 : "");
-                tabela.addCell(item.getTipoCombustivel()  != null ? item.getTipoCombustivel()             : "");
-                tabela.addCell(item.getQuantidadeLitros() != null ? item.getQuantidadeLitros().toString() : "");
-                tabela.addCell(item.getValorTotal()       != null ? item.getValorTotal().toString()       : "");
-                tabela.addCell(item.getKmAbastecimento()  != null ? item.getKmAbastecimento().toString()  : "");
-                tabela.addCell(item.getPostoNome()        != null ? item.getPostoNome()                   : "");
-                tabela.addCell(item.getPostoCidade()      != null ? item.getPostoCidade()                 : "");
-                tabela.addCell(item.getNotaFiscal()       != null ? item.getNotaFiscal()                  : "—");
+                tabela.addCell(item.getDateTime()        != null ? item.getDateTime().toString()          : "");
+                tabela.addCell(item.getVehicle()          != null ? item.getVehicle()                     : "");
+                tabela.addCell(item.getResponsiblePerson()      != null ? item.getResponsiblePerson()                 : "");
+                tabela.addCell(item.getFuelType()  != null ? item.getFuelType()             : "");
+                tabela.addCell(item.getLitersQuantity() != null ? item.getLitersQuantity().toString() : "");
+                tabela.addCell(item.getTotalAmount()       != null ? item.getTotalAmount().toString()       : "");
+                tabela.addCell(item.getFuelingMileage()  != null ? item.getFuelingMileage().toString()  : "");
+                tabela.addCell(item.getGasStationName()        != null ? item.getGasStationName()                   : "");
+                tabela.addCell(item.getGasStationCity()      != null ? item.getGasStationCity()                 : "");
+                tabela.addCell(item.getInvoiceNumber()       != null ? item.getInvoiceNumber()                  : "—");
             }
 
             documento.add(tabela);
@@ -169,16 +169,16 @@ public class AbastecimentoExportService {
 
             for (FuelingItemDTO item : relatorio.getRefuels()) {
                 XWPFTableRow linha = tabela.createRow();
-                linha.getCell(0).setText(item.getDataHora()        != null ? item.getDataHora().toString()          : "");
-                linha.getCell(1).setText(item.getVeiculo()          != null ? item.getVeiculo()                     : "");
-                linha.getCell(2).setText(item.getResponsavel()      != null ? item.getResponsavel()                 : "");
-                linha.getCell(3).setText(item.getTipoCombustivel()  != null ? item.getTipoCombustivel()             : "");
-                linha.getCell(4).setText(item.getQuantidadeLitros() != null ? item.getQuantidadeLitros().toString() : "");
-                linha.getCell(5).setText(item.getValorTotal()       != null ? item.getValorTotal().toString()       : "");
-                linha.getCell(6).setText(item.getKmAbastecimento()  != null ? item.getKmAbastecimento().toString()  : "");
-                linha.getCell(7).setText(item.getPostoNome()        != null ? item.getPostoNome()                   : "");
-                linha.getCell(8).setText(item.getPostoCidade()      != null ? item.getPostoCidade()                 : "");
-                linha.getCell(9).setText(item.getNotaFiscal()       != null ? item.getNotaFiscal()                  : "—");
+                linha.getCell(0).setText(item.getDateTime()        != null ? item.getDateTime().toString()          : "");
+                linha.getCell(1).setText(item.getVehicle()          != null ? item.getVehicle()                     : "");
+                linha.getCell(2).setText(item.getResponsiblePerson()      != null ? item.getResponsiblePerson()                 : "");
+                linha.getCell(3).setText(item.getFuelType()  != null ? item.getFuelType()             : "");
+                linha.getCell(4).setText(item.getLitersQuantity() != null ? item.getLitersQuantity().toString() : "");
+                linha.getCell(5).setText(item.getTotalAmount()       != null ? item.getTotalAmount().toString()       : "");
+                linha.getCell(6).setText(item.getFuelingMileage()  != null ? item.getFuelingMileage().toString()  : "");
+                linha.getCell(7).setText(item.getGasStationName()        != null ? item.getGasStationName()                   : "");
+                linha.getCell(8).setText(item.getGasStationCity()      != null ? item.getGasStationCity()                 : "");
+                linha.getCell(9).setText(item.getInvoiceNumber()       != null ? item.getInvoiceNumber()                  : "—");
             }
 
             documento.write(saida);
