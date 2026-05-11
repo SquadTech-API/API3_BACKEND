@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.FuelingDTO;
-import br.com.edu.fatec.IPEMControl.DTO.AbastecimentoHistoricoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.FuelingHistoryDTO;
 import br.com.edu.fatec.IPEMControl.DTO.AbastecimentoSalvoDTO;
 import br.com.edu.fatec.IPEMControl.Service.AbastecimentoService;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +27,7 @@ public class AbastecimentoController {
 
     // Retorna histórico de refuels, com filtro opcional por veículo
     @GetMapping("/historico")
-    public ResponseEntity<List<AbastecimentoHistoricoDTO>> historico(
+    public ResponseEntity<List<FuelingHistoryDTO>> historico(
             @RequestParam(required = false) Integer idVeiculo) {
         return ResponseEntity.ok(abastecimentoService.buscarHistorico(idVeiculo));
     }

@@ -73,19 +73,19 @@ public class AbastecimentoService {
 
     // ── GET /abastecimento/historico ─────────────────────────────────────────
 
-    public List<AbastecimentoHistoricoDTO> buscarHistorico(Integer idVeiculo) {
+    public List<FuelingHistoryDTO> buscarHistorico(Integer idVeiculo) {
         List<Fueling> lista = (idVeiculo != null)
                 ? abastecimentoRepository.findByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(idVeiculo)
                 : abastecimentoRepository.findAllByOrderByDataHoraDesc();
         return lista.stream().map(this::paraHistoricoDTO).collect(Collectors.toList());
     }
 
-    private AbastecimentoHistoricoDTO paraHistoricoDTO(Fueling a) {
+    private FuelingHistoryDTO paraHistoricoDTO(Fueling a) {
         DepartureLog rs    = a.getDepartureLog();
         Vehicle vehicle = rs != null ? rs.getVehicle() : null;
         String responsavel  = rs != null && rs.getUser() != null ? rs.getUser().getName() : null;
 
-        return new AbastecimentoHistoricoDTO(
+        return new FuelingHistoryDTO(
                 a.getFuelingId(), a.getDateTime(), a.getFuelType(),
                 a.getLitersAmount(), a.getTotalValue(), a.getFuelingKm(),
                 a.getGasStationName(), a.getGasStationCity(), a.getReceipt(),
