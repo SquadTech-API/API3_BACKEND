@@ -60,8 +60,8 @@ public class DashboardVeiculoService {
 
         Double consumo = (litros != null && litros > 0) ? km / litros : 0.0;
 
-        DadosVeiculoDashboardDTO dados =
-                new DadosVeiculoDashboardDTO(gasto, litros, km, saidas, consumo);
+        VehicleDashboardDataDTO dados =
+                new VehicleDashboardDataDTO(gasto, litros, km, saidas, consumo);
 
         return new VehicleDashboardDTO(
                 v.getVehicleId(),
