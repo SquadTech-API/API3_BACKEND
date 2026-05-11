@@ -158,7 +158,7 @@ public class AbastecimentoService {
 
         List<UserRankingDTO>         rankingUsuarios  = construirRankingUsuarios(abastecimentoRepository.buscarRankingUsuarios(dataInicio));
         List<StationRankingDTO>           rankingPostos    = construirRankingPostos(abastecimentoRepository.buscarRankingPostos(dataInicio));
-        List<DistribuicaoCombustivelDTO> distribuicao    = construirDistribuicaoCombustivel(abastecimentoRepository.buscarDistribuicaoCombustivel(dataInicio));
+        List<FuelDistributionDTO> distribuicao    = construirDistribuicaoCombustivel(abastecimentoRepository.buscarDistribuicaoCombustivel(dataInicio));
 
         return new FuelReportDTO(
                 totalGasto, totalLitros, fuelings.size(), trocasOleo.size(),
@@ -301,12 +301,12 @@ public class AbastecimentoService {
         )).collect(Collectors.toList());
     }
 
-    private List<DistribuicaoCombustivelDTO> construirDistribuicaoCombustivel(List<Object[]> linhas) {
+    private List<FuelDistributionDTO> construirDistribuicaoCombustivel(List<Object[]> linhas) {
         long total = linhas.stream().mapToLong(l -> ((Number) l[1]).longValue()).sum();
         return linhas.stream().map(l -> {
             long q  = ((Number) l[1]).longValue();
             double pct = total > 0 ? Math.round((q * 100.0 / total) * 10.0) / 10.0 : 0.0;
-            return new DistribuicaoCombustivelDTO((String) l[0], pct);
+            return new FuelDistributionDTO((String) l[0], pct);
         }).collect(Collectors.toList());
     }
 

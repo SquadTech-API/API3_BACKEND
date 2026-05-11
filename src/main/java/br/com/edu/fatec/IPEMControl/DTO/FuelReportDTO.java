@@ -34,5 +34,5 @@ public class FuelReportDTO {
     // Rankings
     private List<UserRankingDTO> userRankings;
     private List<StationRankingDTO> stationRankings;
-    private List<DistribuicaoCombustivelDTO> fuelDistribution;
+    private List<FuelDistributionDTO> fuelDistribution;
 }
