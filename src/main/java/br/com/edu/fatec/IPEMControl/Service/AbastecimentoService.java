@@ -40,7 +40,7 @@ public class AbastecimentoService {
 
     // ── POST /abastecimento ──────────────────────────────────────────────────
 
-    public AbastecimentoSalvoDTO salvar(FuelingDTO dto) {
+    public SavedFuelingDTO salvar(FuelingDTO dto) {
         DepartureLog departureLog = registroSaidaRepository.findById(dto.getIdSaida())
                 .orElseThrow(() -> new RuntimeException("Registro de saída não encontrado."));
 
@@ -57,7 +57,7 @@ public class AbastecimentoService {
 
         Fueling salvo = abastecimentoRepository.save(ab);
 
-        return new AbastecimentoSalvoDTO(
+        return new SavedFuelingDTO(
                 salvo.getFuelingId(),
                 salvo.getDateTime(),
                 salvo.getFuelType(),

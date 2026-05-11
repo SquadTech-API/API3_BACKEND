@@ -2,7 +2,7 @@ package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.FuelingDTO;
 import br.com.edu.fatec.IPEMControl.DTO.FuelingHistoryDTO;
-import br.com.edu.fatec.IPEMControl.DTO.AbastecimentoSalvoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.SavedFuelingDTO;
 import br.com.edu.fatec.IPEMControl.Service.AbastecimentoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,7 @@ public class AbastecimentoController {
 
     // Registra um novo abastecimento
     @PostMapping
-    public ResponseEntity<AbastecimentoSalvoDTO> criar(@RequestBody FuelingDTO dto) {
+    public ResponseEntity<SavedFuelingDTO> criar(@RequestBody FuelingDTO dto) {
         return ResponseEntity.status(201).body(abastecimentoService.salvar(dto));
     }
 
