@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.AbastecimentoItemDTO;
+import br.com.edu.fatec.IPEMControl.DTO.FuelingItemDTO;
 import br.com.edu.fatec.IPEMControl.DTO.FuelReportDTO;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -39,7 +39,7 @@ public class AbastecimentoExportService {
                     "Litros", "Valor Total", "KM", "Posto", "Cidade", "NF"
             });
 
-            for (AbastecimentoItemDTO item : relatorio.getRefuels()) {
+            for (FuelingItemDTO item : relatorio.getRefuels()) {
                 escritor.writeNext(new String[]{
                         item.getDataHora()           != null ? item.getDataHora().toString()          : "",
                         item.getVeiculo()             != null ? item.getVeiculo()                     : "",
@@ -77,9 +77,9 @@ public class AbastecimentoExportService {
                 cabecalho.createCell(i).setCellValue(colunas[i]);
             }
 
-            List<AbastecimentoItemDTO> abastecimentos = relatorio.getRefuels();
+            List<FuelingItemDTO> abastecimentos = relatorio.getRefuels();
             for (int i = 0; i < abastecimentos.size(); i++) {
-                AbastecimentoItemDTO item = abastecimentos.get(i);
+                FuelingItemDTO item = abastecimentos.get(i);
                 Row linha = aba.createRow(i + 1);
                 linha.createCell(0).setCellValue(item.getDataHora()        != null ? item.getDataHora().toString()           : "");
                 linha.createCell(1).setCellValue(item.getVeiculo()          != null ? item.getVeiculo()                      : "");
@@ -122,7 +122,7 @@ public class AbastecimentoExportService {
                 tabela.addHeaderCell(new Cell().add(new Paragraph(coluna).setBold()));
             }
 
-            for (AbastecimentoItemDTO item : relatorio.getRefuels()) {
+            for (FuelingItemDTO item : relatorio.getRefuels()) {
                 tabela.addCell(item.getDataHora()        != null ? item.getDataHora().toString()          : "");
                 tabela.addCell(item.getVeiculo()          != null ? item.getVeiculo()                     : "");
                 tabela.addCell(item.getResponsavel()      != null ? item.getResponsavel()                 : "");
@@ -167,7 +167,7 @@ public class AbastecimentoExportService {
                 linhaCabecalho.addNewTableCell().setText(colunas[i]);
             }
 
-            for (AbastecimentoItemDTO item : relatorio.getRefuels()) {
+            for (FuelingItemDTO item : relatorio.getRefuels()) {
                 XWPFTableRow linha = tabela.createRow();
                 linha.getCell(0).setText(item.getDataHora()        != null ? item.getDataHora().toString()          : "");
                 linha.getCell(1).setText(item.getVeiculo()          != null ? item.getVeiculo()                     : "");

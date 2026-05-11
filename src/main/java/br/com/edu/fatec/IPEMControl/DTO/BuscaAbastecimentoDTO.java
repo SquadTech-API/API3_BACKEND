@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class BuscaAbastecimentoDTO {
-    private List<AbastecimentoItemDTO> abastecimentos;
+    private List<FuelingItemDTO> abastecimentos;
     private List<ItemTrocaOleoDTO> trocasOleo;
     private List<ConsumoVeiculoDTO> veiculos;
 }

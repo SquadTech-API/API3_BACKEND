@@ -149,7 +149,7 @@ public class AbastecimentoService {
             }
         }
 
-        List<AbastecimentoItemDTO> itensAbastecimento = fuelings.stream()
+        List<FuelingItemDTO> itensAbastecimento = fuelings.stream()
                 .map(this::paraItemDTO).collect(Collectors.toList());
 
         // CORRIGIDO: usa getVehicle() direto da entidade OilChange
@@ -190,7 +190,7 @@ public class AbastecimentoService {
                     abastecimentoRepository.findByRegistroSaidaVeiculoPlacaOrderByDataHoraDesc(placa);
         }
 
-        List<AbastecimentoItemDTO> itensAbastecimento = List.of();
+        List<FuelingItemDTO> itensAbastecimento = List.of();
         List<ItemTrocaOleoDTO>     itensTrocaOleo     = List.of();
 
         if ("ambos".equals(tipoRegistro) || "abast".equals(tipoRegistro)) {
@@ -221,11 +221,11 @@ public class AbastecimentoService {
         };
     }
 
-    private AbastecimentoItemDTO paraItemDTO(Fueling a) {
+    private FuelingItemDTO paraItemDTO(Fueling a) {
         DepartureLog rs   = a.getDepartureLog();
         Vehicle vehicle = rs != null ? rs.getVehicle() : null;
         String responsavel = rs != null && rs.getUser() != null ? rs.getUser().getName() : null;
-        return new AbastecimentoItemDTO(
+        return new FuelingItemDTO(
                 a.getDateTime(),
                 vehicle != null ? vehicle.getPrefix() : null,
                 responsavel, a.getFuelType(), a.getLitersAmount(),

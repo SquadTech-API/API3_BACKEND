@@ -23,7 +23,7 @@ public class FuelReportDTO {
     private List<BigDecimal> weeklyLiters;
 
     // Tabela de registros individuais
-    private List<AbastecimentoItemDTO> refuels;
+    private List<FuelingItemDTO> refuels;
 
     // Dados por veículo
     private List<ConsumoVeiculoDTO> vehicles;
