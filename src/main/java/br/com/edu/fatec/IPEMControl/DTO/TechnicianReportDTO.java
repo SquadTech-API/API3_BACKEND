@@ -70,7 +70,7 @@ public class TechnicianReportDTO {
     private DocumentosDTO documents;
 
     // ── Destinos e serviços ───────────────────────────────────────────────────
-    private List<DestinoFrequenteDTO> destinations;
+    private List<FrequentDestinationDTO> destinations;
     /** Map<serviceName, count> */
     private Map<String, Long> services;
 
