@@ -1,15 +1,19 @@
 package br.com.edu.fatec.IPEMControl.DTO;
 
-public class GraficoKmItemDTO {
+public class KilometerChartItemDTO {
 
     private Integer id;
     private String prefix;
-    private Double valor;
+    private Double value;
 
-    public GraficoKmItemDTO(Integer id, String prefix, Double valor) {
+    public KilometerChartItemDTO(
+            Integer id,
+            String prefix,
+            Double value
+    ) {
         this.id = id;
         this.prefix = prefix;
-        this.valor = valor;
+        this.value = value;
     }
 
     public Integer getId() {
@@ -20,7 +24,7 @@ public class GraficoKmItemDTO {
         return prefix;
     }
 
-    public Double getValor() {
-        return valor;
+    public Double getValue() {
+        return value;
     }
 }

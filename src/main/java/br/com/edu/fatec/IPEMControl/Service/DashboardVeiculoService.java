@@ -26,9 +26,9 @@ public class DashboardVeiculoService {
 
     public DashboardVeiculoDTO buscarDashboard() {
 
-        List<GraficoKmItemDTO> topSemana = registroSaidaRepository.buscarTop5KmSemana()
+        List<KilometerChartItemDTO> topSemana = registroSaidaRepository.buscarTop5KmSemana()
                 .stream()
-                .map(obj -> new GraficoKmItemDTO(
+                .map(obj -> new KilometerChartItemDTO(
                         ((Number) obj[0]).intValue(),
                         (String) obj[1],
                         ((Number) obj[2]).doubleValue()

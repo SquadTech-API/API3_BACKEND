@@ -5,16 +5,16 @@ import java.util.Map;
 
 public class DashboardVeiculoDTO {
 
-    private Map<String, List<GraficoKmItemDTO>> graficoKm;
+    private Map<String, List<KilometerChartItemDTO>> graficoKm;
     private VehicleDashboardDTO veiculoPadrao;
 
-    public DashboardVeiculoDTO(Map<String, List<GraficoKmItemDTO>> graficoKm,
+    public DashboardVeiculoDTO(Map<String, List<KilometerChartItemDTO>> graficoKm,
                                VehicleDashboardDTO veiculoPadrao) {
         this.graficoKm = graficoKm;
         this.veiculoPadrao = veiculoPadrao;
     }
 
-    public Map<String, List<GraficoKmItemDTO>> getGraficoKm() {
+    public Map<String, List<KilometerChartItemDTO>> getGraficoKm() {
         return graficoKm;
     }
 
