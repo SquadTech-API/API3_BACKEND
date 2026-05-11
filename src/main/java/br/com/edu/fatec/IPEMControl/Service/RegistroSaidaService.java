@@ -127,33 +127,33 @@ public class RegistroSaidaService {
         );
     }
 
-    public DepartureLog fecharSaida(Integer id, FecharSaidaDTO dto) {
+    public DepartureLog fecharSaida(Integer id, CloseExitDTO dto) {
         DepartureLog registro = registroSaidaRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de saída não encontrado."));
 
         if (!"em_andamento".equalsIgnoreCase(registro.getStatus()))
             throw new RegraDeNegocioException("Esta saída já foi encerrada.");
-        if (dto.getKmFinal() == null)
+        if (dto.getFinalMileage() == null)
             throw new RegraDeNegocioException("Informe o KM final.");
-        if (dto.getDataRetorno() == null)
+        if (dto.getReturnDate() == null)
             throw new RegraDeNegocioException("Informe o horário de chegada.");
-        if (dto.getKmFinal().compareTo(registro.getStartingKm()) < 0)
+        if (dto.getFinalMileage().compareTo(registro.getStartingKm()) < 0)
             throw new RegraDeNegocioException("KM final não pode ser menor que o KM inicial.");
-        if (dto.getDataRetorno().isBefore(registro.getDateTimeDeparture()))
+        if (dto.getReturnDate().isBefore(registro.getDateTimeDeparture()))
             throw new RegraDeNegocioException("Horário de chegada não pode ser anterior ao horário de saída.");
 
-        BigDecimal kmRodados = dto.getKmFinal().subtract(registro.getStartingKm());
+        BigDecimal kmRodados = dto.getFinalMileage().subtract(registro.getStartingKm());
 
-        registro.setFinishingKm(dto.getKmFinal());
+        registro.setFinishingKm(dto.getFinalMileage());
         registro.setDrivenKm(kmRodados);
-        registro.setReturnDate(dto.getDataRetorno());
+        registro.setReturnDate(dto.getReturnDate());
         registro.setStatus("concluido");
 
-        if (dto.getObservacoes() != null && !dto.getObservacoes().isBlank())
-            registro.setObservacoes(dto.getObservacoes());
+        if (dto.getObservations() != null && !dto.getObservations().isBlank())
+            registro.setObservacoes(dto.getObservations());
 
         Vehicle vehicle = registro.getVehicle();
-        vehicle.setCurrentKm(dto.getKmFinal());
+        vehicle.setCurrentKm(dto.getFinalMileage());
         vehicle.setAvailable(true);
         veiculoRepository.save(vehicle);
 
