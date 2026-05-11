@@ -26,7 +26,7 @@ public class FuelReportDTO {
     private List<FuelingItemDTO> refuels;
 
     // Dados por veículo
-    private List<ConsumoVeiculoDTO> vehicles;
+    private List<VehicleConsumptionDTO> vehicles;
 
     // Histórico de trocas de óleo
     private List<ItemTrocaOleoDTO> oilChanges;

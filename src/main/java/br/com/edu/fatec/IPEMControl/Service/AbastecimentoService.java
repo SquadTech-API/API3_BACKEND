@@ -41,19 +41,19 @@ public class AbastecimentoService {
     // ── POST /abastecimento ──────────────────────────────────────────────────
 
     public SavedFuelingDTO salvar(FuelingDTO dto) {
-        DepartureLog departureLog = registroSaidaRepository.findById(dto.getIdSaida())
+        DepartureLog departureLog = registroSaidaRepository.findById(dto.getTripId())
                 .orElseThrow(() -> new RuntimeException("Registro de saída não encontrado."));
 
         Fueling ab = new Fueling();
         ab.setDepartureLog(departureLog);
-        ab.setDateTime(dto.getDataHora());
-        ab.setFuelType(dto.getTipoCombustivel());
-        ab.setLitersAmount(dto.getQuantidadeLitros());
-        ab.setTotalValue(dto.getValorTotal());
-        ab.setFuelingKm(dto.getKmAbastecimento());
-        ab.setGasStationName(dto.getPostoNome());
-        ab.setGasStationCity(dto.getPostoCidade());
-        ab.setReceipt(dto.getNotaFiscal());
+        ab.setDateTime(dto.getDateTime());
+        ab.setFuelType(dto.getFuelType());
+        ab.setLitersAmount(dto.getLitersQuantity());
+        ab.setTotalValue(dto.getTotalAmount());
+        ab.setFuelingKm(dto.getFuelingMileage());
+        ab.setGasStationName(dto.getGasStationName());
+        ab.setGasStationCity(dto.getGasStationCity());
+        ab.setReceipt(dto.getInvoiceNumber());
 
         Fueling salvo = abastecimentoRepository.save(ab);
 
@@ -127,13 +127,13 @@ public class AbastecimentoService {
         }
 
         List<Object[]> linhasConsumo = abastecimentoRepository.buscarConsumoPorVeiculo(dataInicio);
-        List<ConsumoVeiculoDTO> consumoVeiculos = construirConsumoVeiculos(linhasConsumo, allVehicles);
+        List<VehicleConsumptionDTO> consumoVeiculos = construirConsumoVeiculos(linhasConsumo, allVehicles);
 
         double mediaConsumo = consumoVeiculos.stream()
-                .filter(v -> v.getConsumoKmL() != null).mapToDouble(ConsumoVeiculoDTO::getConsumoKmL)
+                .filter(v -> v.getFuelConsumptionKmPerLiter() != null).mapToDouble(VehicleConsumptionDTO::getFuelConsumptionKmPerLiter)
                 .average().orElse(0);
         double mediaCusto = consumoVeiculos.stream()
-                .filter(v -> v.getCustoPorKm() != null).mapToDouble(ConsumoVeiculoDTO::getCustoPorKm)
+                .filter(v -> v.getCostPerKilometer() != null).mapToDouble(VehicleConsumptionDTO::getCostPerKilometer)
                 .average().orElse(0);
 
         List<Object[]> linhasSemanas = abastecimentoRepository.buscarEstatisticasSemanas(dataInicio);
@@ -202,7 +202,7 @@ public class AbastecimentoService {
                     .stream().map(this::paraItemTrocaOleoDTO).collect(Collectors.toList());
         }
 
-        List<ConsumoVeiculoDTO> veiculos = construirConsumoVeiculos(
+        List<VehicleConsumptionDTO> veiculos = construirConsumoVeiculos(
                 abastecimentoRepository.buscarConsumoPorVeiculo(resolverDataInicio("30")),
                 veiculoRepository.findAll());
 
@@ -260,7 +260,7 @@ public class AbastecimentoService {
         );
     }
 
-    private List<ConsumoVeiculoDTO> construirConsumoVeiculos(List<Object[]> linhas, List<Vehicle> todos) {
+    private List<VehicleConsumptionDTO> construirConsumoVeiculos(List<Object[]> linhas, List<Vehicle> todos) {
         return linhas.stream().map(linha -> {
             String placa          = (String) linha[0];
             BigDecimal litros     = paraBigDecimal(linha[1]);
@@ -278,13 +278,13 @@ public class AbastecimentoService {
                     ? trocaOleoRepository.buscarUltimaPorVeiculo(vehicle.getVehicleId())
                     : Optional.empty();
 
-            return new ConsumoVeiculoDTO(
+            return new VehicleConsumptionDTO(
                     placa,
                     vehicle != null ? vehicle.getCurrentKm() : null,
                     ultimaTroca.map(OilChange::getNextChangeKm).orElse(null),
                     ultimaTroca.map(OilChange::getChangeKm).orElse(null),
                     ultimaTroca.map(t -> t.getCreatedAt().toLocalDate().toString()).orElse(null),
-                    consumoKmL, custoPorKm, totalGasto, litros
+                    consumoKmL, custoPorKm, totalGasto
             );
         }).collect(Collectors.toList());
     }

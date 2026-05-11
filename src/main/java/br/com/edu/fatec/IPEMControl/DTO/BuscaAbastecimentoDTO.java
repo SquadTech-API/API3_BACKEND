@@ -9,5 +9,5 @@ import java.util.List;
 public class BuscaAbastecimentoDTO {
     private List<FuelingItemDTO> abastecimentos;
     private List<ItemTrocaOleoDTO> trocasOleo;
-    private List<ConsumoVeiculoDTO> veiculos;
+    private List<VehicleConsumptionDTO> veiculos;
 }
