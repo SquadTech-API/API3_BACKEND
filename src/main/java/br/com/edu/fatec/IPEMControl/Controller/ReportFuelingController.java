@@ -10,13 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/relatorios/abastecimento")
-public class RelatorioAbastecimentoController {
+@RequestMapping("/report/fueling")
+public class ReportFuelingController {
 
     private final AbastecimentoService abastecimentoService;
     private final AbastecimentoExportService abastecimentoExportService;
 
-    public RelatorioAbastecimentoController(
+    public ReportFuelingController(
             AbastecimentoService abastecimentoService,
             AbastecimentoExportService abastecimentoExportService) {
         this.abastecimentoService = abastecimentoService;
