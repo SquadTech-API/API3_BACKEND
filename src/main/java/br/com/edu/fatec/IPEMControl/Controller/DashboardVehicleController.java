@@ -1,17 +1,17 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.VehicleDashboardResponseDTO;
-import br.com.edu.fatec.IPEMControl.Service.DashboardVeiculoService;
+import br.com.edu.fatec.IPEMControl.Service.DashboardVehicleService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/dashboard/veiculos")
+@RequestMapping("/dashboard/Vehicle")
 @CrossOrigin("*")
-public class DashboardVeiculoController {
+public class DashboardVehicleController {
 
-    private final DashboardVeiculoService service;
+    private final DashboardVehicleService service;
 
-    public DashboardVeiculoController(DashboardVeiculoService service) {
+    public DashboardVehicleController(DashboardVehicleService service) {
         this.service = service;
     }
 
