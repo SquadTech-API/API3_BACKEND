@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.*;
  * - Content-Disposition name de arquivo correto
  */
 @RestController
-@RequestMapping("/relatorios")
+@RequestMapping("/report")
 @CrossOrigin(origins = "*")
-public class RelatorioUsoController {
+public class ReportUsageController {
 
     @Autowired
     private DepartureLogService service;
