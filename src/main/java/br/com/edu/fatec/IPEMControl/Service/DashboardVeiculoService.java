@@ -24,7 +24,7 @@ public class DashboardVeiculoService {
     @Autowired
     private VeiculoRepository veiculoRepository;
 
-    public DashboardVeiculoDTO buscarDashboard() {
+    public VehicleDashboardResponseDTO buscarDashboard() {
 
         List<KilometerChartItemDTO> topSemana = registroSaidaRepository.buscarTop5KmSemana()
                 .stream()
@@ -36,14 +36,14 @@ public class DashboardVeiculoService {
                 .toList();
 
         if (topSemana.isEmpty()) {
-            return new DashboardVeiculoDTO(Map.of("semana", new ArrayList<>()), null);
+            return new VehicleDashboardResponseDTO(Map.of("semana", new ArrayList<>()), null);
         }
 
         Integer idVeiculoPadrao = topSemana.get(0).getId();
 
         VehicleDashboardDTO veiculoPadrao = montarVeiculo(idVeiculoPadrao);
 
-        return new DashboardVeiculoDTO(
+        return new VehicleDashboardResponseDTO(
                 Map.of("semana", topSemana),
                 veiculoPadrao
         );
