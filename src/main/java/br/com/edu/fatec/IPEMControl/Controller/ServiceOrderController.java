@@ -2,7 +2,7 @@ package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.ServiceOrderDTO;
 import br.com.edu.fatec.IPEMControl.DTO.ServiceOrderResponseDTO;
-import br.com.edu.fatec.IPEMControl.Service.OrdemServicoService;
+import br.com.edu.fatec.IPEMControl.Service.ServiceOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,21 +10,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/ordens-servico")
+@RequestMapping("/service-order")
 @CrossOrigin(origins = "*")
-public class OrdemServicoController {
+public class ServiceOrderController {
 
     @Autowired
-    private OrdemServicoService ordemServicoService;
+    private ServiceOrder serviceOrder;
 
     @PostMapping
     public ResponseEntity<ServiceOrderResponseDTO> criar(@RequestBody ServiceOrderDTO dto) {
-        ServiceOrderResponseDTO resposta = ordemServicoService.criar(dto);
+        ServiceOrderResponseDTO resposta = serviceOrder.criar(dto);
         return ResponseEntity.status(201).body(resposta);
     }
 
     @GetMapping
     public ResponseEntity<List<ServiceOrderResponseDTO>> listar() {
-        return ResponseEntity.ok(ordemServicoService.listarTodas());
+        return ResponseEntity.ok(serviceOrder.listarTodas());
     }
 }

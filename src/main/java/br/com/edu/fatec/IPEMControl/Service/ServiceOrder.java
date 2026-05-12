@@ -2,7 +2,6 @@ package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.ServiceOrderDTO;
 import br.com.edu.fatec.IPEMControl.DTO.ServiceOrderResponseDTO;
-import br.com.edu.fatec.IPEMControl.Entities.ServiceOrder;
 import br.com.edu.fatec.IPEMControl.Entities.ServiceType;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class OrdemServicoService {
+public class ServiceOrder {
 
     @Autowired
     private OrdemServicoRepository ordemServicoRepository;
@@ -38,7 +37,7 @@ public class OrdemServicoService {
         ServiceType serviceType = tipoServicoRepository.findById(dto.getServiceTypeId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
 
-        ServiceOrder ordem = new ServiceOrder();
+        br.com.edu.fatec.IPEMControl.Entities.ServiceOrder ordem = new br.com.edu.fatec.IPEMControl.Entities.ServiceOrder();
         ordem.setVehicle(vehicle);
         ordem.setServiceType(serviceType);
         ordem.setObservation(dto.getObservations());
@@ -54,7 +53,7 @@ public class OrdemServicoService {
                 .collect(Collectors.toList());
     }
 
-    private ServiceOrderResponseDTO mapearParaDTO(ServiceOrder ordem) {
+    private ServiceOrderResponseDTO mapearParaDTO(br.com.edu.fatec.IPEMControl.Entities.ServiceOrder ordem) {
         return new ServiceOrderResponseDTO(
                 ordem.getServiceOrderId(),
                 ordem.getVehicle().getLicensePlate(),
