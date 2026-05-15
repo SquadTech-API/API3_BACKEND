@@ -19,29 +19,29 @@ import java.util.List;
  * - PATCH /usuarios/{registration}/ativar    — reativar colaborador (ADM)
  */
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping("/users")
 @CrossOrigin(origins = "*")
-public class UsuarioController {
+public class UserController {
 
     @Autowired
-    private UsuarioService service;
+    private UsuarioService userService;
 
     // POST /usuarios — cadastrar
     @PostMapping
-    public ResponseEntity<User> criar(@RequestBody UserDTO dto) {
-        return ResponseEntity.status(201).body(service.salvar(dto));
+    public ResponseEntity<User> create(@RequestBody UserDTO dto) {
+        return ResponseEntity.status(201).body(userService.salvar(dto));
     }
 
     // GET /usuarios — listar todos
     @GetMapping
-    public ResponseEntity<List<User>> listar() {
-        return ResponseEntity.ok(service.listarTodos());
+    public ResponseEntity<List<User>> findAll() {
+        return ResponseEntity.ok(userService.listarTodos());
     }
 
     // GET /usuarios/{registration}
-    @GetMapping("/{matricula}")
-    public ResponseEntity<User> buscar(@PathVariable Integer matricula) {
-        return service.buscarPorMatricula(matricula)
+    @GetMapping("/{registration}")
+    public ResponseEntity<User> findByRegistration(@PathVariable Integer registration) {
+        return userService.buscarPorMatricula(registration)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -50,38 +50,38 @@ public class UsuarioController {
     // CORRIGIDO: resposta agora inclui tipoHabilitacao e activeEmployee
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
-        LoginRespostaDTO response = service.autenticar(dto.getEmail(), dto.getSenha());
+        LoginRespostaDTO response = userService.autenticar(dto.getEmail(), dto.getSenha());
         if (response != null) {
             return ResponseEntity.ok(response);
         }
-        return ResponseEntity.status(401).body("{\"message\":\"E-mail ou password inválidos.\"}");
+        return ResponseEntity.status(401).body("{\"message\":\"Invalid email or password.\"}");
     }
 
     // PUT /usuarios/{registration} — NOVO: editar colaborador (ADM)
-    @PutMapping("/{matricula}")
-    public ResponseEntity<User> atualizar(
-            @PathVariable Integer matricula,
+    @PutMapping("/{registration}")
+    public ResponseEntity<User> update(
+            @PathVariable Integer registration,
             @RequestBody UserDTO dto) {
-        return ResponseEntity.ok(service.atualizar(matricula, dto));
+        return ResponseEntity.ok(userService.atualizar(registration, dto));
     }
 
     // PATCH /usuarios/{registration}/desativar — NOVO
-    @PatchMapping("/{matricula}/desativar")
-    public ResponseEntity<User> desativar(@PathVariable Integer matricula) {
-        return ResponseEntity.ok(service.desativar(matricula));
+    @PatchMapping("/{registration}/deactivate")
+    public ResponseEntity<User> deactivate(@PathVariable Integer registration) {
+        return ResponseEntity.ok(userService.desativar(registration));
     }
 
     // PATCH /usuarios/{registration}/ativar — NOVO
-    @PatchMapping("/{matricula}/ativar")
-    public ResponseEntity<User> ativar(@PathVariable Integer matricula) {
-        return ResponseEntity.ok(service.ativar(matricula));
+    @PatchMapping("/{registration}/activate")
+    public ResponseEntity<User> activate(@PathVariable Integer registration) {
+        return ResponseEntity.ok(userService.ativar(registration));
     }
 
     // POST /usuarios/atualizar-password
-    @PostMapping("/atualizar-senha")
-    public ResponseEntity<String> atualizarSenha(@RequestBody AtualizarSenhaDTO dto) {
-        boolean atualizado = service.atualizarSenha(dto);
-        if (atualizado) return ResponseEntity.ok("{\"message\":\"Senha atualizada com sucesso!\"}");
-        return ResponseEntity.status(400).body("{\"message\":\"E-mail ou password atual incorretos.\"}");
+    @PostMapping("/update-password")
+    public ResponseEntity<String> updatePassword(@RequestBody AtualizarSenhaDTO dto) {
+        boolean updated = userService.atualizarSenha(dto);
+        if (updated) return ResponseEntity.ok("{\"message\":\"Password updated successfully!\"}");
+        return ResponseEntity.status(400).body("{\"message\":\"Incorrect email or current password.\"}");
     }
 }
