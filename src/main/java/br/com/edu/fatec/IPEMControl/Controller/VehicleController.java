@@ -22,55 +22,55 @@ import java.util.List;
  * 6. POST /vehicles — cadastrar novo (já existia)
  */
 @RestController
-@RequestMapping("/veiculos")
+@RequestMapping("/vehicles")
 @CrossOrigin(origins = "*")
-public class VeiculoController {
+public class VehicleController {
 
     @Autowired
-    private VeiculoService veiculoService;
+    private VeiculoService vehicleService;
 
     @Autowired
-    private VeiculoRepository veiculoRepository;
+    private VeiculoRepository vehicleRepository;
 
     // GET /vehicles?todos=true
     // CORRIGIDO: parâmetro "todos" — quando false filtra veículos ativos
     @GetMapping
-    public ResponseEntity<List<VehicleSummaryDTO>> listar(
-            @RequestParam(required = false, defaultValue = "false") boolean todos) {
-        return ResponseEntity.ok(veiculoService.listarVeiculosResumo(todos));
+    public ResponseEntity<List<VehicleSummaryDTO>> findAll(
+            @RequestParam(required = false, defaultValue = "false") boolean all) {
+        return ResponseEntity.ok(vehicleService.listarVeiculosResumo(all));
     }
 
     // GET /vehicles/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<Vehicle> buscarPorId(@PathVariable Integer id) {
-        return veiculoRepository.findById(id)
+    public ResponseEntity<Vehicle> findById(@PathVariable Integer id) {
+        return vehicleRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     // POST /vehicles
     @PostMapping
-    public ResponseEntity<Vehicle> criar(@RequestBody Vehicle vehicle) {
-        return ResponseEntity.status(201).body(veiculoRepository.save(vehicle));
+    public ResponseEntity<Vehicle> create(@RequestBody Vehicle vehicle) {
+        return ResponseEntity.status(201).body(vehicleRepository.save(vehicle));
     }
 
     // PUT /vehicles/{id} — NOVO: edição completa de veículo
     @PutMapping("/{id}")
-    public ResponseEntity<Vehicle> atualizar(
+    public ResponseEntity<Vehicle> update(
             @PathVariable Integer id,
-            @RequestBody Vehicle atualizado) {
-        return ResponseEntity.ok(veiculoService.atualizar(id, atualizado));
+            @RequestBody Vehicle updatedVehicle) {
+        return ResponseEntity.ok(vehicleService.atualizar(id, updatedVehicle));
     }
 
     // PATCH /vehicles/{id}/desativar — NOVO
-    @PatchMapping("/{id}/desativar")
-    public ResponseEntity<Vehicle> desativar(@PathVariable Integer id) {
-        return ResponseEntity.ok(veiculoService.toggleAtivo(id, false));
+    @PatchMapping("/{id}/deactivate")
+    public ResponseEntity<Vehicle> deactivate(@PathVariable Integer id) {
+        return ResponseEntity.ok(vehicleService.toggleAtivo(id, false));
     }
 
     // PATCH /vehicles/{id}/ativar — NOVO
-    @PatchMapping("/{id}/ativar")
-    public ResponseEntity<Vehicle> ativar(@PathVariable Integer id) {
-        return ResponseEntity.ok(veiculoService.toggleAtivo(id, true));
+    @PatchMapping("/{id}/activate")
+    public ResponseEntity<Vehicle> activate(@PathVariable Integer id) {
+        return ResponseEntity.ok(vehicleService.toggleAtivo(id, true));
     }
 }
