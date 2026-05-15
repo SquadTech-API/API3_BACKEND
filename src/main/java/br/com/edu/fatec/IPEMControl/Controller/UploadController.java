@@ -10,18 +10,18 @@ import java.nio.file.*;
 @RequestMapping("/uploads")
 public class UploadController {
 
-    private static final String PASTA = "uploads/NF/";
+    private static final String UPLOAD_DIR = "uploads/NF/";
 
     @PostMapping
-    public ResponseEntity<String> upload(@RequestParam("foto") MultipartFile arquivo) {
+    public ResponseEntity<String> upload(@RequestParam("foto") MultipartFile file) {
         try {
-            Files.createDirectories(Paths.get(PASTA));
+            Files.createDirectories(Paths.get(UPLOAD_DIR));
 
-            String nomeArquivo = System.currentTimeMillis() + "_" + arquivo.getOriginalFilename();
-            Path destino = Paths.get(PASTA + nomeArquivo);
-            Files.copy(arquivo.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            Path destination = Paths.get(UPLOAD_DIR + fileName);
+            Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
 
-            return ResponseEntity.ok("/" + PASTA + nomeArquivo);
+            return ResponseEntity.ok("/" + UPLOAD_DIR + fileName);
 
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Erro ao salvar arquivo.");
