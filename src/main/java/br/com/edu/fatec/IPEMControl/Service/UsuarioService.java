@@ -5,7 +5,7 @@ import br.com.edu.fatec.IPEMControl.DTO.LoginRespostaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.UserDTO;
 import br.com.edu.fatec.IPEMControl.Entities.User;
 import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
-import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
+import br.com.edu.fatec.IPEMControl.Exception.BusinessRuleException;
 import br.com.edu.fatec.IPEMControl.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,7 +26,7 @@ public class UsuarioService {
     // ── POST /usuarios ────────────────────────────────────────────────────────
     public User salvar(UserDTO dto) {
         if (dto.getPassword() == null || dto.getPassword().isBlank())
-            throw new RegraDeNegocioException("Senha é obrigatória.");
+            throw new BusinessRuleException("Senha é obrigatória.");
 
         User user = new User();
         user.setCpf(dto.getCpf());

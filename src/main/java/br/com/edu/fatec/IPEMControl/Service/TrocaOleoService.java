@@ -5,7 +5,7 @@ import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.OilChange;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
-import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
+import br.com.edu.fatec.IPEMControl.Exception.BusinessRuleException;
 import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
 import br.com.edu.fatec.IPEMControl.Repository.OilChangeRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
@@ -35,11 +35,11 @@ public class TrocaOleoService {
     public OilChange salvar(OilChangeDTO dto) {
 
         if (dto.getVehicleId() == null)
-            throw new RegraDeNegocioException("Informe o veículo.");
+            throw new BusinessRuleException("Informe o veículo.");
         if (dto.getOilChangeMileage() == null)
-            throw new RegraDeNegocioException("Informe o KM da troca.");
+            throw new BusinessRuleException("Informe o KM da troca.");
         if (dto.getOilChangeDate() == null)
-            throw new RegraDeNegocioException("Informe a data da troca.");
+            throw new BusinessRuleException("Informe a data da troca.");
 
         Vehicle vehicle = vehicleRepository.findById(dto.getVehicleId())
                 .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado."));

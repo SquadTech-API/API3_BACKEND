@@ -22,8 +22,8 @@ public class GlobalExceptionHandler {
     }
 
     // 400 — Regra de negócio violada
-    @ExceptionHandler(RegraDeNegocioException.class)
-    public ResponseEntity<Map<String, String>> handleRegraDeNegocio(RegraDeNegocioException ex) {
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity<Map<String, String>> handleRegraDeNegocio(BusinessRuleException ex) {
         return ResponseEntity.status(400).body(Map.of("message", ex.getMessage()));
     }
 

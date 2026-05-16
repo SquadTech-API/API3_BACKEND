@@ -3,7 +3,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 import br.com.edu.fatec.IPEMControl.DTO.*;
 import br.com.edu.fatec.IPEMControl.Entities.*;
 import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
-import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
+import br.com.edu.fatec.IPEMControl.Exception.BusinessRuleException;
 import br.com.edu.fatec.IPEMControl.Repository.*;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -37,35 +37,35 @@ public class RegistroSaidaService {
     private RefuelingRepository refuelingRepository;
 
     public DepartureLog abrirSaida(DepartureLogDTO dto) {
-        if (dto.getVehicleId() == null) throw new RegraDeNegocioException("Informe o veículo.");
-        if (dto.getUserRegistration() == null) throw new RegraDeNegocioException("Informe o usuário.");
-        if (dto.getServiceTypeId() == null) throw new RegraDeNegocioException("Informe o type de serviço.");
-        if (dto.getInitialMileage() == null) throw new RegraDeNegocioException("Informe o KM inicial.");
-        if (dto.getInitialMileage().compareTo(BigDecimal.ZERO) < 0) throw new RegraDeNegocioException("KM inicial não pode ser negativo.");
-        if (dto.getDepartureDatetime() == null) throw new RegraDeNegocioException("Informe a data e hora de saída.");
-        if (dto.getDestination() == null || dto.getDestination().isBlank()) throw new RegraDeNegocioException("Informe o local de destino.");
+        if (dto.getVehicleId() == null) throw new BusinessRuleException("Informe o veículo.");
+        if (dto.getUserRegistration() == null) throw new BusinessRuleException("Informe o usuário.");
+        if (dto.getServiceTypeId() == null) throw new BusinessRuleException("Informe o type de serviço.");
+        if (dto.getInitialMileage() == null) throw new BusinessRuleException("Informe o KM inicial.");
+        if (dto.getInitialMileage().compareTo(BigDecimal.ZERO) < 0) throw new BusinessRuleException("KM inicial não pode ser negativo.");
+        if (dto.getDepartureDatetime() == null) throw new BusinessRuleException("Informe a data e hora de saída.");
+        if (dto.getDestination() == null || dto.getDestination().isBlank()) throw new BusinessRuleException("Informe o local de destino.");
 
         boolean usuarioJaEmSaida = exitRecordRepository
                 .findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(dto.getUserRegistration(), "em_andamento")
                 .isPresent();
         if (usuarioJaEmSaida)
-            throw new RegraDeNegocioException("Você já possui uma saída em andamento. Registre o retorno antes de iniciar uma nova saída.");
+            throw new BusinessRuleException("Você já possui uma saída em andamento. Registre o retorno antes de iniciar uma nova saída.");
 
         Vehicle vehicle = vehicleRepository.findById(dto.getVehicleId())
                 .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado."));
 
         if (Boolean.FALSE.equals(vehicle.getAvailable()))
-            throw new RegraDeNegocioException("Veículo não está disponível.");
+            throw new BusinessRuleException("Veículo não está disponível.");
 
         if (vehicle.getCurrentKm() != null && dto.getInitialMileage().compareTo(vehicle.getCurrentKm()) < 0) {
-            throw new RegraDeNegocioException("KM inicial (" + dto.getInitialMileage() + ") não pode ser menor que o KM atual do veículo (" + vehicle.getCurrentKm() + ").");
+            throw new BusinessRuleException("KM inicial (" + dto.getInitialMileage() + ") não pode ser menor que o KM atual do veículo (" + vehicle.getCurrentKm() + ").");
         }
 
         User user = userRepository.findByMatricula(dto.getUserRegistration())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
 
         if (Boolean.FALSE.equals(user.getActiveColaborator()))
-            throw new RegraDeNegocioException("Colaborador inativo.");
+            throw new BusinessRuleException("Colaborador inativo.");
 
         ServiceType serviceType = serviceTypeRepository.findById(dto.getServiceTypeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tipo de serviço não encontrado."));
@@ -87,20 +87,20 @@ public class RegistroSaidaService {
     }
 
     public ReturnResponseDTO registrarRetorno(Integer id, ReturnDTO dto) {
-        if (dto.getFinalMileage() == null) throw new RegraDeNegocioException("Informe o KM final.");
-        if (dto.getReturnDatetime() == null) throw new RegraDeNegocioException("Informe o horário de chegada.");
+        if (dto.getFinalMileage() == null) throw new BusinessRuleException("Informe o KM final.");
+        if (dto.getReturnDatetime() == null) throw new BusinessRuleException("Informe o horário de chegada.");
 
         DepartureLog registro = exitRecordRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Registro de saída não encontrado."));
 
         if (!"em_andamento".equalsIgnoreCase(registro.getStatus()))
-            throw new RegraDeNegocioException("Esta saída já foi encerrada.");
+            throw new BusinessRuleException("Esta saída já foi encerrada.");
 
         if (dto.getFinalMileage().compareTo(registro.getStartingKm()) < 0)
-            throw new RegraDeNegocioException("KM final não pode ser menor que o KM inicial.");
+            throw new BusinessRuleException("KM final não pode ser menor que o KM inicial.");
 
         if (dto.getReturnDatetime().isBefore(registro.getDateTimeDeparture()))
-            throw new RegraDeNegocioException("Horário de chegada não pode ser anterior ao horário de saída.");
+            throw new BusinessRuleException("Horário de chegada não pode ser anterior ao horário de saída.");
 
         BigDecimal kmRodados = dto.getFinalMileage().subtract(registro.getStartingKm());
 
@@ -132,15 +132,15 @@ public class RegistroSaidaService {
                 .orElseThrow(() -> new ResourceNotFoundException("Registro de saída não encontrado."));
 
         if (!"em_andamento".equalsIgnoreCase(registro.getStatus()))
-            throw new RegraDeNegocioException("Esta saída já foi encerrada.");
+            throw new BusinessRuleException("Esta saída já foi encerrada.");
         if (dto.getKmFinal() == null)
-            throw new RegraDeNegocioException("Informe o KM final.");
+            throw new BusinessRuleException("Informe o KM final.");
         if (dto.getDataRetorno() == null)
-            throw new RegraDeNegocioException("Informe o horário de chegada.");
+            throw new BusinessRuleException("Informe o horário de chegada.");
         if (dto.getKmFinal().compareTo(registro.getStartingKm()) < 0)
-            throw new RegraDeNegocioException("KM final não pode ser menor que o KM inicial.");
+            throw new BusinessRuleException("KM final não pode ser menor que o KM inicial.");
         if (dto.getDataRetorno().isBefore(registro.getDateTimeDeparture()))
-            throw new RegraDeNegocioException("Horário de chegada não pode ser anterior ao horário de saída.");
+            throw new BusinessRuleException("Horário de chegada não pode ser anterior ao horário de saída.");
 
         BigDecimal kmRodados = dto.getKmFinal().subtract(registro.getStartingKm());
 
