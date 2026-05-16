@@ -4,7 +4,7 @@ import br.com.edu.fatec.IPEMControl.DTO.AtualizarSenhaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.LoginRespostaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.UserDTO;
 import br.com.edu.fatec.IPEMControl.Entities.User;
-import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
+import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
 import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
 import br.com.edu.fatec.IPEMControl.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +84,7 @@ public class UsuarioService {
     // NOVO: endpoint para edição pelo ADM
     public User atualizar(Integer matricula, UserDTO dto) {
         User user = repository.findByMatricula(matricula)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
 
         if (dto.getName() != null && !dto.getName().isBlank())
             user.setName(dto.getName());
@@ -102,7 +102,7 @@ public class UsuarioService {
     // NOVO: desativa colaborador
     public User desativar(Integer matricula) {
         User user = repository.findByMatricula(matricula)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
         user.setActiveColaborator(false);
         return repository.save(user);
     }
@@ -111,7 +111,7 @@ public class UsuarioService {
     // NOVO: reativa colaborador
     public User ativar(Integer matricula) {
         User user = repository.findByMatricula(matricula)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
         user.setActiveColaborator(true);
         return repository.save(user);
     }

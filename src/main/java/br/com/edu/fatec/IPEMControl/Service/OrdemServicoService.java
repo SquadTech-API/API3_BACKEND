@@ -5,7 +5,7 @@ import br.com.edu.fatec.IPEMControl.DTO.ServiceOrderResponseDTO;
 import br.com.edu.fatec.IPEMControl.Entities.ServiceOrder;
 import br.com.edu.fatec.IPEMControl.Entities.ServiceType;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
-import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
+import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
 import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
 import br.com.edu.fatec.IPEMControl.Repository.ServiceOrderRepository;
 import br.com.edu.fatec.IPEMControl.Repository.ServiceTypeRepository;
@@ -33,10 +33,10 @@ public class OrdemServicoService {
         if (dto.getServiceTypeId() == null) throw new RegraDeNegocioException("Informe o type de serviço.");
 
         Vehicle vehicle = vehicleRepository.findById(dto.getVehicleId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado."));
 
         ServiceType serviceType = serviceTypeRepository.findById(dto.getServiceTypeId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Tipo de serviço não encontrado."));
 
         ServiceOrder ordem = new ServiceOrder();
         ordem.setVehicle(vehicle);

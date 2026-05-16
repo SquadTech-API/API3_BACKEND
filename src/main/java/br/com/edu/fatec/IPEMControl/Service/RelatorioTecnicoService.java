@@ -6,7 +6,7 @@ import br.com.edu.fatec.IPEMControl.DTO.TechnicianReportDTO;
 import br.com.edu.fatec.IPEMControl.DTO.TechnicianSummaryDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.User;
-import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
+import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
 import br.com.edu.fatec.IPEMControl.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -137,7 +137,7 @@ public class RelatorioTecnicoService {
     public TechnicianReportDTO gerarRelatorioIndividual(Integer matricula, String periodo) {
 
         User user = usuarioRepo.findByMatricula(matricula)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Técnico não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Técnico não encontrado."));
 
         LocalDateTime inicio = dataInicio(periodo);
         TechnicianReportDTO dto = new TechnicianReportDTO();
