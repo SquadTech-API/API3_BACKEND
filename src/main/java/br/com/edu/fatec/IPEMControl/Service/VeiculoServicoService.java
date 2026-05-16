@@ -6,7 +6,7 @@ import br.com.edu.fatec.IPEMControl.Entities.ServiceVehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.ServiceTypeRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
-import br.com.edu.fatec.IPEMControl.Repository.VeiculoServicoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.ServiceVehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +21,7 @@ import java.util.List;
 public class VeiculoServicoService {
 
     @Autowired
-    private VeiculoServicoRepository veiculoServicoRepository;
+    private ServiceVehicleRepository serviceVehicleRepository;
 
     @Autowired
     private VehicleRepository vehicleRepository;
@@ -40,7 +40,7 @@ public class VeiculoServicoService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
 
         // Remove todos os vínculos atuais do veículo
-        veiculoServicoRepository.deleteByVeiculoIdVeiculo(idVeiculo);
+        serviceVehicleRepository.deleteByVeiculoIdVeiculo(idVeiculo);
 
         // Cria novos vínculos apenas para os serviços informados
         for (Integer idTipoServico : idsTipoServico) {
@@ -52,7 +52,7 @@ public class VeiculoServicoService {
             vs.setVehicle(vehicle);
             vs.setServiceType(serviceType);
             vs.setIsLicensed(true);
-            veiculoServicoRepository.save(vs);
+            serviceVehicleRepository.save(vs);
         }
     }
 
@@ -61,7 +61,7 @@ public class VeiculoServicoService {
      * GET /type-services/vehicle/{vehicleId}/ativos
      */
     public List<ServiceType> listarServicosAtivosDoVeiculo(Integer idVeiculo) {
-        return veiculoServicoRepository
+        return serviceVehicleRepository
                 .findByVeiculoIdVeiculoAndHabilitadoTrue(idVeiculo)
                 .stream()
                 .map(ServiceVehicle::getServiceType)
