@@ -5,14 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UsuarioDocumentoRepository extends JpaRepository<DocumentUser, Integer> {
+public interface UserDocumentRepository extends JpaRepository<DocumentUser, Integer> {
 
     /** Total de documents atribuídos ao técnico */
-    long countByUsuarioMatricula(Integer matricula);
+    long countByUsuarioMatricula(Integer registration);
 
     /** Documentos read (lido = true) */
-    long countByUsuarioMatriculaAndLidoTrue(Integer matricula);
+    long countByUsuarioMatriculaAndLidoTrue(Integer registration);
 
     /** Documentos downloaded (baixado = true) */
-    long countByUsuarioMatriculaAndBaixadoTrue(Integer matricula);
+    long countByUsuarioMatriculaAndBaixadoTrue(Integer registration);
 }
