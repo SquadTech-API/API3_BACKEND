@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface UsoVeiculoRepository extends JpaRepository<VehicleUsage, Long> {
+public interface VehicleUsageRepository extends JpaRepository<VehicleUsage, Long> {
 
     boolean existsByVeiculoAndDataFimIsNull(String vehicle);
 
