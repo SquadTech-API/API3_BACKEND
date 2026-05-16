@@ -28,7 +28,7 @@ public class RegistroSaidaService {
     private VeiculoRepository veiculoRepository;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private ServiceTypeRepository serviceTypeRepository;
@@ -61,7 +61,7 @@ public class RegistroSaidaService {
             throw new RegraDeNegocioException("KM inicial (" + dto.getInitialMileage() + ") não pode ser menor que o KM atual do veículo (" + vehicle.getCurrentKm() + ").");
         }
 
-        User user = usuarioRepository.findByMatricula(dto.getUserRegistration())
+        User user = userRepository.findByMatricula(dto.getUserRegistration())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
 
         if (Boolean.FALSE.equals(user.getActiveColaborator()))
