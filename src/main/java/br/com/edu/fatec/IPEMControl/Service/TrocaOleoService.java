@@ -4,7 +4,7 @@ import br.com.edu.fatec.IPEMControl.DTO.OilChangeDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.OilChange;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
-import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
+import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
 import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
 import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
 import br.com.edu.fatec.IPEMControl.Repository.OilChangeRepository;
@@ -42,7 +42,7 @@ public class TrocaOleoService {
             throw new RegraDeNegocioException("Informe a data da troca.");
 
         Vehicle vehicle = vehicleRepository.findById(dto.getVehicleId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado."));
 
         OilChange troca = new OilChange();
         troca.setVehicle(vehicle);
@@ -67,7 +67,7 @@ public class TrocaOleoService {
         // Vínculo com saída (opcional)
         if (dto.getDepartureId() != null) {
             DepartureLog saida = exitRecordRepository.findById(dto.getDepartureId())
-                    .orElseThrow(() -> new RecursoNaoEncontradoException("Saída não encontrada."));
+                    .orElseThrow(() -> new ResourceNotFoundException("Saída não encontrada."));
             troca.setDepartureLog(saida);
         }
 
@@ -89,13 +89,13 @@ public class TrocaOleoService {
     // ── GET /troca-oleo/{id} ──────────────────────────────────────────────────
     public OilChange buscarPorId(Integer id) {
         return oilChangeRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Troca de óleo não encontrada."));
+                .orElseThrow(() -> new ResourceNotFoundException("Troca de óleo não encontrada."));
     }
 
     // ── PUT /troca-oleo/{id} ──────────────────────────────────────────────────
     public OilChange atualizar(Integer id, OilChangeDTO dto) {
         OilChange troca = oilChangeRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Troca de óleo não encontrada."));
+                .orElseThrow(() -> new ResourceNotFoundException("Troca de óleo não encontrada."));
 
         if (dto.getOilChangeMileage() != null)        troca.setChangeKm(dto.getOilChangeMileage());
         if (dto.getIntervalKm() != null)    troca.setIntervalKm(dto.getIntervalKm());

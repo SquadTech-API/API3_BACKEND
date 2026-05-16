@@ -4,7 +4,7 @@ import br.com.edu.fatec.IPEMControl.DTO.VehicleSummaryDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.Fueling;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
-import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
+import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
 import br.com.edu.fatec.IPEMControl.Repository.RefuelingRepository;
 import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
@@ -109,7 +109,7 @@ public class VeiculoService {
      */
     public Vehicle toggleAtivo(Integer id, boolean ativo) {
         Vehicle vehicle = vehicleRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado."));
         vehicle.setActive(ativo);
         return vehicleRepository.save(vehicle);
     }
@@ -120,7 +120,7 @@ public class VeiculoService {
      */
     public Vehicle atualizar(Integer id, Vehicle atualizado) {
         Vehicle vehicle = vehicleRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado."));
 
         vehicle.setPrefix(atualizado.getPrefix());
         vehicle.setLicensePlate(atualizado.getLicensePlate());

@@ -4,7 +4,7 @@ import br.com.edu.fatec.IPEMControl.DTO.AtividadeDiariaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.DailyReportDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.User;
-import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
+import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
 import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
 import br.com.edu.fatec.IPEMControl.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class RelatorioService {
     public DailyReportDTO gerarRelatorioDiarioPorTecnico(Integer matricula, LocalDate data) {
 
         User user = userRepository.findByMatricula(matricula)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
 
 
         LocalDateTime inicioDia = data.atStartOfDay();

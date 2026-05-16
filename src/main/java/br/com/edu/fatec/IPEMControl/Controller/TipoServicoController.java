@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.Entities.ServiceType;
-import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
+import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
 import br.com.edu.fatec.IPEMControl.Repository.ServiceTypeRepository;
 import br.com.edu.fatec.IPEMControl.Service.VeiculoServicoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +71,7 @@ public class TipoServicoController {
             @RequestBody ServiceType atualizado) {
 
         ServiceType existente = serviceTypeRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Tipo de serviço não encontrado."));
 
         if (atualizado.getNomeServico() != null && !atualizado.getNomeServico().isBlank())
             existente.setNomeServico(atualizado.getNomeServico());
@@ -87,7 +87,7 @@ public class TipoServicoController {
     @PatchMapping("/{id}/toggle")
     public ResponseEntity<ServiceType> toggle(@PathVariable Integer id) {
         ServiceType ts = serviceTypeRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Tipo de serviço não encontrado."));
         ts.setLicensed(!Boolean.TRUE.equals(ts.getLicensed()));
         return ResponseEntity.ok(serviceTypeRepository.save(ts));
     }

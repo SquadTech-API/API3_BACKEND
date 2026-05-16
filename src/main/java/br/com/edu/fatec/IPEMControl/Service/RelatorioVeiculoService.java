@@ -4,7 +4,7 @@ import br.com.edu.fatec.IPEMControl.DTO.VehicleReportDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.Fueling;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
-import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
+import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
 import br.com.edu.fatec.IPEMControl.Repository.RefuelingRepository;
 import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
@@ -35,7 +35,7 @@ public class RelatorioVeiculoService {
     public VehicleReportDTO gerarRelatorioVeiculo(Integer idVeiculo) {
 
         Vehicle vehicle = vehicleRepository.findById(idVeiculo)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado: " + idVeiculo));
+                .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado: " + idVeiculo));
 
         // Total de saídas concluídas
         List<DepartureLog> saidasConcluidas = exitRecordRepository

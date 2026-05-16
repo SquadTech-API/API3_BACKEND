@@ -3,7 +3,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 import br.com.edu.fatec.IPEMControl.Entities.ServiceType;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Entities.ServiceVehicle;
-import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
+import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
 import br.com.edu.fatec.IPEMControl.Repository.ServiceTypeRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
 import br.com.edu.fatec.IPEMControl.Repository.ServiceVehicleRepository;
@@ -37,7 +37,7 @@ public class VeiculoServicoService {
     @Transactional
     public void sincronizar(Integer idVeiculo, List<Integer> idsTipoServico) {
         Vehicle vehicle = vehicleRepository.findById(idVeiculo)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado."));
 
         // Remove todos os vínculos atuais do veículo
         serviceVehicleRepository.deleteByVeiculoIdVeiculo(idVeiculo);
@@ -45,7 +45,7 @@ public class VeiculoServicoService {
         // Cria novos vínculos apenas para os serviços informados
         for (Integer idTipoServico : idsTipoServico) {
             ServiceType serviceType = serviceTypeRepository.findById(idTipoServico)
-                    .orElseThrow(() -> new RecursoNaoEncontradoException(
+                    .orElseThrow(() -> new ResourceNotFoundException(
                             "Tipo de serviço não encontrado: " + idTipoServico));
 
             ServiceVehicle vs = new ServiceVehicle();

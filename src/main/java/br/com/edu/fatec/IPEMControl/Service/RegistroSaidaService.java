@@ -2,7 +2,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.*;
 import br.com.edu.fatec.IPEMControl.Entities.*;
-import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
+import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
 import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
 import br.com.edu.fatec.IPEMControl.Repository.*;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -52,7 +52,7 @@ public class RegistroSaidaService {
             throw new RegraDeNegocioException("Você já possui uma saída em andamento. Registre o retorno antes de iniciar uma nova saída.");
 
         Vehicle vehicle = vehicleRepository.findById(dto.getVehicleId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado."));
 
         if (Boolean.FALSE.equals(vehicle.getAvailable()))
             throw new RegraDeNegocioException("Veículo não está disponível.");
@@ -62,13 +62,13 @@ public class RegistroSaidaService {
         }
 
         User user = userRepository.findByMatricula(dto.getUserRegistration())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
 
         if (Boolean.FALSE.equals(user.getActiveColaborator()))
             throw new RegraDeNegocioException("Colaborador inativo.");
 
         ServiceType serviceType = serviceTypeRepository.findById(dto.getServiceTypeId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Tipo de serviço não encontrado."));
 
         DepartureLog registro = new DepartureLog();
         registro.setVehicle(vehicle);
@@ -91,7 +91,7 @@ public class RegistroSaidaService {
         if (dto.getReturnDatetime() == null) throw new RegraDeNegocioException("Informe o horário de chegada.");
 
         DepartureLog registro = exitRecordRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de saída não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Registro de saída não encontrado."));
 
         if (!"em_andamento".equalsIgnoreCase(registro.getStatus()))
             throw new RegraDeNegocioException("Esta saída já foi encerrada.");
@@ -129,7 +129,7 @@ public class RegistroSaidaService {
 
     public DepartureLog fecharSaida(Integer id, FecharSaidaDTO dto) {
         DepartureLog registro = exitRecordRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de saída não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Registro de saída não encontrado."));
 
         if (!"em_andamento".equalsIgnoreCase(registro.getStatus()))
             throw new RegraDeNegocioException("Esta saída já foi encerrada.");
@@ -166,7 +166,7 @@ public class RegistroSaidaService {
 
     public DepartureLog buscarPorId(Integer id) {
         return exitRecordRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de saída não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Registro de saída não encontrado."));
     }
 
     public MonthlyUsageReportDTO gerarRelatorioUsoMensalPorVeiculo(Long idVeiculo, LocalDateTime inicio, LocalDateTime fim) {

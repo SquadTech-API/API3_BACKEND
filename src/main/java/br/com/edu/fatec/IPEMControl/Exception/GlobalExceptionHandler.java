@@ -16,8 +16,8 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     // 404 — Recurso não encontrado
-    @ExceptionHandler(RecursoNaoEncontradoException.class)
-    public ResponseEntity<Map<String, String>> handleNaoEncontrado(RecursoNaoEncontradoException ex) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleNaoEncontrado(ResourceNotFoundException ex) {
         return ResponseEntity.status(404).body(Map.of("message", ex.getMessage()));
     }
 
