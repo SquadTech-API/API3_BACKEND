@@ -25,7 +25,7 @@ public class RegistroSaidaService {
     private ExitRecordRepository exitRecordRepository;
 
     @Autowired
-    private VeiculoRepository veiculoRepository;
+    private VehicleRepository vehicleRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -51,7 +51,7 @@ public class RegistroSaidaService {
         if (usuarioJaEmSaida)
             throw new RegraDeNegocioException("Você já possui uma saída em andamento. Registre o retorno antes de iniciar uma nova saída.");
 
-        Vehicle vehicle = veiculoRepository.findById(dto.getVehicleId())
+        Vehicle vehicle = vehicleRepository.findById(dto.getVehicleId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
 
         if (Boolean.FALSE.equals(vehicle.getAvailable()))
@@ -81,7 +81,7 @@ public class RegistroSaidaService {
         registro.setStatus("em_andamento");
 
         vehicle.setAvailable(false);
-        veiculoRepository.save(vehicle);
+        vehicleRepository.save(vehicle);
 
         return exitRecordRepository.save(registro);
     }
@@ -115,7 +115,7 @@ public class RegistroSaidaService {
         Vehicle vehicle = registro.getVehicle();
         vehicle.setCurrentKm(dto.getFinalMileage());
         vehicle.setAvailable(true);
-        veiculoRepository.save(vehicle);
+        vehicleRepository.save(vehicle);
 
         exitRecordRepository.save(registro);
 
@@ -155,7 +155,7 @@ public class RegistroSaidaService {
         Vehicle vehicle = registro.getVehicle();
         vehicle.setCurrentKm(dto.getKmFinal());
         vehicle.setAvailable(true);
-        veiculoRepository.save(vehicle);
+        vehicleRepository.save(vehicle);
 
         return exitRecordRepository.save(registro);
     }

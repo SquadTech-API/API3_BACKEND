@@ -4,7 +4,7 @@ import br.com.edu.fatec.IPEMControl.DTO.*;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Repository.RefuelingRepository;
 import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
-import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ public class DashboardVeiculoService {
     private RefuelingRepository refuelingRepository;
 
     @Autowired
-    private VeiculoRepository veiculoRepository;
+    private VehicleRepository vehicleRepository;
 
     public DashboardVeiculoDTO buscarDashboard() {
 
@@ -51,7 +51,7 @@ public class DashboardVeiculoService {
 
     private VehicleDashboardDTO montarVeiculo(Integer idVeiculo) {
 
-        Vehicle v = veiculoRepository.findById(idVeiculo).orElseThrow();
+        Vehicle v = vehicleRepository.findById(idVeiculo).orElseThrow();
 
         Double gasto = refuelingRepository.totalGastoSemana(idVeiculo);
         Double litros = refuelingRepository.totalLitrosSemana(idVeiculo);

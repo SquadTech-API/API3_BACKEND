@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
-import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,9 +11,9 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class VeiculoAdmController {
 
-    private final VeiculoRepository repository;
+    private final VehicleRepository repository;
 
-    public VeiculoAdmController(VeiculoRepository repository) {
+    public VeiculoAdmController(VehicleRepository repository) {
         this.repository = repository;
     }
 

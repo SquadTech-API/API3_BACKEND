@@ -5,7 +5,7 @@ import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Entities.ServiceVehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.ServiceTypeRepository;
-import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoServicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ public class VeiculoServicoService {
     private VeiculoServicoRepository veiculoServicoRepository;
 
     @Autowired
-    private VeiculoRepository veiculoRepository;
+    private VehicleRepository vehicleRepository;
 
     @Autowired
     private ServiceTypeRepository serviceTypeRepository;
@@ -36,7 +36,7 @@ public class VeiculoServicoService {
      */
     @Transactional
     public void sincronizar(Integer idVeiculo, List<Integer> idsTipoServico) {
-        Vehicle vehicle = veiculoRepository.findById(idVeiculo)
+        Vehicle vehicle = vehicleRepository.findById(idVeiculo)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
 
         // Remove todos os vínculos atuais do veículo

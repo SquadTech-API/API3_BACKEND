@@ -7,7 +7,7 @@ import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.RefuelingRepository;
 import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
-import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ import java.util.List;
 public class RelatorioVeiculoService {
 
     @Autowired
-    private VeiculoRepository veiculoRepository;
+    private VehicleRepository vehicleRepository;
 
     @Autowired
     private ExitRecordRepository exitRecordRepository;
@@ -34,7 +34,7 @@ public class RelatorioVeiculoService {
      */
     public VehicleReportDTO gerarRelatorioVeiculo(Integer idVeiculo) {
 
-        Vehicle vehicle = veiculoRepository.findById(idVeiculo)
+        Vehicle vehicle = vehicleRepository.findById(idVeiculo)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado: " + idVeiculo));
 
         // Total de saídas concluídas

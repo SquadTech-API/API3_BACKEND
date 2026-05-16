@@ -7,7 +7,7 @@ import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.RefuelingRepository;
 import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
-import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +33,7 @@ public class VeiculoService {
     }
 
     @Autowired
-    private VeiculoRepository veiculoRepository;
+    private VehicleRepository vehicleRepository;
 
     @Autowired
     private ExitRecordRepository exitRecordRepository;
@@ -48,7 +48,7 @@ public class VeiculoService {
      */
     public List<VehicleSummaryDTO> listarVeiculosResumo(boolean todos) {
 
-        List<Vehicle> vehicles = veiculoRepository.findAll().stream()
+        List<Vehicle> vehicles = vehicleRepository.findAll().stream()
                 // CORRIGIDO: técnico não vê veículos inativos
                 .filter(v -> todos || Boolean.TRUE.equals(v.getActive()))
                 .collect(Collectors.toList());
@@ -108,10 +108,10 @@ public class VeiculoService {
      * NOVO: endpoint /vehicles/{id}/ativar e /vehicles/{id}/desativar
      */
     public Vehicle toggleAtivo(Integer id, boolean ativo) {
-        Vehicle vehicle = veiculoRepository.findById(id)
+        Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
         vehicle.setActive(ativo);
-        return veiculoRepository.save(vehicle);
+        return vehicleRepository.save(vehicle);
     }
 
     /**
@@ -119,7 +119,7 @@ public class VeiculoService {
      * NOVO: endpoint /vehicles/{id} PUT
      */
     public Vehicle atualizar(Integer id, Vehicle atualizado) {
-        Vehicle vehicle = veiculoRepository.findById(id)
+        Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
 
         vehicle.setPrefix(atualizado.getPrefix());
@@ -139,7 +139,7 @@ public class VeiculoService {
         if (atualizado.getActive() != null)
             vehicle.setActive(atualizado.getActive());
 
-        return veiculoRepository.save(vehicle);
+        return vehicleRepository.save(vehicle);
     }
 
     private String formatarData(LocalDateTime dateTime) {

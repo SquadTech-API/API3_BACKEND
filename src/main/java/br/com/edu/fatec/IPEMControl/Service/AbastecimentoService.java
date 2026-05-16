@@ -8,7 +8,7 @@ import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Repository.RefuelingRepository;
 import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
 import br.com.edu.fatec.IPEMControl.Repository.OilChangeRepository;
-import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -25,17 +25,17 @@ public class AbastecimentoService {
     private final RefuelingRepository refuelingRepository;
     private final OilChangeRepository oilChangeRepository;
     private final ExitRecordRepository exitRecordRepository;
-    private final VeiculoRepository veiculoRepository;
+    private final VehicleRepository vehicleRepository;
 
     public AbastecimentoService(
             RefuelingRepository refuelingRepository,
             OilChangeRepository oilChangeRepository,
             ExitRecordRepository exitRecordRepository,
-            VeiculoRepository veiculoRepository) {
+            VehicleRepository vehicleRepository) {
         this.refuelingRepository = refuelingRepository;
         this.oilChangeRepository = oilChangeRepository;
         this.exitRecordRepository = exitRecordRepository;
-        this.veiculoRepository        = veiculoRepository;
+        this.vehicleRepository = vehicleRepository;
     }
 
     // ── POST /abastecimento ──────────────────────────────────────────────────
@@ -116,7 +116,7 @@ public class AbastecimentoService {
         List<OilChange> trocasOleo = oilChangeRepository
                 .findByCreatedAtAfterOrderByCreatedAtDesc(dataInicio);
 
-        List<Vehicle> allVehicles = veiculoRepository.findAll();
+        List<Vehicle> allVehicles = vehicleRepository.findAll();
         int quantidadeAtrasada = 0;
         for (Vehicle v : allVehicles) {
             Optional<OilChange> ultimaTroca = oilChangeRepository.buscarUltimaPorVeiculo(v.getVehicleId());
@@ -204,7 +204,7 @@ public class AbastecimentoService {
 
         List<ConsumoVeiculoDTO> veiculos = construirConsumoVeiculos(
                 refuelingRepository.buscarConsumoPorVeiculo(resolverDataInicio("30")),
-                veiculoRepository.findAll());
+                vehicleRepository.findAll());
 
         return new BuscaAbastecimentoDTO(itensAbastecimento, itensTrocaOleo, veiculos);
     }
