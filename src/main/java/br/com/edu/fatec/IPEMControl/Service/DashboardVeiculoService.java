@@ -3,7 +3,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 import br.com.edu.fatec.IPEMControl.DTO.*;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Repository.RefuelingRepository;
-import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
+import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class DashboardVeiculoService {
 
     @Autowired
-    private RegistroSaidaRepository registroSaidaRepository;
+    private ExitRecordRepository exitRecordRepository;
 
     @Autowired
     private RefuelingRepository refuelingRepository;
@@ -26,7 +26,7 @@ public class DashboardVeiculoService {
 
     public DashboardVeiculoDTO buscarDashboard() {
 
-        List<GraficoKmItemDTO> topSemana = registroSaidaRepository.buscarTop5KmSemana()
+        List<GraficoKmItemDTO> topSemana = exitRecordRepository.buscarTop5KmSemana()
                 .stream()
                 .map(obj -> new GraficoKmItemDTO(
                         ((Number) obj[0]).intValue(),
@@ -55,8 +55,8 @@ public class DashboardVeiculoService {
 
         Double gasto = refuelingRepository.totalGastoSemana(idVeiculo);
         Double litros = refuelingRepository.totalLitrosSemana(idVeiculo);
-        Double km = registroSaidaRepository.totalKmSemana(idVeiculo);
-        Long saidas = registroSaidaRepository.totalSaidasSemana(idVeiculo);
+        Double km = exitRecordRepository.totalKmSemana(idVeiculo);
+        Long saidas = exitRecordRepository.totalSaidasSemana(idVeiculo);
 
         Double consumo = (litros != null && litros > 0) ? km / litros : 0.0;
 

@@ -4,7 +4,7 @@ import br.com.edu.fatec.IPEMControl.DTO.HistoricoUsoCardDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.Fueling;
 import br.com.edu.fatec.IPEMControl.Repository.RefuelingRepository;
-import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
+import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ public class HistoricoUsoService {
 
 
     @Autowired
-    private RegistroSaidaRepository registroSaidaRepository;
+    private ExitRecordRepository exitRecordRepository;
 
     @Autowired
     private RefuelingRepository refuelingRepository;
@@ -25,7 +25,7 @@ public class HistoricoUsoService {
     public List<HistoricoUsoCardDTO> listarHistoricoPorVeiculo(Integer idVeiculo) {
 
         // Busca todas as saídas do veículo ordenadas da mais recente
-        List<DepartureLog> saidas = registroSaidaRepository
+        List<DepartureLog> saidas = exitRecordRepository
                 .findByVeiculoIdVeiculoAndDataHoraSaidaBetween(
                         idVeiculo,
                         java.time.LocalDateTime.now().minusYears(5),

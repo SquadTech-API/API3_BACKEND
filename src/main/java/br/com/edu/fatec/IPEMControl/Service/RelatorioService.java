@@ -5,7 +5,7 @@ import br.com.edu.fatec.IPEMControl.DTO.DailyReportDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.User;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
-import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
+import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
 import br.com.edu.fatec.IPEMControl.Repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class RelatorioService {
 
     @Autowired
-    private RegistroSaidaRepository registroSaidaRepository;
+    private ExitRecordRepository exitRecordRepository;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -36,7 +36,7 @@ public class RelatorioService {
         LocalDateTime fimDia = data.atTime(LocalTime.MAX);
 
 
-        List<DepartureLog> saidasDoDia = registroSaidaRepository
+        List<DepartureLog> saidasDoDia = exitRecordRepository
                 .findByUsuarioMatriculaAndDataHoraSaidaBetween(matricula, inicioDia, fimDia);
 
 
