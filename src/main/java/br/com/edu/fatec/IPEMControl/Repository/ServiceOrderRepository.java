@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface OrdemServicoRepository extends JpaRepository<ServiceOrder, Integer> {
+public interface ServiceOrderRepository extends JpaRepository<ServiceOrder, Integer> {
 
-    List<ServiceOrder> findByVeiculoIdVeiculoOrderByDataAberturaDesc(Integer idVeiculo);
+    List<ServiceOrder> findByVeiculoIdVeiculoOrderByDataAberturaDesc(Integer vehicleId);
 
     List<ServiceOrder> findByStatus(String status);
 }
