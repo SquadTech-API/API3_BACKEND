@@ -7,7 +7,7 @@ import br.com.edu.fatec.IPEMControl.Entities.ServiceType;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
-import br.com.edu.fatec.IPEMControl.Repository.OrdemServicoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.ServiceOrderRepository;
 import br.com.edu.fatec.IPEMControl.Repository.TipoServicoRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class OrdemServicoService {
 
     @Autowired
-    private OrdemServicoRepository ordemServicoRepository;
+    private ServiceOrderRepository serviceOrderRepository;
 
     @Autowired
     private VeiculoRepository veiculoRepository;
@@ -43,13 +43,13 @@ public class OrdemServicoService {
         ordem.setServiceType(serviceType);
         ordem.setObservation(dto.getObservations());
 
-        ordem = ordemServicoRepository.save(ordem);
+        ordem = serviceOrderRepository.save(ordem);
 
         return mapearParaDTO(ordem);
     }
 
     public List<ServiceOrderResponseDTO> listarTodas() {
-        return ordemServicoRepository.findAll().stream()
+        return serviceOrderRepository.findAll().stream()
                 .map(this::mapearParaDTO)
                 .collect(Collectors.toList());
     }
