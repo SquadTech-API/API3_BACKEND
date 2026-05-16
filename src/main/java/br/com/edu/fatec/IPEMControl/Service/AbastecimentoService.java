@@ -7,7 +7,7 @@ import br.com.edu.fatec.IPEMControl.Entities.OilChange;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
 import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
-import br.com.edu.fatec.IPEMControl.Repository.TrocaOleoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.OilChangeRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import org.springframework.stereotype.Service;
 
@@ -23,17 +23,17 @@ import java.util.stream.Collectors;
 public class AbastecimentoService {
 
     private final AbastecimentoRepository abastecimentoRepository;
-    private final TrocaOleoRepository trocaOleoRepository;
+    private final OilChangeRepository oilChangeRepository;
     private final RegistroSaidaRepository registroSaidaRepository;
     private final VeiculoRepository veiculoRepository;
 
     public AbastecimentoService(
             AbastecimentoRepository abastecimentoRepository,
-            TrocaOleoRepository trocaOleoRepository,
+            OilChangeRepository oilChangeRepository,
             RegistroSaidaRepository registroSaidaRepository,
             VeiculoRepository veiculoRepository) {
         this.abastecimentoRepository = abastecimentoRepository;
-        this.trocaOleoRepository     = trocaOleoRepository;
+        this.oilChangeRepository = oilChangeRepository;
         this.registroSaidaRepository  = registroSaidaRepository;
         this.veiculoRepository        = veiculoRepository;
     }
@@ -113,13 +113,13 @@ public class AbastecimentoService {
                 .map(a -> a.getLitersAmount() != null ? a.getLitersAmount() : BigDecimal.ZERO)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        List<OilChange> trocasOleo = trocaOleoRepository
+        List<OilChange> trocasOleo = oilChangeRepository
                 .findByCreatedAtAfterOrderByCreatedAtDesc(dataInicio);
 
         List<Vehicle> allVehicles = veiculoRepository.findAll();
         int quantidadeAtrasada = 0;
         for (Vehicle v : allVehicles) {
-            Optional<OilChange> ultimaTroca = trocaOleoRepository.buscarUltimaPorVeiculo(v.getVehicleId());
+            Optional<OilChange> ultimaTroca = oilChangeRepository.buscarUltimaPorVeiculo(v.getVehicleId());
             if (ultimaTroca.isPresent() && v.getCurrentKm() != null &&
                     v.getCurrentKm().compareTo(ultimaTroca.get().getNextChangeKm()) >= 0) {
                 quantidadeAtrasada++;
@@ -197,7 +197,7 @@ public class AbastecimentoService {
             itensAbastecimento = fuelings.stream().map(this::paraItemDTO).collect(Collectors.toList());
         }
         if ("ambos".equals(tipoRegistro) || "oleo".equals(tipoRegistro)) {
-            itensTrocaOleo = trocaOleoRepository
+            itensTrocaOleo = oilChangeRepository
                     .findByCreatedAtAfterOrderByCreatedAtDesc(resolverDataInicio("30"))
                     .stream().map(this::paraItemTrocaOleoDTO).collect(Collectors.toList());
         }
@@ -275,7 +275,7 @@ public class AbastecimentoService {
                     .filter(v -> v.getLicensePlate().equals(placa)).findFirst().orElse(null);
 
             Optional<OilChange> ultimaTroca = vehicle != null
-                    ? trocaOleoRepository.buscarUltimaPorVeiculo(vehicle.getVehicleId())
+                    ? oilChangeRepository.buscarUltimaPorVeiculo(vehicle.getVehicleId())
                     : Optional.empty();
 
             return new ConsumoVeiculoDTO(

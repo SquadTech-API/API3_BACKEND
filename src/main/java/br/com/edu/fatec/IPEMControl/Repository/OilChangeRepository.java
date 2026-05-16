@@ -11,25 +11,25 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TrocaOleoRepository extends JpaRepository<OilChange, Integer> {
+public interface OilChangeRepository extends JpaRepository<OilChange, Integer> {
 
     // Total de trocas de óleo vinculadas a saídas do técnico
-    long countByRegistroSaidaUsuarioMatricula(Integer matricula);
+    long countByRegistroSaidaUsuarioMatricula(Integer registration);
 
     // Última troca do técnico (para relatório de técnicos)
-    Optional<OilChange> findTopByRegistroSaidaUsuarioMatriculaOrderByCreatedAtDesc(Integer matricula);
+    Optional<OilChange> findTopByRegistroSaidaUsuarioMatriculaOrderByCreatedAtDesc(Integer registration);
 
     // Última troca de um veículo específico
     @Query("SELECT t FROM OilChange t WHERE t.veiculo.idVeiculo = :idVeiculo ORDER BY t.createdAt DESC")
-    Optional<OilChange> buscarUltimaPorVeiculo(@Param("vehicleId") Integer idVeiculo);
+    Optional<OilChange> buscarUltimaPorVeiculo(@Param("vehicleId") Integer vehicleId);
 
     // NOVO: lista trocas por veículo ordenadas da mais recente
     // Usado pelo TrocaOleoService.listarPorVeiculo()
-    List<OilChange> findByVeiculoIdVeiculoOrderByCreatedAtDesc(Integer idVeiculo);
-
+    List<OilChange> findByVeiculoIdVeiculoOrderByCreatedAtDesc(Integer vehicleId);
+    
     // Trocas após uma determinada data (para relatório de abastecimento)
-    List<OilChange> findByCreatedAtAfterOrderByCreatedAtDesc(LocalDateTime dataInicio);
+    List<OilChange> findByCreatedAtAfterOrderByCreatedAtDesc(LocalDateTime startDate);
 
     // CORRIGIDO: busca trocas vinculadas a uma saída específica
-    Optional<OilChange> findTopByRegistroSaidaIdSaidaOrderByCreatedAtDesc(Integer idSaida);
+    Optional<OilChange> findTopByRegistroSaidaIdSaidaOrderByCreatedAtDesc(Integer exitId);
 }
