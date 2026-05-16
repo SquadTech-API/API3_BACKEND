@@ -37,7 +37,7 @@ public class UsuarioService {
         user.setActiveColaborator(dto.getActiveEmployee() != null ? dto.getActiveEmployee() : true);
         user.setUserType(dto.getUserType() != null ? dto.getUserType() : User.UserType.technician);
         user.setPosition(dto.getRole());
-        user.setTipoHabilitacao(dto.getTipoHabilitacao());
+        user.setDriverLicenseType(dto.getDriverLicenseType());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         return repository.save(user);
     }
@@ -73,9 +73,7 @@ public class UsuarioService {
                 user.getPosition(),
                 user.getEmail(),
                 user.getUserType().name(),
-                // CORRIGIDO: tipoHabilitacao agora incluído na resposta
-                user.getTipoHabilitacao() != null ? user.getTipoHabilitacao().name() : null,
-                // CORRIGIDO: activeEmployee incluído para validação no frontend
+                user.getDriverLicenseType() != null ? user.getDriverLicenseType().name() : null,
                 user.getActiveColaborator()
         );
     }
@@ -92,8 +90,8 @@ public class UsuarioService {
             user.setPosition(dto.getRole());
         if (dto.getUserType() != null)
             user.setUserType(dto.getUserType());
-        if (dto.getTipoHabilitacao() != null)
-            user.setTipoHabilitacao(dto.getTipoHabilitacao());
+        if (dto.getDriverLicenseType() != null)
+            user.setDriverLicenseType(dto.getDriverLicenseType());
 
         return repository.save(user);
     }
