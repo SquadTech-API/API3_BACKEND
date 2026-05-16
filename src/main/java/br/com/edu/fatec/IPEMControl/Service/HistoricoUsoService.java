@@ -3,7 +3,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 import br.com.edu.fatec.IPEMControl.DTO.HistoricoUsoCardDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.Fueling;
-import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.RefuelingRepository;
 import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class HistoricoUsoService {
     private RegistroSaidaRepository registroSaidaRepository;
 
     @Autowired
-    private AbastecimentoRepository abastecimentoRepository;
+    private RefuelingRepository refuelingRepository;
 
     public List<HistoricoUsoCardDTO> listarHistoricoPorVeiculo(Integer idVeiculo) {
 
@@ -54,7 +54,7 @@ public class HistoricoUsoService {
 
                     // Verifica se houve abastecimento nessa saída
                     List<Fueling> fuelings =
-                            abastecimentoRepository.findByRegistroSaida(saida);
+                            refuelingRepository.findByRegistroSaida(saida);
                     boolean abasteceu = !fuelings.isEmpty();
 
                     return new HistoricoUsoCardDTO(

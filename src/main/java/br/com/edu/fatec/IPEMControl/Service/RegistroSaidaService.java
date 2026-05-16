@@ -34,7 +34,7 @@ public class RegistroSaidaService {
     private TipoServicoRepository tipoServicoRepository;
 
     @Autowired
-    private AbastecimentoRepository abastecimentoRepository;
+    private RefuelingRepository refuelingRepository;
 
     public DepartureLog abrirSaida(DepartureLogDTO dto) {
         if (dto.getVehicleId() == null) throw new RegraDeNegocioException("Informe o veículo.");
@@ -181,7 +181,7 @@ public class RegistroSaidaService {
         BigDecimal totalLitros = BigDecimal.ZERO;
 
         for (DepartureLog viagem : viagens) {
-            List<Fueling> fuelings = abastecimentoRepository.findByRegistroSaida(viagem);
+            List<Fueling> fuelings = refuelingRepository.findByRegistroSaida(viagem);
             for (Fueling a : fuelings) {
                 if (a.getTotalValue() != null) totalGasto = totalGasto.add(a.getTotalValue());
                 if (a.getLitersAmount() != null) totalLitros = totalLitros.add(a.getLitersAmount());

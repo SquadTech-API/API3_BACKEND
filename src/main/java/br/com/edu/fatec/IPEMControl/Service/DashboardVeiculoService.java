@@ -2,7 +2,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.*;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
-import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.RefuelingRepository;
 import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class DashboardVeiculoService {
     private RegistroSaidaRepository registroSaidaRepository;
 
     @Autowired
-    private AbastecimentoRepository abastecimentoRepository;
+    private RefuelingRepository refuelingRepository;
 
     @Autowired
     private VeiculoRepository veiculoRepository;
@@ -53,8 +53,8 @@ public class DashboardVeiculoService {
 
         Vehicle v = veiculoRepository.findById(idVeiculo).orElseThrow();
 
-        Double gasto = abastecimentoRepository.totalGastoSemana(idVeiculo);
-        Double litros = abastecimentoRepository.totalLitrosSemana(idVeiculo);
+        Double gasto = refuelingRepository.totalGastoSemana(idVeiculo);
+        Double litros = refuelingRepository.totalLitrosSemana(idVeiculo);
         Double km = registroSaidaRepository.totalKmSemana(idVeiculo);
         Long saidas = registroSaidaRepository.totalSaidasSemana(idVeiculo);
 
