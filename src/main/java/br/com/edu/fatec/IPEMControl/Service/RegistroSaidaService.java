@@ -31,7 +31,7 @@ public class RegistroSaidaService {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private TipoServicoRepository tipoServicoRepository;
+    private ServiceTypeRepository serviceTypeRepository;
 
     @Autowired
     private RefuelingRepository refuelingRepository;
@@ -67,7 +67,7 @@ public class RegistroSaidaService {
         if (Boolean.FALSE.equals(user.getActiveColaborator()))
             throw new RegraDeNegocioException("Colaborador inativo.");
 
-        ServiceType serviceType = tipoServicoRepository.findById(dto.getServiceTypeId())
+        ServiceType serviceType = serviceTypeRepository.findById(dto.getServiceTypeId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
 
         DepartureLog registro = new DepartureLog();

@@ -8,7 +8,7 @@ import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
 import br.com.edu.fatec.IPEMControl.Repository.ServiceOrderRepository;
-import br.com.edu.fatec.IPEMControl.Repository.TipoServicoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.ServiceTypeRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class OrdemServicoService {
     private VeiculoRepository veiculoRepository;
 
     @Autowired
-    private TipoServicoRepository tipoServicoRepository;
+    private ServiceTypeRepository serviceTypeRepository;
 
     public ServiceOrderResponseDTO criar(ServiceOrderDTO dto) {
         if (dto.getVehicleId() == null) throw new RegraDeNegocioException("Informe o veículo.");
@@ -35,7 +35,7 @@ public class OrdemServicoService {
         Vehicle vehicle = veiculoRepository.findById(dto.getVehicleId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
 
-        ServiceType serviceType = tipoServicoRepository.findById(dto.getServiceTypeId())
+        ServiceType serviceType = serviceTypeRepository.findById(dto.getServiceTypeId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
 
         ServiceOrder ordem = new ServiceOrder();

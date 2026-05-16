@@ -4,7 +4,7 @@ import br.com.edu.fatec.IPEMControl.Entities.ServiceType;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Entities.ServiceVehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
-import br.com.edu.fatec.IPEMControl.Repository.TipoServicoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.ServiceTypeRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoServicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class VeiculoServicoService {
     private VeiculoRepository veiculoRepository;
 
     @Autowired
-    private TipoServicoRepository tipoServicoRepository;
+    private ServiceTypeRepository serviceTypeRepository;
 
     /**
      * Sincroniza (substitui) os serviços habilitados para um veículo.
@@ -44,7 +44,7 @@ public class VeiculoServicoService {
 
         // Cria novos vínculos apenas para os serviços informados
         for (Integer idTipoServico : idsTipoServico) {
-            ServiceType serviceType = tipoServicoRepository.findById(idTipoServico)
+            ServiceType serviceType = serviceTypeRepository.findById(idTipoServico)
                     .orElseThrow(() -> new RecursoNaoEncontradoException(
                             "Tipo de serviço não encontrado: " + idTipoServico));
 

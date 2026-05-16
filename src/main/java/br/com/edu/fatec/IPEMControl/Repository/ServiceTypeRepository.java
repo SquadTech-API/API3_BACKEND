@@ -11,7 +11,7 @@ import java.util.List;
  * Antes não tinha esse método — TipoServicoController não conseguia filtrar.
  */
 @Repository
-public interface TipoServicoRepository extends JpaRepository<ServiceType, Integer> {
+public interface ServiceTypeRepository extends JpaRepository<ServiceType, Integer> {
 
     // NOVO: filtra apenas serviços habilitados
     List<ServiceType> findByHabilitadoTrue();
