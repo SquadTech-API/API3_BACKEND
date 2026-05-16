@@ -5,7 +5,7 @@ import br.com.edu.fatec.IPEMControl.DTO.DepartureLogDTO;
 import br.com.edu.fatec.IPEMControl.DTO.ReturnDTO;
 import br.com.edu.fatec.IPEMControl.DTO.ReturnResponseDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
-import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
+import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
 import br.com.edu.fatec.IPEMControl.Service.RegistroSaidaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ public class RegistroSaidaController {
     private RegistroSaidaService registroSaidaService;
 
     @Autowired
-    private RegistroSaidaRepository registroSaidaRepository;
+    private ExitRecordRepository exitRecordRepository;
 
     @PostMapping
     public ResponseEntity<DepartureLog> abrirSaida(@RequestBody DepartureLogDTO dto) {
@@ -60,7 +60,7 @@ public class RegistroSaidaController {
     // Busca saída ativa de um veículo
     @GetMapping("/ativo")
     public ResponseEntity<DepartureLog> buscarSaidaAtivaPorVeiculo(@RequestParam Integer veiculoId) {
-        return registroSaidaRepository
+        return exitRecordRepository
                 .findTopByVeiculoIdVeiculoAndStatusOrderByDataHoraSaidaDesc(veiculoId, "em_andamento")
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -69,7 +69,7 @@ public class RegistroSaidaController {
     // Busca saída ativa do usuário — usado pelo vehicles.js para redirecionamento automático
     @GetMapping("/ativo-usuario")
     public ResponseEntity<DepartureLog> buscarSaidaAtivaPorUsuario(@RequestParam Integer matricula) {
-        return registroSaidaRepository
+        return exitRecordRepository
                 .findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(matricula, "em_andamento")
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -79,7 +79,7 @@ public class RegistroSaidaController {
     @GetMapping("/veiculo/{idVeiculo}/troca-oleo")
     public ResponseEntity<List<DepartureLog>> buscarSaidasTrocaOleo(@PathVariable Integer idVeiculo) {
         return ResponseEntity.ok(
-                registroSaidaRepository.findByVeiculoIdVeiculoAndTipoServicoEhTrocaOleoTrue(idVeiculo)
+                exitRecordRepository.findByVeiculoIdVeiculoAndTipoServicoEhTrocaOleoTrue(idVeiculo)
         );
     }
 }

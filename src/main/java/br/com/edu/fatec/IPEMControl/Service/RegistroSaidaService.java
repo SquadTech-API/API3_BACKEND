@@ -22,7 +22,7 @@ import java.util.List;
 public class RegistroSaidaService {
 
     @Autowired
-    private RegistroSaidaRepository registroSaidaRepository;
+    private ExitRecordRepository exitRecordRepository;
 
     @Autowired
     private VeiculoRepository veiculoRepository;
@@ -45,7 +45,7 @@ public class RegistroSaidaService {
         if (dto.getDepartureDatetime() == null) throw new RegraDeNegocioException("Informe a data e hora de saída.");
         if (dto.getDestination() == null || dto.getDestination().isBlank()) throw new RegraDeNegocioException("Informe o local de destino.");
 
-        boolean usuarioJaEmSaida = registroSaidaRepository
+        boolean usuarioJaEmSaida = exitRecordRepository
                 .findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(dto.getUserRegistration(), "em_andamento")
                 .isPresent();
         if (usuarioJaEmSaida)
@@ -83,14 +83,14 @@ public class RegistroSaidaService {
         vehicle.setAvailable(false);
         veiculoRepository.save(vehicle);
 
-        return registroSaidaRepository.save(registro);
+        return exitRecordRepository.save(registro);
     }
 
     public ReturnResponseDTO registrarRetorno(Integer id, ReturnDTO dto) {
         if (dto.getFinalMileage() == null) throw new RegraDeNegocioException("Informe o KM final.");
         if (dto.getReturnDatetime() == null) throw new RegraDeNegocioException("Informe o horário de chegada.");
 
-        DepartureLog registro = registroSaidaRepository.findById(id)
+        DepartureLog registro = exitRecordRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de saída não encontrado."));
 
         if (!"em_andamento".equalsIgnoreCase(registro.getStatus()))
@@ -117,7 +117,7 @@ public class RegistroSaidaService {
         vehicle.setAvailable(true);
         veiculoRepository.save(vehicle);
 
-        registroSaidaRepository.save(registro);
+        exitRecordRepository.save(registro);
 
         return new ReturnResponseDTO(
                 registro.getDepartureLogId(), registro.getStatus(), registro.getStartingKm(),
@@ -128,7 +128,7 @@ public class RegistroSaidaService {
     }
 
     public DepartureLog fecharSaida(Integer id, FecharSaidaDTO dto) {
-        DepartureLog registro = registroSaidaRepository.findById(id)
+        DepartureLog registro = exitRecordRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de saída não encontrado."));
 
         if (!"em_andamento".equalsIgnoreCase(registro.getStatus()))
@@ -157,21 +157,21 @@ public class RegistroSaidaService {
         vehicle.setAvailable(true);
         veiculoRepository.save(vehicle);
 
-        return registroSaidaRepository.save(registro);
+        return exitRecordRepository.save(registro);
     }
 
     public List<DepartureLog> listarTodos() {
-        return registroSaidaRepository.findAll();
+        return exitRecordRepository.findAll();
     }
 
     public DepartureLog buscarPorId(Integer id) {
-        return registroSaidaRepository.findById(id)
+        return exitRecordRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de saída não encontrado."));
     }
 
     public MonthlyUsageReportDTO gerarRelatorioUsoMensalPorVeiculo(Long idVeiculo, LocalDateTime inicio, LocalDateTime fim) {
         // CERTIFICAÇÃO: Alterado para buscar por DataHoraSaida para evitar relatórios zerados
-        List<DepartureLog> viagens = registroSaidaRepository.findByVeiculoIdVeiculoAndDataHoraSaidaBetween(idVeiculo.intValue(), inicio, fim);
+        List<DepartureLog> viagens = exitRecordRepository.findByVeiculoIdVeiculoAndDataHoraSaidaBetween(idVeiculo.intValue(), inicio, fim);
 
         BigDecimal totalKm = viagens.stream()
                 .map(v -> v.getDrivenKm() != null ? v.getDrivenKm() : BigDecimal.ZERO)

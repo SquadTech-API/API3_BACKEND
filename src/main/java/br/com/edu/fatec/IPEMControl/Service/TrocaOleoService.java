@@ -6,7 +6,7 @@ import br.com.edu.fatec.IPEMControl.Entities.OilChange;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
-import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
+import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
 import br.com.edu.fatec.IPEMControl.Repository.OilChangeRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class TrocaOleoService {
     private VeiculoRepository veiculoRepository;
 
     @Autowired
-    private RegistroSaidaRepository registroSaidaRepository;
+    private ExitRecordRepository exitRecordRepository;
 
     // ── POST /troca-oleo ──────────────────────────────────────────────────────
     public OilChange salvar(OilChangeDTO dto) {
@@ -66,7 +66,7 @@ public class TrocaOleoService {
 
         // Vínculo com saída (opcional)
         if (dto.getDepartureId() != null) {
-            DepartureLog saida = registroSaidaRepository.findById(dto.getDepartureId())
+            DepartureLog saida = exitRecordRepository.findById(dto.getDepartureId())
                     .orElseThrow(() -> new RecursoNaoEncontradoException("Saída não encontrada."));
             troca.setDepartureLog(saida);
         }

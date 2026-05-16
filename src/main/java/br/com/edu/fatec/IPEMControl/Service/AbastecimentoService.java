@@ -6,7 +6,7 @@ import br.com.edu.fatec.IPEMControl.Entities.Fueling;
 import br.com.edu.fatec.IPEMControl.Entities.OilChange;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Repository.RefuelingRepository;
-import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
+import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
 import br.com.edu.fatec.IPEMControl.Repository.OilChangeRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import org.springframework.stereotype.Service;
@@ -24,24 +24,24 @@ public class AbastecimentoService {
 
     private final RefuelingRepository refuelingRepository;
     private final OilChangeRepository oilChangeRepository;
-    private final RegistroSaidaRepository registroSaidaRepository;
+    private final ExitRecordRepository exitRecordRepository;
     private final VeiculoRepository veiculoRepository;
 
     public AbastecimentoService(
             RefuelingRepository refuelingRepository,
             OilChangeRepository oilChangeRepository,
-            RegistroSaidaRepository registroSaidaRepository,
+            ExitRecordRepository exitRecordRepository,
             VeiculoRepository veiculoRepository) {
         this.refuelingRepository = refuelingRepository;
         this.oilChangeRepository = oilChangeRepository;
-        this.registroSaidaRepository  = registroSaidaRepository;
+        this.exitRecordRepository = exitRecordRepository;
         this.veiculoRepository        = veiculoRepository;
     }
 
     // ── POST /abastecimento ──────────────────────────────────────────────────
 
     public AbastecimentoSalvoDTO salvar(AbastecimentoDTO dto) {
-        DepartureLog departureLog = registroSaidaRepository.findById(dto.getIdSaida())
+        DepartureLog departureLog = exitRecordRepository.findById(dto.getIdSaida())
                 .orElseThrow(() -> new RuntimeException("Registro de saída não encontrado."));
 
         Fueling ab = new Fueling();

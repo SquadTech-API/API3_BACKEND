@@ -6,7 +6,7 @@ import br.com.edu.fatec.IPEMControl.Entities.Fueling;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.RefuelingRepository;
-import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
+import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
 import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class VeiculoService {
     private VeiculoRepository veiculoRepository;
 
     @Autowired
-    private RegistroSaidaRepository registroSaidaRepository;
+    private ExitRecordRepository exitRecordRepository;
 
     @Autowired
     private RefuelingRepository refuelingRepository;
@@ -56,7 +56,7 @@ public class VeiculoService {
         return vehicles.stream().map(veiculo -> {
 
             Optional<DepartureLog> ultimoRegistro =
-                    registroSaidaRepository
+                    exitRecordRepository
                             .findTopByVeiculoIdVeiculoOrderByDataHoraSaidaDesc(veiculo.getVehicleId());
 
             boolean emUso = ultimoRegistro
