@@ -26,7 +26,7 @@ public class RelatorioTecnicoService {
 
     @Autowired private ExitRecordRepository saidaRepo;
     @Autowired private RefuelingRepository abastRepo;
-    @Autowired private UsuarioRepository          usuarioRepo;
+    @Autowired private UserRepository usuarioRepo;
     @Autowired private OilChangeRepository trocaOleoRepo;
     @Autowired private UserDocumentRepository docRepo;
 

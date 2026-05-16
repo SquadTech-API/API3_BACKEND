@@ -6,7 +6,7 @@ import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.User;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
-import br.com.edu.fatec.IPEMControl.Repository.UsuarioRepository;
+import br.com.edu.fatec.IPEMControl.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +24,11 @@ public class RelatorioService {
     private ExitRecordRepository exitRecordRepository;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UserRepository userRepository;
 
     public DailyReportDTO gerarRelatorioDiarioPorTecnico(Integer matricula, LocalDate data) {
 
-        User user = usuarioRepository.findByMatricula(matricula)
+        User user = userRepository.findByMatricula(matricula)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
 
 
