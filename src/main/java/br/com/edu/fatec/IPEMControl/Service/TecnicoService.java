@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.Entities.Technician;
-import br.com.edu.fatec.IPEMControl.Repository.TecnicoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.TechnicianRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,9 +10,9 @@ import java.util.Optional;
 @Service
 public class TecnicoService {
 
-    private final TecnicoRepository repository;
+    private final TechnicianRepository repository;
 
-    public TecnicoService(TecnicoRepository repository) {
+    public TecnicoService(TechnicianRepository repository) {
         this.repository = repository;
     }
 
