@@ -2,7 +2,7 @@ package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.VehicleSummaryDTO;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
-import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
 import br.com.edu.fatec.IPEMControl.Service.VeiculoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ public class VeiculoController {
     private VeiculoService veiculoService;
 
     @Autowired
-    private VeiculoRepository veiculoRepository;
+    private VehicleRepository vehicleRepository;
 
     // GET /vehicles?todos=true
     // CORRIGIDO: parâmetro "todos" — quando false filtra veículos ativos
@@ -43,7 +43,7 @@ public class VeiculoController {
     // GET /vehicles/{id}
     @GetMapping("/{id}")
     public ResponseEntity<Vehicle> buscarPorId(@PathVariable Integer id) {
-        return veiculoRepository.findById(id)
+        return vehicleRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -51,7 +51,7 @@ public class VeiculoController {
     // POST /vehicles
     @PostMapping
     public ResponseEntity<Vehicle> criar(@RequestBody Vehicle vehicle) {
-        return ResponseEntity.status(201).body(veiculoRepository.save(vehicle));
+        return ResponseEntity.status(201).body(vehicleRepository.save(vehicle));
     }
 
     // PUT /vehicles/{id} — NOVO: edição completa de veículo

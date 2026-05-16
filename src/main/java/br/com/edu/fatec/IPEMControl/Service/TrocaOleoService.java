@@ -8,7 +8,7 @@ import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
 import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
 import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
 import br.com.edu.fatec.IPEMControl.Repository.OilChangeRepository;
-import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,7 @@ public class TrocaOleoService {
     private OilChangeRepository oilChangeRepository;
 
     @Autowired
-    private VeiculoRepository veiculoRepository;
+    private VehicleRepository vehicleRepository;
 
     @Autowired
     private ExitRecordRepository exitRecordRepository;
@@ -41,7 +41,7 @@ public class TrocaOleoService {
         if (dto.getOilChangeDate() == null)
             throw new RegraDeNegocioException("Informe a data da troca.");
 
-        Vehicle vehicle = veiculoRepository.findById(dto.getVehicleId())
+        Vehicle vehicle = vehicleRepository.findById(dto.getVehicleId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
 
         OilChange troca = new OilChange();
@@ -74,7 +74,7 @@ public class TrocaOleoService {
         // Atualiza intervalo padrão no veículo para futuros alertas
         vehicle.setOilChangeIntervalKm(intervalo);
         vehicle.setOilChangeAlertSent(false);
-        veiculoRepository.save(vehicle);
+        vehicleRepository.save(vehicle);
 
         return oilChangeRepository.save(troca);
     }
