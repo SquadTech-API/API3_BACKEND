@@ -5,7 +5,7 @@ import br.com.edu.fatec.IPEMControl.DTO.ActiveUsageDTO;
 import br.com.edu.fatec.IPEMControl.Entities.Technician;
 import br.com.edu.fatec.IPEMControl.Entities.VehicleUsage;
 import br.com.edu.fatec.IPEMControl.Repository.TechnicianRepository;
-import br.com.edu.fatec.IPEMControl.Repository.UsoVeiculoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.VehicleUsageRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,10 +14,10 @@ import java.util.stream.Collectors;
 @Service
 public class UsoVeiculoService {
 
-    private final UsoVeiculoRepository usoRepository;
+    private final VehicleUsageRepository usoRepository;
     private final TechnicianRepository technicianRepository;
 
-    public UsoVeiculoService(UsoVeiculoRepository usoRepository,
+    public UsoVeiculoService(VehicleUsageRepository usoRepository,
                              TechnicianRepository technicianRepository) {
         this.usoRepository = usoRepository;
         this.technicianRepository = technicianRepository;
