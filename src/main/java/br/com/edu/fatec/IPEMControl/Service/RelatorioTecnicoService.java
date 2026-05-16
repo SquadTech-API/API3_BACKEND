@@ -25,7 +25,7 @@ public class RelatorioTecnicoService {
     private static final DateTimeFormatter FMT_DATETIME = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     @Autowired private RegistroSaidaRepository   saidaRepo;
-    @Autowired private AbastecimentoRepository    abastRepo;
+    @Autowired private RefuelingRepository abastRepo;
     @Autowired private UsuarioRepository          usuarioRepo;
     @Autowired private OilChangeRepository trocaOleoRepo;
     @Autowired private UsuarioDocumentoRepository docRepo;
