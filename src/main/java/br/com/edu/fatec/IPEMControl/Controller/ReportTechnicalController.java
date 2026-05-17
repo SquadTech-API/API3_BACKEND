@@ -9,9 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/relatorios/tecnicos")
+@RequestMapping("/report/technical")
 @CrossOrigin(origins = "*")
-public class RelatorioTecnicoController {
+public class ReportTechnicalController {
 
     @Autowired
     private RelatorioTecnicoService relatorioTecnicoService;
@@ -19,20 +19,14 @@ public class RelatorioTecnicoController {
     @Autowired
     private RelatorioExportService exportService;
 
-    /**
-     * GET /relatorios/technicians/geral?periodo={periodo}
-     * periodo: hoje | 7 | 30 | year  (padrão: 30)
-     */
+
     @GetMapping("/geral")
     public ResponseEntity<GeneralReportDTO> visaoGeral(
             @RequestParam(defaultValue = "30") String periodo) {
         return ResponseEntity.ok(relatorioTecnicoService.gerarVisaoGeral(periodo));
     }
 
-    /**
-     * GET /relatorios/technicians/{registration}?periodo={periodo}
-     * periodo: hoje | 7 | 30 | year  (padrão: 30)
-     */
+
     @GetMapping("/{matricula}")
     public ResponseEntity<TechnicianReportDTO> individual(
             @PathVariable Integer matricula,
@@ -40,11 +34,7 @@ public class RelatorioTecnicoController {
         return ResponseEntity.ok(relatorioTecnicoService.gerarRelatorioIndividual(matricula, periodo));
     }
 
-    /**
-     * GET /relatorios/technicians/{registration}/download?formato={fmt}&periodo={periodo}
-     * formato: pdf | csv | excel | docx  (padrão: pdf)
-     * periodo: hoje | 7 | 30 | year        (padrão: 30)
-     */
+
     @GetMapping("/{matricula}/download")
     public ResponseEntity<byte[]> download(
             @PathVariable Integer matricula,

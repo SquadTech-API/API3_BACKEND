@@ -7,15 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/relatorios/veiculos")
+@RequestMapping("/report/vehicle")
 @CrossOrigin("*")
-public class RelatorioVeiculoController {
+public class ReportVehicleController {
 
     private final RelatorioVeiculoService service;
     private final RelatorioVeiculoExportService exportService;
 
-    public RelatorioVeiculoController(RelatorioVeiculoService service,
-                                      RelatorioVeiculoExportService exportService) {
+    public ReportVehicleController(RelatorioVeiculoService service,
+                                   RelatorioVeiculoExportService exportService) {
         this.service = service;
         this.exportService = exportService;
     }

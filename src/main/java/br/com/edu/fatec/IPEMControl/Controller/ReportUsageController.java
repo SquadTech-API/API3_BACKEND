@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.Service.RegistroSaidaService;
+import br.com.edu.fatec.IPEMControl.Service.DepartureLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -23,12 +23,12 @@ import org.springframework.web.bind.annotation.*;
  * - Content-Disposition name de arquivo correto
  */
 @RestController
-@RequestMapping("/relatorios")
+@RequestMapping("/report")
 @CrossOrigin(origins = "*")
-public class RelatorioUsoController {
+public class ReportUsageController {
 
     @Autowired
-    private RegistroSaidaService service;
+    private DepartureLogService service;
 
     @GetMapping("/viatura")
     public ResponseEntity<byte[]> downloadRelatorio(

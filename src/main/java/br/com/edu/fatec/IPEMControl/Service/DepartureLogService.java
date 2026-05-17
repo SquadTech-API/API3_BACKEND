@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class RegistroSaidaService {
+public class DepartureLogService {
 
     @Autowired
     private RegistroSaidaRepository registroSaidaRepository;

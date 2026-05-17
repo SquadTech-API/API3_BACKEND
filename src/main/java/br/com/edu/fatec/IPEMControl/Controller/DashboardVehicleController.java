@@ -5,13 +5,13 @@ import br.com.edu.fatec.IPEMControl.Service.DashboardVeiculoService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/dashboard/veiculos")
+@RequestMapping("/dashboard/Vehicle")
 @CrossOrigin("*")
-public class DashboardVeiculoController {
+public class DashboardVehicleController {
 
     private final DashboardVeiculoService service;
 
-    public DashboardVeiculoController(DashboardVeiculoService service) {
+    public DashboardVehicleController(DashboardVeiculoService service) {
         this.service = service;
     }
 

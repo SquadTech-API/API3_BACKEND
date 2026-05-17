@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 
-@Controller // Alterado de @RestController para @Controller
-@RequestMapping("/relatorios")
-public class RelatorioController {
+@Controller
+@RequestMapping("/report")
+public class ReportController {
 
     @Autowired
     private RelatorioService relatorioService;
