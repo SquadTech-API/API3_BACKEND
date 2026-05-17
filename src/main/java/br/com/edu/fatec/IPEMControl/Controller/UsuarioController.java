@@ -1,9 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.DTO.AtualizarSenhaDTO;
-import br.com.edu.fatec.IPEMControl.DTO.LoginDTO;
-import br.com.edu.fatec.IPEMControl.DTO.LoginRespostaDTO;
-import br.com.edu.fatec.IPEMControl.DTO.UserDTO;
+import br.com.edu.fatec.IPEMControl.DTO.*;
 import br.com.edu.fatec.IPEMControl.Entities.User;
 import br.com.edu.fatec.IPEMControl.Service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +47,7 @@ public class UsuarioController {
     // CORRIGIDO: resposta agora inclui tipoHabilitacao e activeEmployee
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
-        LoginRespostaDTO response = service.autenticar(dto.getEmail(), dto.getSenha());
+        LoginResponseDTO response = service.autenticar(dto.getEmail(), dto.getSenha());
         if (response != null) {
             return ResponseEntity.ok(response);
         }
@@ -79,7 +76,7 @@ public class UsuarioController {
 
     // POST /usuarios/atualizar-password
     @PostMapping("/atualizar-senha")
-    public ResponseEntity<String> atualizarSenha(@RequestBody AtualizarSenhaDTO dto) {
+    public ResponseEntity<String> atualizarSenha(@RequestBody UpdatePasswordDTO dto) {
         boolean atualizado = service.atualizarSenha(dto);
         if (atualizado) return ResponseEntity.ok("{\"message\":\"Senha atualizada com sucesso!\"}");
         return ResponseEntity.status(400).body("{\"message\":\"E-mail ou password atual incorretos.\"}");

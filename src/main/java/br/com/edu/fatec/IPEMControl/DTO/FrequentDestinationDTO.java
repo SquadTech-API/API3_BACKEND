@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class DestinoFrequenteDTO {
-    private String local;
-    private Long quantidade;
+public class FrequentDestinationDTO {
+
+    private String location;
+    private Long quantity;
 }

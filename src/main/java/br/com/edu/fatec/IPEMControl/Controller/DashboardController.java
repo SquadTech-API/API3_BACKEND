@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.DTO.DashboardGraficoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.DashboardChartDTO;
 import br.com.edu.fatec.IPEMControl.Service.DashboardService;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +15,7 @@ public class DashboardController {
     }
 
     @GetMapping("/comparativo")
-    public DashboardGraficoDTO comparativo() {
+    public DashboardChartDTO comparativo() {
         return service.buscarComparativo();
     }
 }

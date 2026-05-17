@@ -1,9 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.DestinoFrequenteDTO;
-import br.com.edu.fatec.IPEMControl.DTO.GeneralReportDTO;
-import br.com.edu.fatec.IPEMControl.DTO.TechnicianReportDTO;
-import br.com.edu.fatec.IPEMControl.DTO.TechnicianSummaryDTO;
+import br.com.edu.fatec.IPEMControl.DTO.*;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.User;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
@@ -220,9 +217,9 @@ public class RelatorioTecnicoService {
         dto.setDocuments(documentos);
 
         // Destinos (top 5)
-        List<DestinoFrequenteDTO> destinos = new ArrayList<>();
+        List<FrequentDestinationDTO> destinos = new ArrayList<>();
         for (Object[] row : saidaRepo.buscarDestinosMaisFrequentes(matricula)) {
-            destinos.add(new DestinoFrequenteDTO((String) row[0], ((Number) row[1]).longValue()));
+            destinos.add(new FrequentDestinationDTO((String) row[0], ((Number) row[1]).longValue()));
         }
         dto.setDestinations(destinos);
 

@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.DTO.BuscaAbastecimentoDTO;
 import br.com.edu.fatec.IPEMControl.DTO.FuelReportDTO;
+import br.com.edu.fatec.IPEMControl.DTO.FuelingSearchDTO;
 import br.com.edu.fatec.IPEMControl.Service.AbastecimentoExportService;
 import br.com.edu.fatec.IPEMControl.Service.AbastecimentoService;
 import org.springframework.http.HttpHeaders;
@@ -31,7 +31,7 @@ public class RelatorioAbastecimentoController {
 
     // Busca detalhada por data, intervalo ou veículo
     @GetMapping("/busca")
-    public ResponseEntity<BuscaAbastecimentoDTO> busca(
+    public ResponseEntity<FuelingSearchDTO> busca(
             @RequestParam String tipo,
             @RequestParam(required = false) String data,
             @RequestParam(required = false) String de,

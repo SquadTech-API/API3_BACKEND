@@ -1,7 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.AtualizarSenhaDTO;
-import br.com.edu.fatec.IPEMControl.DTO.LoginRespostaDTO;
+import br.com.edu.fatec.IPEMControl.DTO.LoginResponseDTO;
+import br.com.edu.fatec.IPEMControl.DTO.UpdatePasswordDTO;
 import br.com.edu.fatec.IPEMControl.DTO.UserDTO;
 import br.com.edu.fatec.IPEMControl.Entities.User;
 import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
@@ -37,7 +37,7 @@ public class UsuarioService {
         user.setActiveColaborator(dto.getActiveEmployee() != null ? dto.getActiveEmployee() : true);
         user.setUserType(dto.getUserType() != null ? dto.getUserType() : User.UserType.technician);
         user.setPosition(dto.getRole());
-        user.setTipoHabilitacao(dto.getTipoHabilitacao());
+        user.setDriverLicenseType(dto.getDriverLicenseType());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         return repository.save(user);
     }
@@ -57,7 +57,7 @@ public class UsuarioService {
 
     // ── POST /usuarios/login ──────────────────────────────────────────────────
     // CORRIGIDO: agora retorna tipoHabilitacao e activeEmployee
-    public LoginRespostaDTO autenticar(String email, String senha) {
+    public LoginResponseDTO autenticar(String email, String senha) {
         Optional<User> optional = repository.findByEmail(email);
 
         if (optional.isEmpty()) return null;
@@ -67,14 +67,14 @@ public class UsuarioService {
         if (!Boolean.TRUE.equals(user.getActiveColaborator())) return null;
         if (!passwordEncoder.matches(senha, user.getPassword()))  return null;
 
-        return new LoginRespostaDTO(
+        return new LoginResponseDTO(
                 user.getRegistration(),
                 user.getName(),
                 user.getPosition(),
                 user.getEmail(),
                 user.getUserType().name(),
                 // CORRIGIDO: tipoHabilitacao agora incluído na resposta
-                user.getTipoHabilitacao() != null ? user.getTipoHabilitacao().name() : null,
+                user.getDriverLicenseType() != null ? user.getDriverLicenseType().name() : null,
                 // CORRIGIDO: activeEmployee incluído para validação no frontend
                 user.getActiveColaborator()
         );
@@ -92,8 +92,8 @@ public class UsuarioService {
             user.setPosition(dto.getRole());
         if (dto.getUserType() != null)
             user.setUserType(dto.getUserType());
-        if (dto.getTipoHabilitacao() != null)
-            user.setTipoHabilitacao(dto.getTipoHabilitacao());
+        if (dto.getDriverLicenseType() != null)
+            user.setDriverLicenseType(dto.getDriverLicenseType());
 
         return repository.save(user);
     }
@@ -117,14 +117,14 @@ public class UsuarioService {
     }
 
     // ── POST /usuarios/atualizar-password ────────────────────────────────────────
-    public boolean atualizarSenha(AtualizarSenhaDTO dto) {
+    public boolean atualizarSenha(UpdatePasswordDTO dto) {
         Optional<User> optional = repository.findByEmail(dto.getEmail());
         if (optional.isEmpty()) return false;
 
         User user = optional.get();
-        if (!passwordEncoder.matches(dto.getSenhaAtual(), user.getPassword())) return false;
+        if (!passwordEncoder.matches(dto.getNewPassword(), user.getPassword())) return false;
 
-        user.setPassword(passwordEncoder.encode(dto.getNovaSenha()));
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
         repository.save(user);
         return true;
     }

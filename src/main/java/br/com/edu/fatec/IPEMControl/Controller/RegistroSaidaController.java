@@ -1,9 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.DTO.FecharSaidaDTO;
-import br.com.edu.fatec.IPEMControl.DTO.DepartureLogDTO;
-import br.com.edu.fatec.IPEMControl.DTO.ReturnDTO;
-import br.com.edu.fatec.IPEMControl.DTO.ReturnResponseDTO;
+import br.com.edu.fatec.IPEMControl.DTO.*;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
 import br.com.edu.fatec.IPEMControl.Service.RegistroSaidaService;
@@ -43,7 +40,7 @@ public class RegistroSaidaController {
     @PatchMapping("/{id}/fechar")
     public ResponseEntity<DepartureLog> fecharSaida(
             @PathVariable Integer id,
-            @RequestBody FecharSaidaDTO dto) {
+            @RequestBody CloseExitDTO dto) {
         return ResponseEntity.ok(registroSaidaService.fecharSaida(id, dto));
     }
 

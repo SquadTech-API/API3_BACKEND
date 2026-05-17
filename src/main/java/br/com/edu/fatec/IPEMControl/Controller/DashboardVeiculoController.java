@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.DTO.DashboardVeiculoDTO;
+import br.com.edu.fatec.IPEMControl.DTO.VehicleDashboardResponseDTO;
 import br.com.edu.fatec.IPEMControl.Service.DashboardVeiculoService;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +16,7 @@ public class DashboardVeiculoController {
     }
 
     @GetMapping
-    public DashboardVeiculoDTO buscarDashboard() {
+    public VehicleDashboardResponseDTO buscarDashboard() {
         return service.buscarDashboard();
     }
 }

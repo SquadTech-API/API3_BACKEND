@@ -23,16 +23,16 @@ public class FuelReportDTO {
     private List<BigDecimal> weeklyLiters;
 
     // Tabela de registros individuais
-    private List<AbastecimentoItemDTO> refuels;
+    private List<FuelingItemDTO> refuels;
 
     // Dados por veículo
-    private List<ConsumoVeiculoDTO> vehicles;
+    private List<VehicleConsumptionDTO> vehicles;
 
     // Histórico de trocas de óleo
-    private List<ItemTrocaOleoDTO> oilChanges;
+    private List<OilChangeItemDTO> oilChanges;
 
     // Rankings
     private List<UserRankingDTO> userRankings;
     private List<StationRankingDTO> stationRankings;
-    private List<DistribuicaoCombustivelDTO> fuelDistribution;
+    private List<FuelDistributionDTO> fuelDistribution;
 }

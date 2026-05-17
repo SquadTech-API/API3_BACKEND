@@ -24,11 +24,11 @@ public class DashboardVeiculoService {
     @Autowired
     private VeiculoRepository veiculoRepository;
 
-    public DashboardVeiculoDTO buscarDashboard() {
+    public VehicleDashboardResponseDTO buscarDashboard() {
 
-        List<GraficoKmItemDTO> topSemana = registroSaidaRepository.buscarTop5KmSemana()
+        List<KilometerChartItemDTO> topSemana = registroSaidaRepository.buscarTop5KmSemana()
                 .stream()
-                .map(obj -> new GraficoKmItemDTO(
+                .map(obj -> new KilometerChartItemDTO(
                         ((Number) obj[0]).intValue(),
                         (String) obj[1],
                         ((Number) obj[2]).doubleValue()
@@ -36,14 +36,14 @@ public class DashboardVeiculoService {
                 .toList();
 
         if (topSemana.isEmpty()) {
-            return new DashboardVeiculoDTO(Map.of("semana", new ArrayList<>()), null);
+            return new VehicleDashboardResponseDTO(Map.of("semana", new ArrayList<>()), null);
         }
 
         Integer idVeiculoPadrao = topSemana.get(0).getId();
 
         VehicleDashboardDTO veiculoPadrao = montarVeiculo(idVeiculoPadrao);
 
-        return new DashboardVeiculoDTO(
+        return new VehicleDashboardResponseDTO(
                 Map.of("semana", topSemana),
                 veiculoPadrao
         );
@@ -60,8 +60,8 @@ public class DashboardVeiculoService {
 
         Double consumo = (litros != null && litros > 0) ? km / litros : 0.0;
 
-        DadosVeiculoDashboardDTO dados =
-                new DadosVeiculoDashboardDTO(gasto, litros, km, saidas, consumo);
+        VehicleDashboardDataDTO dados =
+                new VehicleDashboardDataDTO(gasto, litros, km, saidas, consumo);
 
         return new VehicleDashboardDTO(
                 v.getVehicleId(),

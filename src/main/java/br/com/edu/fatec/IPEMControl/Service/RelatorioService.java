@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.AtividadeDiariaDTO;
+import br.com.edu.fatec.IPEMControl.DTO.DailyActivityDTO;
 import br.com.edu.fatec.IPEMControl.DTO.DailyReportDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.User;
@@ -45,8 +45,8 @@ public class RelatorioService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Mapeia as entidades para o AtividadeDiariaDTO
-        List<AtividadeDiariaDTO> atividades = saidasDoDia.stream()
-                .map(saida -> new AtividadeDiariaDTO(
+        List<DailyActivityDTO> atividades = saidasDoDia.stream()
+                .map(saida -> new DailyActivityDTO (
                         saida.getVehicle().getPrefix(),
                         saida.getDestination(),
                         saida.getDateTimeDeparture(),

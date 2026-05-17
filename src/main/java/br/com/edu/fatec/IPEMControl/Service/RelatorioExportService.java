@@ -1,6 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.DestinoFrequenteDTO;
+import br.com.edu.fatec.IPEMControl.DTO.FrequentDestinationDTO;
 import br.com.edu.fatec.IPEMControl.DTO.TechnicianReportDTO;
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -115,9 +115,9 @@ public class RelatorioExportService {
             Table tDest = new Table(UnitValue.createPercentArray(new float[]{70, 30})).useAllAvailableWidth();
             tDest.addHeaderCell(new Cell().add(new Paragraph("Local").setBold()));
             tDest.addHeaderCell(new Cell().add(new Paragraph("Visitas").setBold()));
-            for (DestinoFrequenteDTO d : dto.getDestinations()) {
-                tDest.addCell(d.getLocal());
-                tDest.addCell(String.valueOf(d.getQuantidade()));
+            for (FrequentDestinationDTO d : dto.getDestinations()) {
+                tDest.addCell(d.getLocation());
+                tDest.addCell(String.valueOf(d.getQuantity()));
             }
             document.add(tDest);
         }
@@ -191,8 +191,8 @@ public class RelatorioExportService {
         }
 
         if (dto.getDestinations() != null) {
-            for (DestinoFrequenteDTO d : dto.getDestinations()) {
-                csv.writeNext(new String[]{"Destinos", d.getLocal(), str(d.getQuantidade())});
+            for (FrequentDestinationDTO d : dto.getDestinations()) {
+                csv.writeNext(new String[]{"Destinos", d.getLocation(), str(d.getQuantity())});
             }
         }
 
@@ -283,10 +283,10 @@ public class RelatorioExportService {
             Sheet sheDest = workbook.createSheet("Destinos");
             addXlsRow(sheDest, cabecalho, 0, "Local", "Visitas");
             int r = 1;
-            for (DestinoFrequenteDTO d : dto.getDestinations()) {
+            for (FrequentDestinationDTO d : dto.getDestinations()) {
                 Row row = sheDest.createRow(r++);
-                row.createCell(0).setCellValue(d.getLocal());
-                row.createCell(1).setCellValue(d.getQuantidade());
+                row.createCell(0).setCellValue(d.getLocation());
+                row.createCell(1).setCellValue(d.getQuantity());
             }
             sheDest.autoSizeColumn(0); sheDest.autoSizeColumn(1);
         }
@@ -376,8 +376,8 @@ public class RelatorioExportService {
 
         if (dto.getDestinations() != null && !dto.getDestinations().isEmpty()) {
             addDocxTitulo(doc, "Destinos Mais Frequentes", 14);
-            for (DestinoFrequenteDTO d : dto.getDestinations()) {
-                addDocxParagraph(doc, "• " + d.getLocal() + " — " + d.getQuantidade() + " visita(s)",
+            for (FrequentDestinationDTO d : dto.getDestinations()) {
+                addDocxParagraph(doc, "• " + d.getLocation() + " — " + d.getQuantity() + " visita(s)",
                         false, 11);
             }
         }

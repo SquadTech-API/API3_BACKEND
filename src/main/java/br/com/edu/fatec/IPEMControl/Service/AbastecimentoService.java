@@ -40,24 +40,24 @@ public class AbastecimentoService {
 
     // ── POST /abastecimento ──────────────────────────────────────────────────
 
-    public AbastecimentoSalvoDTO salvar(AbastecimentoDTO dto) {
-        DepartureLog departureLog = registroSaidaRepository.findById(dto.getIdSaida())
+    public SavedFuelingDTO salvar(FuelingDTO dto) {
+        DepartureLog departureLog = registroSaidaRepository.findById(dto.getTripId())
                 .orElseThrow(() -> new RuntimeException("Registro de saída não encontrado."));
 
         Fueling ab = new Fueling();
         ab.setDepartureLog(departureLog);
-        ab.setDateTime(dto.getDataHora());
-        ab.setFuelType(dto.getTipoCombustivel());
-        ab.setLitersAmount(dto.getQuantidadeLitros());
-        ab.setTotalValue(dto.getValorTotal());
-        ab.setFuelingKm(dto.getKmAbastecimento());
-        ab.setGasStationName(dto.getPostoNome());
-        ab.setGasStationCity(dto.getPostoCidade());
-        ab.setReceipt(dto.getNotaFiscal());
+        ab.setDateTime(dto.getDateTime());
+        ab.setFuelType(dto.getFuelType());
+        ab.setLitersAmount(dto.getLitersQuantity());
+        ab.setTotalValue(dto.getTotalAmount());
+        ab.setFuelingKm(dto.getFuelingMileage());
+        ab.setGasStationName(dto.getGasStationName());
+        ab.setGasStationCity(dto.getGasStationCity());
+        ab.setReceipt(dto.getInvoiceNumber());
 
         Fueling salvo = abastecimentoRepository.save(ab);
 
-        return new AbastecimentoSalvoDTO(
+        return new SavedFuelingDTO(
                 salvo.getFuelingId(),
                 salvo.getDateTime(),
                 salvo.getFuelType(),
@@ -73,19 +73,19 @@ public class AbastecimentoService {
 
     // ── GET /abastecimento/historico ─────────────────────────────────────────
 
-    public List<AbastecimentoHistoricoDTO> buscarHistorico(Integer idVeiculo) {
+    public List<FuelingHistoryDTO> buscarHistorico(Integer idVeiculo) {
         List<Fueling> lista = (idVeiculo != null)
                 ? abastecimentoRepository.findByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(idVeiculo)
                 : abastecimentoRepository.findAllByOrderByDataHoraDesc();
         return lista.stream().map(this::paraHistoricoDTO).collect(Collectors.toList());
     }
 
-    private AbastecimentoHistoricoDTO paraHistoricoDTO(Fueling a) {
+    private FuelingHistoryDTO paraHistoricoDTO(Fueling a) {
         DepartureLog rs    = a.getDepartureLog();
         Vehicle vehicle = rs != null ? rs.getVehicle() : null;
         String responsavel  = rs != null && rs.getUser() != null ? rs.getUser().getName() : null;
 
-        return new AbastecimentoHistoricoDTO(
+        return new FuelingHistoryDTO(
                 a.getFuelingId(), a.getDateTime(), a.getFuelType(),
                 a.getLitersAmount(), a.getTotalValue(), a.getFuelingKm(),
                 a.getGasStationName(), a.getGasStationCity(), a.getReceipt(),
@@ -127,13 +127,13 @@ public class AbastecimentoService {
         }
 
         List<Object[]> linhasConsumo = abastecimentoRepository.buscarConsumoPorVeiculo(dataInicio);
-        List<ConsumoVeiculoDTO> consumoVeiculos = construirConsumoVeiculos(linhasConsumo, allVehicles);
+        List<VehicleConsumptionDTO> consumoVeiculos = construirConsumoVeiculos(linhasConsumo, allVehicles);
 
         double mediaConsumo = consumoVeiculos.stream()
-                .filter(v -> v.getConsumoKmL() != null).mapToDouble(ConsumoVeiculoDTO::getConsumoKmL)
+                .filter(v -> v.getFuelConsumptionKmPerLiter() != null).mapToDouble(VehicleConsumptionDTO::getFuelConsumptionKmPerLiter)
                 .average().orElse(0);
         double mediaCusto = consumoVeiculos.stream()
-                .filter(v -> v.getCustoPorKm() != null).mapToDouble(ConsumoVeiculoDTO::getCustoPorKm)
+                .filter(v -> v.getCostPerKilometer() != null).mapToDouble(VehicleConsumptionDTO::getCostPerKilometer)
                 .average().orElse(0);
 
         List<Object[]> linhasSemanas = abastecimentoRepository.buscarEstatisticasSemanas(dataInicio);
@@ -149,16 +149,16 @@ public class AbastecimentoService {
             }
         }
 
-        List<AbastecimentoItemDTO> itensAbastecimento = fuelings.stream()
+        List<FuelingItemDTO> itensAbastecimento = fuelings.stream()
                 .map(this::paraItemDTO).collect(Collectors.toList());
 
         // CORRIGIDO: usa getVehicle() direto da entidade OilChange
-        List<ItemTrocaOleoDTO> itensTrocaOleo = trocasOleo.stream()
+        List<OilChangeItemDTO> itensTrocaOleo = trocasOleo.stream()
                 .map(this::paraItemTrocaOleoDTO).collect(Collectors.toList());
 
         List<UserRankingDTO>         rankingUsuarios  = construirRankingUsuarios(abastecimentoRepository.buscarRankingUsuarios(dataInicio));
         List<StationRankingDTO>           rankingPostos    = construirRankingPostos(abastecimentoRepository.buscarRankingPostos(dataInicio));
-        List<DistribuicaoCombustivelDTO> distribuicao    = construirDistribuicaoCombustivel(abastecimentoRepository.buscarDistribuicaoCombustivel(dataInicio));
+        List<FuelDistributionDTO> distribuicao    = construirDistribuicaoCombustivel(abastecimentoRepository.buscarDistribuicaoCombustivel(dataInicio));
 
         return new FuelReportDTO(
                 totalGasto, totalLitros, fuelings.size(), trocasOleo.size(),
@@ -172,7 +172,7 @@ public class AbastecimentoService {
 
     // ── GET /relatorios/abastecimento/busca ──────────────────────────────────
 
-    public BuscaAbastecimentoDTO buscar(String tipo, String data, String de, String ate,
+    public FuelingSearchDTO buscar(String tipo, String data, String de, String ate,
                                         String placa, String tipoRegistro) {
         List<Fueling> fuelings = new ArrayList<>();
         switch (tipo) {
@@ -190,8 +190,8 @@ public class AbastecimentoService {
                     abastecimentoRepository.findByRegistroSaidaVeiculoPlacaOrderByDataHoraDesc(placa);
         }
 
-        List<AbastecimentoItemDTO> itensAbastecimento = List.of();
-        List<ItemTrocaOleoDTO>     itensTrocaOleo     = List.of();
+        List<FuelingItemDTO> itensAbastecimento = List.of();
+        List<OilChangeItemDTO>     itensTrocaOleo     = List.of();
 
         if ("ambos".equals(tipoRegistro) || "abast".equals(tipoRegistro)) {
             itensAbastecimento = fuelings.stream().map(this::paraItemDTO).collect(Collectors.toList());
@@ -202,11 +202,11 @@ public class AbastecimentoService {
                     .stream().map(this::paraItemTrocaOleoDTO).collect(Collectors.toList());
         }
 
-        List<ConsumoVeiculoDTO> veiculos = construirConsumoVeiculos(
+        List<VehicleConsumptionDTO> veiculos = construirConsumoVeiculos(
                 abastecimentoRepository.buscarConsumoPorVeiculo(resolverDataInicio("30")),
                 veiculoRepository.findAll());
 
-        return new BuscaAbastecimentoDTO(itensAbastecimento, itensTrocaOleo, veiculos);
+        return new FuelingSearchDTO(itensAbastecimento, itensTrocaOleo, veiculos);
     }
 
     // ── Auxiliares ────────────────────────────────────────────────────────────
@@ -221,11 +221,11 @@ public class AbastecimentoService {
         };
     }
 
-    private AbastecimentoItemDTO paraItemDTO(Fueling a) {
+    private FuelingItemDTO paraItemDTO(Fueling a) {
         DepartureLog rs   = a.getDepartureLog();
         Vehicle vehicle = rs != null ? rs.getVehicle() : null;
         String responsavel = rs != null && rs.getUser() != null ? rs.getUser().getName() : null;
-        return new AbastecimentoItemDTO(
+        return new FuelingItemDTO(
                 a.getDateTime(),
                 vehicle != null ? vehicle.getPrefix() : null,
                 responsavel, a.getFuelType(), a.getLitersAmount(),
@@ -242,7 +242,7 @@ public class AbastecimentoService {
      * CORRIGIDO: ItemTrocaOleoDTO espera LocalDateTime — usa createdAt (timestamp do registro)
      * como aproximação aceitável enquanto oilChangeDate (LocalDate) não é adicionado ao DTO.
      */
-    private ItemTrocaOleoDTO paraItemTrocaOleoDTO(OilChange t) {
+    private OilChangeItemDTO  paraItemTrocaOleoDTO(OilChange t) {
         // Usa o vínculo direto com Vehicle adicionado na entidade corrigida
         Vehicle vehicle = t.getVehicle();
 
@@ -251,7 +251,7 @@ public class AbastecimentoService {
             vehicle = t.getDepartureLog().getVehicle();
         }
 
-        return new ItemTrocaOleoDTO(
+        return new OilChangeItemDTO(
                 t.getCreatedAt(),                                        // LocalDateTime — timestamp
                 vehicle != null ? vehicle.getLicensePlate()     : null,
                 t.getChangeKm(),
@@ -260,7 +260,7 @@ public class AbastecimentoService {
         );
     }
 
-    private List<ConsumoVeiculoDTO> construirConsumoVeiculos(List<Object[]> linhas, List<Vehicle> todos) {
+    private List<VehicleConsumptionDTO> construirConsumoVeiculos(List<Object[]> linhas, List<Vehicle> todos) {
         return linhas.stream().map(linha -> {
             String placa          = (String) linha[0];
             BigDecimal litros     = paraBigDecimal(linha[1]);
@@ -278,13 +278,13 @@ public class AbastecimentoService {
                     ? trocaOleoRepository.buscarUltimaPorVeiculo(vehicle.getVehicleId())
                     : Optional.empty();
 
-            return new ConsumoVeiculoDTO(
+            return new VehicleConsumptionDTO(
                     placa,
                     vehicle != null ? vehicle.getCurrentKm() : null,
                     ultimaTroca.map(OilChange::getNextChangeKm).orElse(null),
                     ultimaTroca.map(OilChange::getChangeKm).orElse(null),
                     ultimaTroca.map(t -> t.getCreatedAt().toLocalDate().toString()).orElse(null),
-                    consumoKmL, custoPorKm, totalGasto, litros
+                    consumoKmL, custoPorKm, totalGasto
             );
         }).collect(Collectors.toList());
     }
@@ -301,12 +301,12 @@ public class AbastecimentoService {
         )).collect(Collectors.toList());
     }
 
-    private List<DistribuicaoCombustivelDTO> construirDistribuicaoCombustivel(List<Object[]> linhas) {
+    private List<FuelDistributionDTO> construirDistribuicaoCombustivel(List<Object[]> linhas) {
         long total = linhas.stream().mapToLong(l -> ((Number) l[1]).longValue()).sum();
         return linhas.stream().map(l -> {
             long q  = ((Number) l[1]).longValue();
             double pct = total > 0 ? Math.round((q * 100.0 / total) * 10.0) / 10.0 : 0.0;
-            return new DistribuicaoCombustivelDTO((String) l[0], pct);
+            return new FuelDistributionDTO((String) l[0], pct);
         }).collect(Collectors.toList());
     }
 

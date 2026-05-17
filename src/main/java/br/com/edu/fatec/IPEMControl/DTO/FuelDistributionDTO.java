@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class DistribuicaoCombustivelDTO {
-    private String tipo;
-    private Double pct;
+public class FuelDistributionDTO {
+
+    private String type;
+    private Double percentage;
 }
