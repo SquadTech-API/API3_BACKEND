@@ -1,59 +1,66 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.DTO.*;
+import br.com.edu.fatec.IPEMControl.DTO.FecharSaidaDTO;
+import br.com.edu.fatec.IPEMControl.DTO.DepartureLogDTO;
+import br.com.edu.fatec.IPEMControl.DTO.ReturnDTO;
+import br.com.edu.fatec.IPEMControl.DTO.ReturnResponseDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
-import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
-import br.com.edu.fatec.IPEMControl.Service.DepartureLogService;
+import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
+import br.com.edu.fatec.IPEMControl.Service.RegistroSaidaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * CORRIGIDO: adicionado endpoint para saídas com troca de óleo por veículo.
+ * Usado pelo editar-troca-de-oleo.js ao popular o select de saídas.
+ */
 @RestController
 @RequestMapping("/registro-saidas")
 @CrossOrigin(origins = "*")
-public class DepartureLogController {
+public class RegistroSaidaController {
 
     @Autowired
-    private DepartureLogService departureLogService;
+    private RegistroSaidaService registroSaidaService;
 
     @Autowired
-    private RegistroSaidaRepository registroSaidaRepository;
+    private ExitRecordRepository exitRecordRepository;
 
     @PostMapping
     public ResponseEntity<DepartureLog> abrirSaida(@RequestBody DepartureLogDTO dto) {
-        return ResponseEntity.status(201).body(departureLogService.abrirSaida(dto));
+        return ResponseEntity.status(201).body(registroSaidaService.abrirSaida(dto));
     }
 
     @PatchMapping("/{id}/retorno")
     public ResponseEntity<ReturnResponseDTO> registrarRetorno(
             @PathVariable Integer id,
             @RequestBody ReturnDTO dto) {
-        return ResponseEntity.ok(departureLogService.registrarRetorno(id, dto));
+        return ResponseEntity.ok(registroSaidaService.registrarRetorno(id, dto));
     }
 
     @PatchMapping("/{id}/fechar")
     public ResponseEntity<DepartureLog> fecharSaida(
             @PathVariable Integer id,
-            @RequestBody CloseExitDTO dto) {
-        return ResponseEntity.ok(departureLogService.fecharSaida(id, dto));
+            @RequestBody FecharSaidaDTO dto) {
+        return ResponseEntity.ok(registroSaidaService.fecharSaida(id, dto));
     }
 
     @GetMapping
     public ResponseEntity<List<DepartureLog>> listar() {
-        return ResponseEntity.ok(departureLogService.listarTodos());
+        return ResponseEntity.ok(registroSaidaService.listarTodos());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<DepartureLog> buscar(@PathVariable Integer id) {
-        return ResponseEntity.ok(departureLogService.buscarPorId(id));
+        return ResponseEntity.ok(registroSaidaService.buscarPorId(id));
     }
 
     // Busca saída ativa de um veículo
     @GetMapping("/ativo")
     public ResponseEntity<DepartureLog> buscarSaidaAtivaPorVeiculo(@RequestParam Integer veiculoId) {
-        return registroSaidaRepository
+        return exitRecordRepository
                 .findTopByVeiculoIdVeiculoAndStatusOrderByDataHoraSaidaDesc(veiculoId, "em_andamento")
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -62,7 +69,7 @@ public class DepartureLogController {
     // Busca saída ativa do usuário — usado pelo vehicles.js para redirecionamento automático
     @GetMapping("/ativo-usuario")
     public ResponseEntity<DepartureLog> buscarSaidaAtivaPorUsuario(@RequestParam Integer matricula) {
-        return registroSaidaRepository
+        return exitRecordRepository
                 .findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(matricula, "em_andamento")
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -72,7 +79,7 @@ public class DepartureLogController {
     @GetMapping("/veiculo/{idVeiculo}/troca-oleo")
     public ResponseEntity<List<DepartureLog>> buscarSaidasTrocaOleo(@PathVariable Integer idVeiculo) {
         return ResponseEntity.ok(
-                registroSaidaRepository.findByVeiculoIdVeiculoAndTipoServicoEhTrocaOleoTrue(idVeiculo)
+                exitRecordRepository.findByVeiculoIdVeiculoAndTipoServicoEhTrocaOleoTrue(idVeiculo)
         );
     }
 }

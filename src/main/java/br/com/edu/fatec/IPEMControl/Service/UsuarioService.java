@@ -1,12 +1,12 @@
 package br.com.edu.fatec.IPEMControl.Service;
 
-import br.com.edu.fatec.IPEMControl.DTO.LoginResponseDTO;
-import br.com.edu.fatec.IPEMControl.DTO.UpdatePasswordDTO;
+import br.com.edu.fatec.IPEMControl.DTO.AtualizarSenhaDTO;
+import br.com.edu.fatec.IPEMControl.DTO.LoginRespostaDTO;
 import br.com.edu.fatec.IPEMControl.DTO.UserDTO;
 import br.com.edu.fatec.IPEMControl.Entities.User;
-import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
-import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
-import br.com.edu.fatec.IPEMControl.Repository.UsuarioRepository;
+import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
+import br.com.edu.fatec.IPEMControl.Exception.BusinessRuleException;
+import br.com.edu.fatec.IPEMControl.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.Optional;
 public class UsuarioService {
 
     @Autowired
-    private UsuarioRepository repository;
+    private UserRepository repository;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -26,7 +26,7 @@ public class UsuarioService {
     // ── POST /usuarios ────────────────────────────────────────────────────────
     public User salvar(UserDTO dto) {
         if (dto.getPassword() == null || dto.getPassword().isBlank())
-            throw new RegraDeNegocioException("Senha é obrigatória.");
+            throw new BusinessRuleException("Senha é obrigatória.");
 
         User user = new User();
         user.setCpf(dto.getCpf());
@@ -57,7 +57,7 @@ public class UsuarioService {
 
     // ── POST /usuarios/login ──────────────────────────────────────────────────
     // CORRIGIDO: agora retorna tipoHabilitacao e activeEmployee
-    public LoginResponseDTO autenticar(String email, String senha) {
+    public LoginRespostaDTO autenticar(String email, String senha) {
         Optional<User> optional = repository.findByEmail(email);
 
         if (optional.isEmpty()) return null;
@@ -67,15 +67,13 @@ public class UsuarioService {
         if (!Boolean.TRUE.equals(user.getActiveColaborator())) return null;
         if (!passwordEncoder.matches(senha, user.getPassword()))  return null;
 
-        return new LoginResponseDTO(
+        return new LoginRespostaDTO(
                 user.getRegistration(),
                 user.getName(),
                 user.getPosition(),
                 user.getEmail(),
                 user.getUserType().name(),
-                // CORRIGIDO: tipoHabilitacao agora incluído na resposta
                 user.getDriverLicenseType() != null ? user.getDriverLicenseType().name() : null,
-                // CORRIGIDO: activeEmployee incluído para validação no frontend
                 user.getActiveColaborator()
         );
     }
@@ -84,7 +82,7 @@ public class UsuarioService {
     // NOVO: endpoint para edição pelo ADM
     public User atualizar(Integer matricula, UserDTO dto) {
         User user = repository.findByMatricula(matricula)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
 
         if (dto.getName() != null && !dto.getName().isBlank())
             user.setName(dto.getName());
@@ -102,7 +100,7 @@ public class UsuarioService {
     // NOVO: desativa colaborador
     public User desativar(Integer matricula) {
         User user = repository.findByMatricula(matricula)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
         user.setActiveColaborator(false);
         return repository.save(user);
     }
@@ -111,20 +109,20 @@ public class UsuarioService {
     // NOVO: reativa colaborador
     public User ativar(Integer matricula) {
         User user = repository.findByMatricula(matricula)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
         user.setActiveColaborator(true);
         return repository.save(user);
     }
 
     // ── POST /usuarios/atualizar-password ────────────────────────────────────────
-    public boolean atualizarSenha(UpdatePasswordDTO dto) {
+    public boolean atualizarSenha(AtualizarSenhaDTO dto) {
         Optional<User> optional = repository.findByEmail(dto.getEmail());
         if (optional.isEmpty()) return false;
 
         User user = optional.get();
-        if (!passwordEncoder.matches(dto.getNewPassword(), user.getPassword())) return false;
+        if (!passwordEncoder.matches(dto.getSenhaAtual(), user.getPassword())) return false;
 
-        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        user.setPassword(passwordEncoder.encode(dto.getNovaSenha()));
         repository.save(user);
         return true;
     }

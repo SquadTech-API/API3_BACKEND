@@ -16,14 +16,14 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     // 404 — Recurso não encontrado
-    @ExceptionHandler(RecursoNaoEncontradoException.class)
-    public ResponseEntity<Map<String, String>> handleNaoEncontrado(RecursoNaoEncontradoException ex) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleNaoEncontrado(ResourceNotFoundException ex) {
         return ResponseEntity.status(404).body(Map.of("message", ex.getMessage()));
     }
 
     // 400 — Regra de negócio violada
-    @ExceptionHandler(RegraDeNegocioException.class)
-    public ResponseEntity<Map<String, String>> handleRegraDeNegocio(RegraDeNegocioException ex) {
+    @ExceptionHandler(BusinessRuleException.class)
+    public ResponseEntity<Map<String, String>> handleRegraDeNegocio(BusinessRuleException ex) {
         return ResponseEntity.status(400).body(Map.of("message", ex.getMessage()));
     }
 
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
         else if (cause.contains("email"))    msg = "E-mail já cadastrado no sistema.";
         else if (cause.contains("licensePlate"))    msg = "Placa já cadastrada no sistema.";
         else if (cause.contains("numero_habilitacao")) msg = "Número de habilitação já cadastrado.";
-        else if (cause.contains("nome_servico"))       msg = "Já existe um type de serviço com esse name.";
+        else if (cause.contains("nome_servico"))       msg = "Já existe um serviço com esse nome.";
         return ResponseEntity.status(409).body(Map.of("message", msg));
     }
 

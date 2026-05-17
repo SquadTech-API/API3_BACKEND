@@ -4,11 +4,11 @@ import br.com.edu.fatec.IPEMControl.DTO.ServiceOrderDTO;
 import br.com.edu.fatec.IPEMControl.DTO.ServiceOrderResponseDTO;
 import br.com.edu.fatec.IPEMControl.Entities.ServiceType;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
-import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
-import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
-import br.com.edu.fatec.IPEMControl.Repository.OrdemServicoRepository;
-import br.com.edu.fatec.IPEMControl.Repository.TipoServicoRepository;
-import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
+import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
+import br.com.edu.fatec.IPEMControl.Exception.BusinessRuleException;
+import br.com.edu.fatec.IPEMControl.Repository.ServiceOrderRepository;
+import br.com.edu.fatec.IPEMControl.Repository.ServiceTypeRepository;
+import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,36 +19,36 @@ import java.util.stream.Collectors;
 public class ServiceOrder {
 
     @Autowired
-    private OrdemServicoRepository ordemServicoRepository;
+    private ServiceOrderRepository serviceOrderRepository;
 
     @Autowired
-    private VeiculoRepository veiculoRepository;
+    private VehicleRepository vehicleRepository;
 
     @Autowired
-    private TipoServicoRepository tipoServicoRepository;
+    private ServiceTypeRepository serviceTypeRepository;
 
     public ServiceOrderResponseDTO criar(ServiceOrderDTO dto) {
-        if (dto.getVehicleId() == null) throw new RegraDeNegocioException("Informe o veículo.");
-        if (dto.getServiceTypeId() == null) throw new RegraDeNegocioException("Informe o type de serviço.");
+        if (dto.getVehicleId() == null) throw new BusinessRuleException("Informe o veículo.");
+        if (dto.getServiceTypeId() == null) throw new BusinessRuleException("Informe o type de serviço.");
 
-        Vehicle vehicle = veiculoRepository.findById(dto.getVehicleId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
+        Vehicle vehicle = vehicleRepository.findById(dto.getVehicleId())
+                .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado."));
 
-        ServiceType serviceType = tipoServicoRepository.findById(dto.getServiceTypeId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
+        ServiceType serviceType = serviceTypeRepository.findById(dto.getServiceTypeId())
+                .orElseThrow(() -> new ResourceNotFoundException("Tipo de serviço não encontrado."));
 
         br.com.edu.fatec.IPEMControl.Entities.ServiceOrder ordem = new br.com.edu.fatec.IPEMControl.Entities.ServiceOrder();
         ordem.setVehicle(vehicle);
         ordem.setServiceType(serviceType);
         ordem.setObservation(dto.getObservations());
 
-        ordem = ordemServicoRepository.save(ordem);
+        ordem = serviceOrderRepository.save(ordem);
 
         return mapearParaDTO(ordem);
     }
 
     public List<ServiceOrderResponseDTO> listarTodas() {
-        return ordemServicoRepository.findAll().stream()
+        return serviceOrderRepository.findAll().stream()
                 .map(this::mapearParaDTO)
                 .collect(Collectors.toList());
     }

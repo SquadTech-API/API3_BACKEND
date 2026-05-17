@@ -3,7 +3,7 @@ package br.com.edu.fatec.IPEMControl.Service;
 import br.com.edu.fatec.IPEMControl.DTO.*;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.User;
-import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
+import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
 import br.com.edu.fatec.IPEMControl.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,11 +21,11 @@ public class RelatorioTecnicoService {
     private static final DateTimeFormatter FMT_DATE     = DateTimeFormatter.ISO_LOCAL_DATE;
     private static final DateTimeFormatter FMT_DATETIME = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
-    @Autowired private RegistroSaidaRepository   saidaRepo;
-    @Autowired private AbastecimentoRepository    abastRepo;
-    @Autowired private UsuarioRepository          usuarioRepo;
-    @Autowired private TrocaOleoRepository        trocaOleoRepo;
-    @Autowired private UsuarioDocumentoRepository docRepo;
+    @Autowired private ExitRecordRepository saidaRepo;
+    @Autowired private RefuelingRepository abastRepo;
+    @Autowired private UserRepository usuarioRepo;
+    @Autowired private OilChangeRepository trocaOleoRepo;
+    @Autowired private UserDocumentRepository docRepo;
 
     // ════════════════════════════════════════════════════════════════════════
     //  Utilitários
@@ -134,7 +134,7 @@ public class RelatorioTecnicoService {
     public TechnicianReportDTO gerarRelatorioIndividual(Integer matricula, String periodo) {
 
         User user = usuarioRepo.findByMatricula(matricula)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Técnico não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Técnico não encontrado."));
 
         LocalDateTime inicio = dataInicio(periodo);
         TechnicianReportDTO dto = new TechnicianReportDTO();

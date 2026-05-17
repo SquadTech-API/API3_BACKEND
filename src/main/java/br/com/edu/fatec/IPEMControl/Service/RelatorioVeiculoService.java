@@ -4,10 +4,10 @@ import br.com.edu.fatec.IPEMControl.DTO.VehicleReportDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.Fueling;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
-import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
-import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
-import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
-import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
+import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
+import br.com.edu.fatec.IPEMControl.Repository.RefuelingRepository;
+import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
+import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +20,13 @@ import java.util.List;
 public class RelatorioVeiculoService {
 
     @Autowired
-    private VeiculoRepository veiculoRepository;
+    private VehicleRepository vehicleRepository;
 
     @Autowired
-    private RegistroSaidaRepository registroSaidaRepository;
+    private ExitRecordRepository exitRecordRepository;
 
     @Autowired
-    private AbastecimentoRepository abastecimentoRepository;
+    private RefuelingRepository refuelingRepository;
 
     /**
      * CORRIGIDO: antes retornava dados hardcoded (Fiat Uno, ABC-1234...).
@@ -34,11 +34,11 @@ public class RelatorioVeiculoService {
      */
     public VehicleReportDTO gerarRelatorioVeiculo(Integer idVeiculo) {
 
-        Vehicle vehicle = veiculoRepository.findById(idVeiculo)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado: " + idVeiculo));
+        Vehicle vehicle = vehicleRepository.findById(idVeiculo)
+                .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado: " + idVeiculo));
 
         // Total de saídas concluídas
-        List<DepartureLog> saidasConcluidas = registroSaidaRepository
+        List<DepartureLog> saidasConcluidas = exitRecordRepository
                 .findByVeiculoIdVeiculoAndDataHoraSaidaBetween(
                         idVeiculo,
                         LocalDateTime.now().minusYears(5),
@@ -54,7 +54,7 @@ public class RelatorioVeiculoService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Litros totais abastecidos
-        List<Fueling> fuelings = abastecimentoRepository
+        List<Fueling> fuelings = refuelingRepository
                 .findByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(idVeiculo);
 
         BigDecimal totalLitros = fuelings.stream()

@@ -2,9 +2,9 @@ package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.*;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
-import br.com.edu.fatec.IPEMControl.Repository.AbastecimentoRepository;
-import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
-import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.RefuelingRepository;
+import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
+import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,19 +16,19 @@ import java.util.ArrayList;
 public class DashboardVeiculoService {
 
     @Autowired
-    private RegistroSaidaRepository registroSaidaRepository;
+    private ExitRecordRepository exitRecordRepository;
 
     @Autowired
-    private AbastecimentoRepository abastecimentoRepository;
+    private RefuelingRepository refuelingRepository;
 
     @Autowired
-    private VeiculoRepository veiculoRepository;
+    private VehicleRepository vehicleRepository;
 
-    public VehicleDashboardResponseDTO buscarDashboard() {
+    public DashboardVeiculoDTO buscarDashboard() {
 
-        List<KilometerChartItemDTO> topSemana = registroSaidaRepository.buscarTop5KmSemana()
+        List<GraficoKmItemDTO> topSemana = exitRecordRepository.buscarTop5KmSemana()
                 .stream()
-                .map(obj -> new KilometerChartItemDTO(
+                .map(obj -> new GraficoKmItemDTO(
                         ((Number) obj[0]).intValue(),
                         (String) obj[1],
                         ((Number) obj[2]).doubleValue()
@@ -36,14 +36,14 @@ public class DashboardVeiculoService {
                 .toList();
 
         if (topSemana.isEmpty()) {
-            return new VehicleDashboardResponseDTO(Map.of("semana", new ArrayList<>()), null);
+            return new DashboardVeiculoDTO(Map.of("semana", new ArrayList<>()), null);
         }
 
         Integer idVeiculoPadrao = topSemana.get(0).getId();
 
         VehicleDashboardDTO veiculoPadrao = montarVeiculo(idVeiculoPadrao);
 
-        return new VehicleDashboardResponseDTO(
+        return new DashboardVeiculoDTO(
                 Map.of("semana", topSemana),
                 veiculoPadrao
         );
@@ -51,17 +51,17 @@ public class DashboardVeiculoService {
 
     private VehicleDashboardDTO montarVeiculo(Integer idVeiculo) {
 
-        Vehicle v = veiculoRepository.findById(idVeiculo).orElseThrow();
+        Vehicle v = vehicleRepository.findById(idVeiculo).orElseThrow();
 
-        Double gasto = abastecimentoRepository.totalGastoSemana(idVeiculo);
-        Double litros = abastecimentoRepository.totalLitrosSemana(idVeiculo);
-        Double km = registroSaidaRepository.totalKmSemana(idVeiculo);
-        Long saidas = registroSaidaRepository.totalSaidasSemana(idVeiculo);
+        Double gasto = refuelingRepository.totalGastoSemana(idVeiculo);
+        Double litros = refuelingRepository.totalLitrosSemana(idVeiculo);
+        Double km = exitRecordRepository.totalKmSemana(idVeiculo);
+        Long saidas = exitRecordRepository.totalSaidasSemana(idVeiculo);
 
         Double consumo = (litros != null && litros > 0) ? km / litros : 0.0;
 
-        VehicleDashboardDataDTO dados =
-                new VehicleDashboardDataDTO(gasto, litros, km, saidas, consumo);
+        DadosVeiculoDashboardDTO dados =
+                new DadosVeiculoDashboardDTO(gasto, litros, km, saidas, consumo);
 
         return new VehicleDashboardDTO(
                 v.getVehicleId(),

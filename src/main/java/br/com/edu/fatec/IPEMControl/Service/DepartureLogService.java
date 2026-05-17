@@ -2,8 +2,8 @@ package br.com.edu.fatec.IPEMControl.Service;
 
 import br.com.edu.fatec.IPEMControl.DTO.*;
 import br.com.edu.fatec.IPEMControl.Entities.*;
-import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
-import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
+import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
+import br.com.edu.fatec.IPEMControl.Exception.BusinessRuleException;
 import br.com.edu.fatec.IPEMControl.Repository.*;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -19,56 +19,56 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class DepartureLogService {
+public class RegistroSaidaService {
 
     @Autowired
-    private RegistroSaidaRepository registroSaidaRepository;
+    private ExitRecordRepository exitRecordRepository;
 
     @Autowired
-    private VeiculoRepository veiculoRepository;
+    private VehicleRepository vehicleRepository;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private TipoServicoRepository tipoServicoRepository;
+    private ServiceTypeRepository serviceTypeRepository;
 
     @Autowired
-    private AbastecimentoRepository abastecimentoRepository;
+    private RefuelingRepository refuelingRepository;
 
     public DepartureLog abrirSaida(DepartureLogDTO dto) {
-        if (dto.getVehicleId() == null) throw new RegraDeNegocioException("Informe o veículo.");
-        if (dto.getUserRegistration() == null) throw new RegraDeNegocioException("Informe o usuário.");
-        if (dto.getServiceTypeId() == null) throw new RegraDeNegocioException("Informe o type de serviço.");
-        if (dto.getInitialMileage() == null) throw new RegraDeNegocioException("Informe o KM inicial.");
-        if (dto.getInitialMileage().compareTo(BigDecimal.ZERO) < 0) throw new RegraDeNegocioException("KM inicial não pode ser negativo.");
-        if (dto.getDepartureDatetime() == null) throw new RegraDeNegocioException("Informe a data e hora de saída.");
-        if (dto.getDestination() == null || dto.getDestination().isBlank()) throw new RegraDeNegocioException("Informe o local de destino.");
+        if (dto.getVehicleId() == null) throw new BusinessRuleException("Informe o veículo.");
+        if (dto.getUserRegistration() == null) throw new BusinessRuleException("Informe o usuário.");
+        if (dto.getServiceTypeId() == null) throw new BusinessRuleException("Informe o type de serviço.");
+        if (dto.getInitialMileage() == null) throw new BusinessRuleException("Informe o KM inicial.");
+        if (dto.getInitialMileage().compareTo(BigDecimal.ZERO) < 0) throw new BusinessRuleException("KM inicial não pode ser negativo.");
+        if (dto.getDepartureDatetime() == null) throw new BusinessRuleException("Informe a data e hora de saída.");
+        if (dto.getDestination() == null || dto.getDestination().isBlank()) throw new BusinessRuleException("Informe o local de destino.");
 
-        boolean usuarioJaEmSaida = registroSaidaRepository
+        boolean usuarioJaEmSaida = exitRecordRepository
                 .findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(dto.getUserRegistration(), "em_andamento")
                 .isPresent();
         if (usuarioJaEmSaida)
-            throw new RegraDeNegocioException("Você já possui uma saída em andamento. Registre o retorno antes de iniciar uma nova saída.");
+            throw new BusinessRuleException("Você já possui uma saída em andamento. Registre o retorno antes de iniciar uma nova saída.");
 
-        Vehicle vehicle = veiculoRepository.findById(dto.getVehicleId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
+        Vehicle vehicle = vehicleRepository.findById(dto.getVehicleId())
+                .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado."));
 
         if (Boolean.FALSE.equals(vehicle.getAvailable()))
-            throw new RegraDeNegocioException("Veículo não está disponível.");
+            throw new BusinessRuleException("Veículo não está disponível.");
 
         if (vehicle.getCurrentKm() != null && dto.getInitialMileage().compareTo(vehicle.getCurrentKm()) < 0) {
-            throw new RegraDeNegocioException("KM inicial (" + dto.getInitialMileage() + ") não pode ser menor que o KM atual do veículo (" + vehicle.getCurrentKm() + ").");
+            throw new BusinessRuleException("KM inicial (" + dto.getInitialMileage() + ") não pode ser menor que o KM atual do veículo (" + vehicle.getCurrentKm() + ").");
         }
 
-        User user = usuarioRepository.findByMatricula(dto.getUserRegistration())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuário não encontrado."));
+        User user = userRepository.findByMatricula(dto.getUserRegistration())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
 
         if (Boolean.FALSE.equals(user.getActiveColaborator()))
-            throw new RegraDeNegocioException("Colaborador inativo.");
+            throw new BusinessRuleException("Colaborador inativo.");
 
-        ServiceType serviceType = tipoServicoRepository.findById(dto.getServiceTypeId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Tipo de serviço não encontrado."));
+        ServiceType serviceType = serviceTypeRepository.findById(dto.getServiceTypeId())
+                .orElseThrow(() -> new ResourceNotFoundException("Tipo de serviço não encontrado."));
 
         DepartureLog registro = new DepartureLog();
         registro.setVehicle(vehicle);
@@ -81,26 +81,26 @@ public class DepartureLogService {
         registro.setStatus("em_andamento");
 
         vehicle.setAvailable(false);
-        veiculoRepository.save(vehicle);
+        vehicleRepository.save(vehicle);
 
-        return registroSaidaRepository.save(registro);
+        return exitRecordRepository.save(registro);
     }
 
     public ReturnResponseDTO registrarRetorno(Integer id, ReturnDTO dto) {
-        if (dto.getFinalMileage() == null) throw new RegraDeNegocioException("Informe o KM final.");
-        if (dto.getReturnDatetime() == null) throw new RegraDeNegocioException("Informe o horário de chegada.");
+        if (dto.getFinalMileage() == null) throw new BusinessRuleException("Informe o KM final.");
+        if (dto.getReturnDatetime() == null) throw new BusinessRuleException("Informe o horário de chegada.");
 
-        DepartureLog registro = registroSaidaRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de saída não encontrado."));
+        DepartureLog registro = exitRecordRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Registro de saída não encontrado."));
 
         if (!"em_andamento".equalsIgnoreCase(registro.getStatus()))
-            throw new RegraDeNegocioException("Esta saída já foi encerrada.");
+            throw new BusinessRuleException("Esta saída já foi encerrada.");
 
         if (dto.getFinalMileage().compareTo(registro.getStartingKm()) < 0)
-            throw new RegraDeNegocioException("KM final não pode ser menor que o KM inicial.");
+            throw new BusinessRuleException("KM final não pode ser menor que o KM inicial.");
 
         if (dto.getReturnDatetime().isBefore(registro.getDateTimeDeparture()))
-            throw new RegraDeNegocioException("Horário de chegada não pode ser anterior ao horário de saída.");
+            throw new BusinessRuleException("Horário de chegada não pode ser anterior ao horário de saída.");
 
         BigDecimal kmRodados = dto.getFinalMileage().subtract(registro.getStartingKm());
 
@@ -115,9 +115,9 @@ public class DepartureLogService {
         Vehicle vehicle = registro.getVehicle();
         vehicle.setCurrentKm(dto.getFinalMileage());
         vehicle.setAvailable(true);
-        veiculoRepository.save(vehicle);
+        vehicleRepository.save(vehicle);
 
-        registroSaidaRepository.save(registro);
+        exitRecordRepository.save(registro);
 
         return new ReturnResponseDTO(
                 registro.getDepartureLogId(), registro.getStatus(), registro.getStartingKm(),
@@ -127,51 +127,51 @@ public class DepartureLogService {
         );
     }
 
-    public DepartureLog fecharSaida(Integer id, CloseExitDTO dto) {
-        DepartureLog registro = registroSaidaRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de saída não encontrado."));
+    public DepartureLog fecharSaida(Integer id, FecharSaidaDTO dto) {
+        DepartureLog registro = exitRecordRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Registro de saída não encontrado."));
 
         if (!"em_andamento".equalsIgnoreCase(registro.getStatus()))
-            throw new RegraDeNegocioException("Esta saída já foi encerrada.");
-        if (dto.getFinalMileage() == null)
-            throw new RegraDeNegocioException("Informe o KM final.");
-        if (dto.getReturnDate() == null)
-            throw new RegraDeNegocioException("Informe o horário de chegada.");
-        if (dto.getFinalMileage().compareTo(registro.getStartingKm()) < 0)
-            throw new RegraDeNegocioException("KM final não pode ser menor que o KM inicial.");
-        if (dto.getReturnDate().isBefore(registro.getDateTimeDeparture()))
-            throw new RegraDeNegocioException("Horário de chegada não pode ser anterior ao horário de saída.");
+            throw new BusinessRuleException("Esta saída já foi encerrada.");
+        if (dto.getKmFinal() == null)
+            throw new BusinessRuleException("Informe o KM final.");
+        if (dto.getDataRetorno() == null)
+            throw new BusinessRuleException("Informe o horário de chegada.");
+        if (dto.getKmFinal().compareTo(registro.getStartingKm()) < 0)
+            throw new BusinessRuleException("KM final não pode ser menor que o KM inicial.");
+        if (dto.getDataRetorno().isBefore(registro.getDateTimeDeparture()))
+            throw new BusinessRuleException("Horário de chegada não pode ser anterior ao horário de saída.");
 
-        BigDecimal kmRodados = dto.getFinalMileage().subtract(registro.getStartingKm());
+        BigDecimal kmRodados = dto.getKmFinal().subtract(registro.getStartingKm());
 
-        registro.setFinishingKm(dto.getFinalMileage());
+        registro.setFinishingKm(dto.getKmFinal());
         registro.setDrivenKm(kmRodados);
-        registro.setReturnDate(dto.getReturnDate());
+        registro.setReturnDate(dto.getDataRetorno());
         registro.setStatus("concluido");
 
-        if (dto.getObservations() != null && !dto.getObservations().isBlank())
-            registro.setObservacoes(dto.getObservations());
+        if (dto.getObservacoes() != null && !dto.getObservacoes().isBlank())
+            registro.setObservacoes(dto.getObservacoes());
 
         Vehicle vehicle = registro.getVehicle();
-        vehicle.setCurrentKm(dto.getFinalMileage());
+        vehicle.setCurrentKm(dto.getKmFinal());
         vehicle.setAvailable(true);
-        veiculoRepository.save(vehicle);
+        vehicleRepository.save(vehicle);
 
-        return registroSaidaRepository.save(registro);
+        return exitRecordRepository.save(registro);
     }
 
     public List<DepartureLog> listarTodos() {
-        return registroSaidaRepository.findAll();
+        return exitRecordRepository.findAll();
     }
 
     public DepartureLog buscarPorId(Integer id) {
-        return registroSaidaRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de saída não encontrado."));
+        return exitRecordRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Registro de saída não encontrado."));
     }
 
     public MonthlyUsageReportDTO gerarRelatorioUsoMensalPorVeiculo(Long idVeiculo, LocalDateTime inicio, LocalDateTime fim) {
         // CERTIFICAÇÃO: Alterado para buscar por DataHoraSaida para evitar relatórios zerados
-        List<DepartureLog> viagens = registroSaidaRepository.findByVeiculoIdVeiculoAndDataHoraSaidaBetween(idVeiculo.intValue(), inicio, fim);
+        List<DepartureLog> viagens = exitRecordRepository.findByVeiculoIdVeiculoAndDataHoraSaidaBetween(idVeiculo.intValue(), inicio, fim);
 
         BigDecimal totalKm = viagens.stream()
                 .map(v -> v.getDrivenKm() != null ? v.getDrivenKm() : BigDecimal.ZERO)
@@ -181,7 +181,7 @@ public class DepartureLogService {
         BigDecimal totalLitros = BigDecimal.ZERO;
 
         for (DepartureLog viagem : viagens) {
-            List<Fueling> fuelings = abastecimentoRepository.findByRegistroSaida(viagem);
+            List<Fueling> fuelings = refuelingRepository.findByRegistroSaida(viagem);
             for (Fueling a : fuelings) {
                 if (a.getTotalValue() != null) totalGasto = totalGasto.add(a.getTotalValue());
                 if (a.getLitersAmount() != null) totalLitros = totalLitros.add(a.getLitersAmount());

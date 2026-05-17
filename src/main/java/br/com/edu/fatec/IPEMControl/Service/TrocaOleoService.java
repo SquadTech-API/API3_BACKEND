@@ -4,11 +4,11 @@ import br.com.edu.fatec.IPEMControl.DTO.OilChangeDTO;
 import br.com.edu.fatec.IPEMControl.Entities.DepartureLog;
 import br.com.edu.fatec.IPEMControl.Entities.OilChange;
 import br.com.edu.fatec.IPEMControl.Entities.Vehicle;
-import br.com.edu.fatec.IPEMControl.Exception.RecursoNaoEncontradoException;
-import br.com.edu.fatec.IPEMControl.Exception.RegraDeNegocioException;
-import br.com.edu.fatec.IPEMControl.Repository.RegistroSaidaRepository;
-import br.com.edu.fatec.IPEMControl.Repository.TrocaOleoRepository;
-import br.com.edu.fatec.IPEMControl.Repository.VeiculoRepository;
+import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
+import br.com.edu.fatec.IPEMControl.Exception.BusinessRuleException;
+import br.com.edu.fatec.IPEMControl.Repository.ExitRecordRepository;
+import br.com.edu.fatec.IPEMControl.Repository.OilChangeRepository;
+import br.com.edu.fatec.IPEMControl.Repository.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,26 +23,26 @@ import java.util.List;
 public class TrocaOleoService {
 
     @Autowired
-    private TrocaOleoRepository trocaOleoRepository;
+    private OilChangeRepository oilChangeRepository;
 
     @Autowired
-    private VeiculoRepository veiculoRepository;
+    private VehicleRepository vehicleRepository;
 
     @Autowired
-    private RegistroSaidaRepository registroSaidaRepository;
+    private ExitRecordRepository exitRecordRepository;
 
     // ── POST /troca-oleo ──────────────────────────────────────────────────────
     public OilChange salvar(OilChangeDTO dto) {
 
         if (dto.getVehicleId() == null)
-            throw new RegraDeNegocioException("Informe o veículo.");
+            throw new BusinessRuleException("Informe o veículo.");
         if (dto.getOilChangeMileage() == null)
-            throw new RegraDeNegocioException("Informe o KM da troca.");
+            throw new BusinessRuleException("Informe o KM da troca.");
         if (dto.getOilChangeDate() == null)
-            throw new RegraDeNegocioException("Informe a data da troca.");
+            throw new BusinessRuleException("Informe a data da troca.");
 
-        Vehicle vehicle = veiculoRepository.findById(dto.getVehicleId())
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado."));
+        Vehicle vehicle = vehicleRepository.findById(dto.getVehicleId())
+                .orElseThrow(() -> new ResourceNotFoundException("Veículo não encontrado."));
 
         OilChange troca = new OilChange();
         troca.setVehicle(vehicle);
@@ -66,36 +66,36 @@ public class TrocaOleoService {
 
         // Vínculo com saída (opcional)
         if (dto.getDepartureId() != null) {
-            DepartureLog saida = registroSaidaRepository.findById(dto.getDepartureId())
-                    .orElseThrow(() -> new RecursoNaoEncontradoException("Saída não encontrada."));
+            DepartureLog saida = exitRecordRepository.findById(dto.getDepartureId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Saída não encontrada."));
             troca.setDepartureLog(saida);
         }
 
         // Atualiza intervalo padrão no veículo para futuros alertas
         vehicle.setOilChangeIntervalKm(intervalo);
         vehicle.setOilChangeAlertSent(false);
-        veiculoRepository.save(vehicle);
+        vehicleRepository.save(vehicle);
 
-        return trocaOleoRepository.save(troca);
+        return oilChangeRepository.save(troca);
     }
 
     // ── GET /troca-oleo?veiculoId={id} ────────────────────────────────────────
     public List<OilChange> listarPorVeiculo(Integer idVeiculo) {
         if (idVeiculo == null)
-            return trocaOleoRepository.findAll();
-        return trocaOleoRepository.findByVeiculoIdVeiculoOrderByCreatedAtDesc(idVeiculo);
+            return oilChangeRepository.findAll();
+        return oilChangeRepository.findByVeiculoIdVeiculoOrderByCreatedAtDesc(idVeiculo);
     }
 
     // ── GET /troca-oleo/{id} ──────────────────────────────────────────────────
     public OilChange buscarPorId(Integer id) {
-        return trocaOleoRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Troca de óleo não encontrada."));
+        return oilChangeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Troca de óleo não encontrada."));
     }
 
     // ── PUT /troca-oleo/{id} ──────────────────────────────────────────────────
     public OilChange atualizar(Integer id, OilChangeDTO dto) {
-        OilChange troca = trocaOleoRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Troca de óleo não encontrada."));
+        OilChange troca = oilChangeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Troca de óleo não encontrada."));
 
         if (dto.getOilChangeMileage() != null)        troca.setChangeKm(dto.getOilChangeMileage());
         if (dto.getIntervalKm() != null)    troca.setIntervalKm(dto.getIntervalKm());
@@ -103,6 +103,6 @@ public class TrocaOleoService {
         if (dto.getOilChangeDate() != null)      troca.setChangeDate(dto.getOilChangeDate());
         if (dto.getObservations() != null)    troca.setObservation(dto.getObservations());
 
-        return trocaOleoRepository.save(troca);
+        return oilChangeRepository.save(troca);
     }
 }

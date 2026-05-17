@@ -4,8 +4,8 @@ import br.com.edu.fatec.IPEMControl.DTO.VehicleUsageDTO;
 import br.com.edu.fatec.IPEMControl.DTO.ActiveUsageDTO;
 import br.com.edu.fatec.IPEMControl.Entities.Technician;
 import br.com.edu.fatec.IPEMControl.Entities.VehicleUsage;
-import br.com.edu.fatec.IPEMControl.Repository.TecnicoRepository;
-import br.com.edu.fatec.IPEMControl.Repository.UsoVeiculoRepository;
+import br.com.edu.fatec.IPEMControl.Repository.TechnicianRepository;
+import br.com.edu.fatec.IPEMControl.Repository.VehicleUsageRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,18 +14,18 @@ import java.util.stream.Collectors;
 @Service
 public class UsoVeiculoService {
 
-    private final UsoVeiculoRepository usoRepository;
-    private final TecnicoRepository tecnicoRepository;
+    private final VehicleUsageRepository usoRepository;
+    private final TechnicianRepository technicianRepository;
 
-    public UsoVeiculoService(UsoVeiculoRepository usoRepository,
-                             TecnicoRepository tecnicoRepository) {
+    public UsoVeiculoService(VehicleUsageRepository usoRepository,
+                             TechnicianRepository technicianRepository) {
         this.usoRepository = usoRepository;
-        this.tecnicoRepository = tecnicoRepository;
+        this.technicianRepository = technicianRepository;
     }
 
     public VehicleUsageDTO registrar(VehicleUsageDTO dto) {
 
-        Technician technician = tecnicoRepository.findById(dto.getTechnicianId())
+        Technician technician = technicianRepository.findById(dto.getTechnicianId())
                 .orElseThrow(() -> new RuntimeException("Technician not found"));
 
         boolean emUso = usoRepository.existsByVeiculoAndDataFimIsNull(dto.getVehicle());
