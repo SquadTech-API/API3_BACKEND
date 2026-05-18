@@ -9,5 +9,5 @@ import java.util.List;
 public interface UsageHistoryRepository extends JpaRepository<VehicleUsageHistory, Integer> {
 
     // Busca o histórico filtrando pelo ID do veículo e ordenando pela data mais recente
-    List<VehicleUsageHistory> findByVeiculoIdVeiculoOrderByDataRegistroDesc(Integer vehicleId);
+    List<VehicleUsageHistory> findByVehicleVehicleIdOrderByDateLogDesc(Integer vehicleId);
 }

@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface ServiceOrderRepository extends JpaRepository<ServiceOrder, Integer> {
 
-    List<ServiceOrder> findByVeiculoIdVeiculoOrderByDataAberturaDesc(Integer vehicleId);
+    List<ServiceOrder> findByVehicleVehicleIdOrderByOpeningDateDesc(Integer vehicleId);
 
     List<ServiceOrder> findByStatus(String status);
 }

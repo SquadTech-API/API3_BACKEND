@@ -1,45 +1,31 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.Service.DepartureLogService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * CORRIGIDO: switch de mediaType estava incompleto.
- *
- * Problemas anteriores:
- * 1. switch só tratava "pdf" e "csv" — "excel" e "docx" caíam em
- *    APPLICATION_OCTET_STREAM com extensão ".csv" (errado).
- * 2. RegistroSaidaService.gerarArquivoRelatorio() só gerava PDF real;
- *    "excel" e "docx" retornavam texto plano com extensão errada.
- *    Esse service foi atualizado separadamente para suportar os 4 formatos.
- *
- * Correções aplicadas:
- * - Cases adicionados para "excel" → .xlsx e "docx" → .docx
- * - Extensão do arquivo corrigida para cada formato
- * - Content-Disposition name de arquivo correto
- */
 @RestController
 @RequestMapping("/report")
 @CrossOrigin(origins = "*")
 public class ReportUsageController {
 
-    @Autowired
-    private DepartureLogService service;
+    private final DepartureLogService departureLogService;
 
-    @GetMapping("/viatura")
-    public ResponseEntity<byte[]> downloadRelatorio(
-            @RequestParam Long idVeiculo,
-            @RequestParam String formato,
-            @RequestParam String periodo) {
+    public ReportUsageController(DepartureLogService departureLogService) {
+        this.departureLogService = departureLogService;
+    }
 
-        byte[] arquivo = service.gerarArquivoRelatorio(idVeiculo, formato, periodo);
+    @GetMapping("/vehicle")
+    public ResponseEntity<byte[]> downloadReport(
+            @RequestParam Long vehicleId,
+            @RequestParam String format,
+            @RequestParam String period) {
 
-        // CORRIGIDO: switch completo com todos os 4 formatos que o frontend envia
-        MediaType mediaType = switch (formato.toLowerCase()) {
+        byte[] file = departureLogService.generateReportFile(vehicleId, format, period);
+
+        MediaType mediaType = switch (format.toLowerCase()) {
             case "pdf"   -> MediaType.APPLICATION_PDF;
             case "csv"   -> MediaType.parseMediaType("text/csv; charset=UTF-8");
             case "excel" -> MediaType.parseMediaType(
@@ -49,8 +35,7 @@ public class ReportUsageController {
             default      -> MediaType.APPLICATION_OCTET_STREAM;
         };
 
-        // CORRIGIDO: extensão correta para cada formato
-        String extensao = switch (formato.toLowerCase()) {
+        String extension = switch (format.toLowerCase()) {
             case "pdf"   -> "pdf";
             case "csv"   -> "csv";
             case "excel" -> "xlsx";
@@ -58,11 +43,11 @@ public class ReportUsageController {
             default      -> "bin";
         };
 
-        String nomeArquivo = "relatorio_viatura_" + idVeiculo + "." + extensao;
+        String fileName = "vehicle_report_" + vehicleId + "." + extension;
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + nomeArquivo)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
                 .contentType(mediaType)
-                .body(arquivo);
+                .body(file);
     }
 }

@@ -10,7 +10,7 @@ import java.util.Map;
  * Resposta do GET /relatorios/technicians/{registration}?periodo={periodo}
  *
  * Removidos por serem responsabilidade do frontend:
- *   - alertas         (derivado dos dados já presentes no response)
+ *   - alertas         (derivado dos data já presentes no response)
  *   - eficiencia      (totalKm / totalSpending)
  *   - mediaMensal     (saidas / 4)
  *   - taxaLeitura     ((read / received) * 100)

@@ -2,8 +2,7 @@ package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.ServiceOrderDTO;
 import br.com.edu.fatec.IPEMControl.DTO.ServiceOrderResponseDTO;
-import br.com.edu.fatec.IPEMControl.Service.ServiceOrder;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.com.edu.fatec.IPEMControl.Service.ServiceOrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,17 +13,20 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class ServiceOrderController {
 
-    @Autowired
-    private ServiceOrder serviceOrder;
+    private final ServiceOrderService serviceOrderService;
+
+    public ServiceOrderController(ServiceOrderService serviceOrderService) {
+        this.serviceOrderService = serviceOrderService;
+    }
 
     @PostMapping
-    public ResponseEntity<ServiceOrderResponseDTO> criar(@RequestBody ServiceOrderDTO dto) {
-        ServiceOrderResponseDTO resposta = serviceOrder.criar(dto);
-        return ResponseEntity.status(201).body(resposta);
+    public ResponseEntity<ServiceOrderResponseDTO> create(@RequestBody ServiceOrderDTO dto) {
+        ServiceOrderResponseDTO response = serviceOrderService.create(dto);
+        return ResponseEntity.status(201).body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<ServiceOrderResponseDTO>> listar() {
-        return ResponseEntity.ok(serviceOrder.listarTodas());
+    public ResponseEntity<List<ServiceOrderResponseDTO>> list() {
+        return ResponseEntity.ok(serviceOrderService.findAll());
     }
 }

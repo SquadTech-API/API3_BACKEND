@@ -18,7 +18,7 @@ public class ServiceType {
     private Integer serviceTypeId;
 
     @Column(name = "nome_servico", nullable = false, length = 100)
-    private String nomeServico;
+    private String serviceName;
 
     @Column(name = "descricao", columnDefinition = "TEXT")
     private String description;

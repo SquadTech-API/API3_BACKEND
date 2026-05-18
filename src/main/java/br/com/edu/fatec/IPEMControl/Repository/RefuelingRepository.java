@@ -15,18 +15,16 @@ import java.util.Optional;
 @Repository
 public interface RefuelingRepository extends JpaRepository<Fueling, Integer> {
 
-    // NOVO MÉTODO: Essencial para o HistoricoUsoService (Item 11)
-    @Query("SELECT a FROM Fueling a JOIN a.registroSaida rs WHERE rs.veiculo.idVeiculo = :idVeiculo")
-    List<Fueling> findByVeiculoIdVeiculo(@Param("vehicleId") Integer vehicleId);
+    @Query("SELECT fueling FROM Fueling fueling JOIN fueling.departureLog departureLog WHERE departureLog.vehicle.vehicleId = :vehicleId")
+    List<Fueling> findByVehicleVehicleId(@Param("vehicleId") Integer vehicleId);
 
-    // Método essencial para o Relatório Uso Mensal
-    List<Fueling> findByRegistroSaida(DepartureLog departureLog);
+    List<Fueling> findByDepartureLog(DepartureLog departureLog);
 
-    Optional<Fueling> findTopByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(Integer vehicleId);
+    Optional<Fueling> findTopByDepartureLogVehicleVehicleIdOrderByDateTimeDesc(Integer vehicleId);
 
-    List<Fueling> findByRegistroSaidaVeiculoIdVeiculoOrderByDataHoraDesc(Integer vehicleId);
+    List<Fueling> findByDepartureLogVehicleVehicleIdOrderByDateTimeDesc(Integer vehicleId);
 
-    List<Fueling> findAllByOrderByDataHoraDesc();
+    List<Fueling> findAllByOrderByDateTimeDesc();
 
     @Query(value = """
         SELECT rs.matricula_usuario,
@@ -37,7 +35,7 @@ public interface RefuelingRepository extends JpaRepository<Fueling, Integer> {
         WHERE rs.data_hora_saida >= :startDate
         GROUP BY rs.matricula_usuario
         """, nativeQuery = true)
-    List<Object[]> buscarCustoPorTecnico(@Param("startDatetime") LocalDateTime startDate);
+    List<Object[]> findCostByTechnician(@Param("startDate") LocalDateTime startDate);
 
     @Query(value = """
         SELECT COALESCE(SUM(a.valor_total), 0)
@@ -46,8 +44,8 @@ public interface RefuelingRepository extends JpaRepository<Fueling, Integer> {
         WHERE rs.matricula_usuario = :registration
           AND rs.data_hora_saida >= :startDate
         """, nativeQuery = true)
-    BigDecimal sumGastoPorMatriculaEPeriodo(@Param("registration") Integer registration,
-                                            @Param("startDatetime") LocalDateTime startDate);
+    BigDecimal sumSpendingByRegistrationAndPeriod(@Param("registration") Integer registration,
+                                                  @Param("startDate") LocalDateTime startDate);
 
     @Query(value = """
         SELECT COUNT(a.id_abastecimento)
@@ -56,8 +54,8 @@ public interface RefuelingRepository extends JpaRepository<Fueling, Integer> {
         WHERE rs.matricula_usuario = :registration
           AND rs.data_hora_saida >= :startDate
         """, nativeQuery = true)
-    long countAbastPorMatriculaEPeriodo(@Param("registration") Integer registration,
-                                        @Param("startDatetime") LocalDateTime startDate);
+    long countFuelingsByRegistrationAndPeriod(@Param("registration") Integer registration,
+                                              @Param("startDate") LocalDateTime startDate);
 
     @Query(value = """
         SELECT a.*
@@ -67,7 +65,7 @@ public interface RefuelingRepository extends JpaRepository<Fueling, Integer> {
         ORDER BY a.data_hora DESC
         LIMIT 1
         """, nativeQuery = true)
-    Optional<Fueling> findUltimoAbastecimentoDoTecnico(@Param("registration") Integer registration);
+    Optional<Fueling> findLatestFuelingByTechnician(@Param("registration") Integer registration);
 
     // ── Queries para dashboard de veículos ───────────────────────────────────
 
@@ -75,10 +73,10 @@ public interface RefuelingRepository extends JpaRepository<Fueling, Integer> {
         SELECT COALESCE(SUM(a.valor_total), 0)
         FROM abastecimento a
         JOIN registro_saida rs ON a.id_saida = rs.id_saida
-        WHERE rs.id_veiculo = :idVeiculo
+        WHERE rs.id_veiculo = :vehicleId
           AND rs.data_hora_saida >= NOW() - INTERVAL 7 DAY
         """, nativeQuery = true)
-    Double totalGastoSemana(@Param("vehicleId") Integer vehicleId);
+    Double totalWeeklySpending(@Param("vehicleId") Integer vehicleId);
 
     @Query(value = """
         SELECT COALESCE(SUM(a.quantidade_litros), 0)
@@ -87,49 +85,49 @@ public interface RefuelingRepository extends JpaRepository<Fueling, Integer> {
         WHERE rs.id_veiculo = :vehicleId
           AND rs.data_hora_saida >= NOW() - INTERVAL 7 DAY
         """, nativeQuery = true)
-    Double totalLitrosSemana(@Param("vehicleId") Integer vehicleId);
+    Double totalWeeklyLiters(@Param("vehicleId") Integer vehicleId);
 
     // Filtros e Estatísticas
-    List<Fueling> findByDataHoraBetweenOrderByDataHoraDesc(LocalDateTime start, LocalDateTime end);
+    List<Fueling> findByDateTimeBetweenOrderByDateTimeDesc(LocalDateTime start, LocalDateTime end);
 
-    List<Fueling> findByRegistroSaidaVeiculoPlacaOrderByDataHoraDesc(String licensePlate);
+    List<Fueling> findByDepartureLogVehicleLicensePlateOrderByDateTimeDesc(String licensePlate);
 
-    List<Fueling> findByDataHoraAfterOrderByDataHoraDesc(LocalDateTime start);
+    List<Fueling> findByDateTimeAfterOrderByDateTimeDesc(LocalDateTime start);
 
     @Query("SELECT WEEK(a.dateTime), SUM(a.totalValue), SUM(a.litersAmount) " +
             "FROM Fueling a WHERE a.dateTime >= :startDate " +
             "GROUP BY WEEK(a.dateTime) ORDER BY WEEK(a.dateTime)")
-    List<Object[]> buscarEstatisticasSemanas(@Param("startDatetime") LocalDateTime startDate);
+    List<Object[]> findWeeklyStatistics(@Param("startDate") LocalDateTime startDate);
 
     @Query("SELECT a.gasStationName, a.gasStationCity, COUNT(a) " +
             "FROM Fueling a WHERE a.dateTime >= :startDate " +
             "GROUP BY a.gasStationName, a.gasStationCity " +
             "ORDER BY COUNT(a) DESC")
-    List<Object[]> buscarRankingPostos(@Param("startDatetime") LocalDateTime startDate);
+    List<Object[]> findStationRankings(@Param("startDate") LocalDateTime startDate);
 
     @Query("SELECT a.fuelType, COUNT(a) " +
             "FROM Fueling a WHERE a.dateTime >= :startDate " +
             "GROUP BY a.fuelType " +
             "ORDER BY COUNT(a) DESC")
-    List<Object[]> buscarDistribuicaoCombustivel(@Param("startDatetime") LocalDateTime startDate);
+    List<Object[]> findFuelDistribution(@Param("startDate") LocalDateTime startDate);
 
-    @Query("SELECT v.placa, SUM(a.litersAmount), SUM(rs.kmRodados), " +
-            "CASE WHEN SUM(a.litersAmount) > 0 " +
-            "THEN SUM(rs.kmRodados) / SUM(a.litersAmount) ELSE 0 END, " +
-            "SUM(a.totalValue) " +
-            "FROM Fueling a " +
-            "JOIN a.registroSaida rs " +
-            "JOIN rs.veiculo v " +
-            "WHERE a.dateTime >= :startDate " +
-            "GROUP BY v.placa")
-    List<Object[]> buscarConsumoPorVeiculo(@Param("startDatetime") LocalDateTime startDate);
+    @Query("SELECT vehicle.licensePlate, SUM(fueling.litersAmount), SUM(departureLog.drivenKm), " +
+            "CASE WHEN SUM(fueling.litersAmount) > 0 " +
+            "THEN SUM(departureLog.drivenKm) / SUM(fueling.litersAmount) ELSE 0 END, " +
+            "SUM(fueling.totalValue) " +
+            "FROM Fueling fueling " +
+            "JOIN fueling.departureLog departureLog " +
+            "JOIN departureLog.vehicle vehicle " +
+            "WHERE fueling.dateTime >= :startDate " +
+            "GROUP BY vehicle.licensePlate")
+    List<Object[]> findVehicleConsumption(@Param("startDate") LocalDateTime startDate);
 
-    @Query("SELECT u.nome, COUNT(a), SUM(a.totalValue) " +
-            "FROM Fueling a " +
-            "JOIN a.registroSaida rs " +
-            "JOIN rs.usuario u " +
-            "WHERE a.dateTime >= :startDate " +
-            "GROUP BY u.nome " +
-            "ORDER BY COUNT(a) DESC")
-    List<Object[]> buscarRankingUsuarios(@Param("startDatetime") LocalDateTime startDate);
+    @Query("SELECT appUser.name, COUNT(fueling), SUM(fueling.totalValue) " +
+            "FROM Fueling fueling " +
+            "JOIN fueling.departureLog departureLog " +
+            "JOIN departureLog.user appUser " +
+            "WHERE fueling.dateTime >= :startDate " +
+            "GROUP BY appUser.name " +
+            "ORDER BY COUNT(fueling) DESC")
+    List<Object[]> findUserRankings(@Param("startDate") LocalDateTime startDate);
 }

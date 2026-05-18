@@ -10,21 +10,21 @@ public class OilChangeDTO {
     // Veículo relacionado (obrigatório)
     private Integer vehicleId;
 
-    // Saída vinculada (opcional — pode ser troca avulsa)
+    // Saída vinculada (opcional — pode ser oilChange avulsa)
     private Integer departureId;
 
-    // KM no momento da troca (obrigatório)
+    // KM no momento da oilChange (obrigatório)
     private BigDecimal oilChangeMileage;
 
-    // Intervalo em mileage até a próxima troca (ex: 5000)
+    // Intervalo em mileage até a próxima oilChange (ex: 5000)
     private BigDecimal intervalKm;
 
-    // KM da próxima troca = oilChangeMileage + intervalKm (calculado ou enviado pelo frontend)
+    // KM da próxima oilChange = oilChangeMileage + intervalKm (calculado ou enviado pelo frontend)
     private BigDecimal nextOilChangeMileage;
 
-    // Data efetiva da troca (obrigatório)
+    // Data efetiva da oilChange (obrigatório)
     private LocalDate oilChangeDate;
 
-    // Observações sobre a troca (type de óleo, filtro, etc.)
+    // Observações sobre a oilChange (type de óleo, filtro, etc.)
     private String observations;
 }

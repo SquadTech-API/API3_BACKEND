@@ -26,7 +26,7 @@ public class DepartureLog {
     private String status;
 
     @Column(name = "observations", columnDefinition = "TEXT")
-    private String observacoes;
+    private String observations;
 
     @Column(name = "data_hora_saida")
     private LocalDateTime dateTimeDeparture;

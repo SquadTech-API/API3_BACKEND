@@ -1,94 +1,61 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.Entities.ServiceType;
-import br.com.edu.fatec.IPEMControl.Exception.ResourceNotFoundException;
-import br.com.edu.fatec.IPEMControl.Repository.ServiceTypeRepository;
-import br.com.edu.fatec.IPEMControl.Service.VeiculoServicoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.com.edu.fatec.IPEMControl.DTO.ServiceTypeDTO;
+import br.com.edu.fatec.IPEMControl.Service.ServiceTypeService;
+import br.com.edu.fatec.IPEMControl.Service.VehicleServiceSyncService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * CORRIGIDO: antes só tinha GET /type-services.
- * Adicionados todos os endpoints que o frontend chama:
- * - GET  /type-services/ativos              — serviços habilitados (para selects)
- * - GET  /type-services/vehicle/{id}/ativos — serviços habilitados para um veículo
- * - POST /type-services                     — cadastrar type de serviço
- * - PUT  /type-services/{id}               — editar type de serviço
- * - PATCH /type-services/{id}/toggle       — habilitar/desabilitar serviço
- */
 @RestController
-@RequestMapping("/tipo-servicos")
+@RequestMapping("/service-types")
 @CrossOrigin(origins = "*")
-public class TipoServicoController {
+public class ServiceTypeController {
 
-    @Autowired
-    private ServiceTypeRepository serviceTypeRepository;
+    private final ServiceTypeService serviceTypeService;
+    private final VehicleServiceSyncService vehicleServiceSyncService;
 
-    @Autowired
-    private VeiculoServicoService veiculoServicoService;
+    public ServiceTypeController(ServiceTypeService serviceTypeService,
+                                 VehicleServiceSyncService vehicleServiceSyncService) {
+        this.serviceTypeService = serviceTypeService;
+        this.vehicleServiceSyncService = vehicleServiceSyncService;
+    }
 
-    // GET /type-services — listar todos
     @GetMapping
-    public ResponseEntity<List<ServiceType>> listar() {
-        return ResponseEntity.ok(serviceTypeRepository.findAll());
+    public ResponseEntity<List<ServiceTypeDTO>> list() {
+        return ResponseEntity.ok(serviceTypeService.findAll());
     }
 
-    // GET /type-services/ativos — NOVO: apenas os habilitados
-    @GetMapping("/ativos")
-    public ResponseEntity<List<ServiceType>> listarAtivos() {
-        return ResponseEntity.ok(serviceTypeRepository.findByHabilitadoTrue());
+    @GetMapping("/active")
+    public ResponseEntity<List<ServiceTypeDTO>> findActive() {
+        return ResponseEntity.ok(serviceTypeService.findActive());
     }
 
-    // GET /type-services/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<ServiceType> buscar(@PathVariable Integer id) {
-        return serviceTypeRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ServiceTypeDTO> search(@PathVariable Integer id) {
+        return ResponseEntity.ok(serviceTypeService.findById(id));
     }
 
-    // GET /type-services/vehicle/{vehicleId}/ativos — NOVO
-    // Retorna serviços habilitados para um veículo específico
-    @GetMapping("/veiculo/{idVeiculo}/ativos")
-    public ResponseEntity<List<ServiceType>> listarAtivosDoVeiculo(@PathVariable Integer idVeiculo) {
-        return ResponseEntity.ok(veiculoServicoService.listarServicosAtivosDoVeiculo(idVeiculo));
+    @GetMapping("/vehicle/{vehicleId}/active")
+    public ResponseEntity<List<ServiceTypeDTO>> findActiveByVehicle(@PathVariable Integer vehicleId) {
+        return ResponseEntity.ok(vehicleServiceSyncService.findActiveServicesByVehicle(vehicleId));
     }
 
-    // POST /type-services — NOVO: cadastrar
     @PostMapping
-    public ResponseEntity<ServiceType> criar(@RequestBody ServiceType serviceType) {
-        serviceType.setLicensed(true); // padrão ao criar
-        return ResponseEntity.status(201).body(serviceTypeRepository.save(serviceType));
+    public ResponseEntity<ServiceTypeDTO> create(@RequestBody ServiceTypeDTO serviceType) {
+        return ResponseEntity.status(201).body(serviceTypeService.create(serviceType));
     }
 
-    // PUT /type-services/{id} — NOVO: editar
     @PutMapping("/{id}")
-    public ResponseEntity<ServiceType> atualizar(
+    public ResponseEntity<ServiceTypeDTO> update(
             @PathVariable Integer id,
-            @RequestBody ServiceType atualizado) {
-
-        ServiceType existente = serviceTypeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Tipo de serviço não encontrado."));
-
-        if (atualizado.getNomeServico() != null && !atualizado.getNomeServico().isBlank())
-            existente.setNomeServico(atualizado.getNomeServico());
-        if (atualizado.getDescription() != null)
-            existente.setDescription(atualizado.getDescription());
-        if (atualizado.getOilChangeST() != null)
-            existente.setOilChangeST(atualizado.getOilChangeST());
-
-        return ResponseEntity.ok(serviceTypeRepository.save(existente));
+            @RequestBody ServiceTypeDTO updated) {
+        return ResponseEntity.ok(serviceTypeService.update(id, updated));
     }
 
-    // PATCH /type-services/{id}/toggle — NOVO: habilitar/desabilitar
     @PatchMapping("/{id}/toggle")
-    public ResponseEntity<ServiceType> toggle(@PathVariable Integer id) {
-        ServiceType ts = serviceTypeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Tipo de serviço não encontrado."));
-        ts.setLicensed(!Boolean.TRUE.equals(ts.getLicensed()));
-        return ResponseEntity.ok(serviceTypeRepository.save(ts));
+    public ResponseEntity<ServiceTypeDTO> toggle(@PathVariable Integer id) {
+        return ResponseEntity.ok(serviceTypeService.toggle(id));
     }
 }

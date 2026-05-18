@@ -1,8 +1,7 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.DailyReportDTO;
-import br.com.edu.fatec.IPEMControl.Service.RelatorioService;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.com.edu.fatec.IPEMControl.Service.ReportService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,23 +15,19 @@ import java.time.LocalDate;
 @RequestMapping("/report")
 public class ReportController {
 
-    @Autowired
-    private RelatorioService relatorioService;
+    private final ReportService reportService;
 
-    @GetMapping("/diario")
-    public String relatorioDiario(
-            @RequestParam Integer matricula,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
-            Model model) { // Adicionado o Model aqui
+    public ReportController(ReportService reportService) {
+        this.reportService = reportService;
+    }
 
-        // 1. Busca os dados no serviço
-        DailyReportDTO relatorio = relatorioService.gerarRelatorioDiarioPorTecnico(matricula, data);
-
-        // 2. Coloca os dados dentro do "pacote" que o HTML vai abrir
-        model.addAttribute("relatorio", relatorio);
-
-        // 3. Retorna o NOME do arquivo HTML que está na pasta templates (sem o .html)
-        // Se o seu arquivo se chamar "relatorio-viatura.html", coloque apenas "relatorio-viatura"
-        return "relatorio-viatura";
+    @GetMapping("/daily")
+    public String dailyReport(
+            @RequestParam Integer registration,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            Model model) {
+        DailyReportDTO report = reportService.generateDailyReportByTechnician(registration, date);
+        model.addAttribute("report", report);
+        return "vehicle-report";
     }
 }

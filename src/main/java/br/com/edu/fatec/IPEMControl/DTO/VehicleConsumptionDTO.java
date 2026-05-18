@@ -15,4 +15,5 @@ public class VehicleConsumptionDTO {
     private Double fuelConsumptionKmPerLiter;
     private Double costPerKilometer;
     private BigDecimal totalCost;
+    private BigDecimal totalLiters;
 }

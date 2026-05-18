@@ -1,107 +1,44 @@
-# Compilação e Artefatos (Maven)
-target/
-*.class
-*.war
-*.ear
-*.jar
-*.zip
-*.tar.gz
-
-# Configurações do IntelliJ IDEA
-.idea/
-*.iml
-*.iws
-*.ipr
-out/
-
-# Arquivos de log e temporários
-*.log
-temp/
-
-# Configurações locais do Spring (sensível)
-src/main/resources/application-local.properties
-
-# Sistema Operacional
-.DS_Store
-Thumbs.db
-# =========================
-# JAVA / MAVEN / GRADLE
-# =========================
-
-# Build
+# Maven / Java build output
 target/
 build/
 out/
-
-# Arquivos compilados
 *.class
 *.jar
 *.war
 *.ear
 
-# Logs
-*.log
-
-# =========================
-# INTELLIJ IDEA
-# =========================
-
+# IDE files
 .idea/
-*.iws
 *.iml
+*.iws
 *.ipr
-
-# =========================
-# VS CODE
-# =========================
-
 .vscode/
 
-# =========================
-# SISTEMA OPERACIONAL
-# =========================
-
-# Windows
-Thumbs.db
-Desktop.ini
-
-# Mac
-.DS_Store
-
-# Linux
-*~
-
-# =========================
-# CONFIGS LOCAIS (IMPORTANTE)
-# =========================
-
-# Arquivos sensíveis
+# Local configuration and secrets
 .env
 .env.*
-
-# Configurações locais
+src/main/resources/application-local.properties
 application-local.properties
 application-dev.properties
 
-# =========================
-# DATABASE / TEMP
-# =========================
-
-*.sqlite
-*.db
-
-# =========================
-# NODE (se tiver front junto)
-# =========================
-
-node_modules/
-dist/
-coverage/
-
-# =========================
-# OUTROS
-# =========================
-
+# Logs and temporary files
+*.log
 *.tmp
 *.bak
 *.swp
+temp/
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*~
+
+# Local databases
+*.sqlite
+*.db
+
+# Frontend dependencies/builds if a frontend is added here
+node_modules/
+dist/
+coverage/

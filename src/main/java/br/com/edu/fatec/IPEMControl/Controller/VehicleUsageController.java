@@ -2,7 +2,7 @@ package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.ActiveUsageDTO;
 import br.com.edu.fatec.IPEMControl.DTO.VehicleUsageDTO;
-import br.com.edu.fatec.IPEMControl.Service.UsoVeiculoService;
+import br.com.edu.fatec.IPEMControl.Service.VehicleUsageService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,9 +11,9 @@ import java.util.List;
 @RequestMapping("/vehicle-usages")
 public class VehicleUsageController {
 
-    private final UsoVeiculoService vehicleUsageService;
+    private final VehicleUsageService vehicleUsageService;
 
-    public VehicleUsageController(UsoVeiculoService vehicleUsageService) {
+    public VehicleUsageController(VehicleUsageService vehicleUsageService) {
         this.vehicleUsageService = vehicleUsageService;
     }
 

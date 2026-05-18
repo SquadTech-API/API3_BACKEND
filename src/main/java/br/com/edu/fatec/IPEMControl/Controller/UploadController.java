@@ -24,7 +24,7 @@ public class UploadController {
             return ResponseEntity.ok("/" + UPLOAD_DIR + fileName);
 
         } catch (IOException e) {
-            return ResponseEntity.status(500).body("Erro ao salvar arquivo.");
+            return ResponseEntity.status(500).body("Erro ao save arquivo.");
         }
     }
 }

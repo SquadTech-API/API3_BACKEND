@@ -2,8 +2,8 @@ package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.FuelReportDTO;
 import br.com.edu.fatec.IPEMControl.DTO.FuelingSearchDTO;
-import br.com.edu.fatec.IPEMControl.Service.AbastecimentoExportService;
-import br.com.edu.fatec.IPEMControl.Service.AbastecimentoService;
+import br.com.edu.fatec.IPEMControl.Service.FuelingExportService;
+import br.com.edu.fatec.IPEMControl.Service.FuelingService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,55 +13,52 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/report/fueling")
 public class ReportFuelingController {
 
-    private final AbastecimentoService abastecimentoService;
-    private final AbastecimentoExportService abastecimentoExportService;
+    private final FuelingService fuelingService;
+    private final FuelingExportService fuelingExportService;
 
     public ReportFuelingController(
-            AbastecimentoService abastecimentoService,
-            AbastecimentoExportService abastecimentoExportService) {
-        this.abastecimentoService = abastecimentoService;
-        this.abastecimentoExportService = abastecimentoExportService;
+            FuelingService fuelingService,
+            FuelingExportService fuelingExportService) {
+        this.fuelingService = fuelingService;
+        this.fuelingExportService = fuelingExportService;
     }
 
-    // Retorna summary geral do período informado
-    @GetMapping("/geral")
-    public ResponseEntity<FuelReportDTO> geral(@RequestParam String periodo) {
-        return ResponseEntity.ok(abastecimentoService.gerarRelatorio(periodo));
+    @GetMapping("/summary")
+    public ResponseEntity<FuelReportDTO> summary(@RequestParam String period) {
+        return ResponseEntity.ok(fuelingService.generateReport(period));
     }
 
-    // Busca detalhada por data, intervalo ou veículo
-    @GetMapping("/busca")
-    public ResponseEntity<FuelingSearchDTO> busca(
-            @RequestParam String tipo,
-            @RequestParam(required = false) String data,
-            @RequestParam(required = false) String de,
-            @RequestParam(required = false) String ate,
-            @RequestParam(required = false) String veiculo,
-            @RequestParam(required = false, defaultValue = "ambos") String tipoRegistro) {
+    @GetMapping("/search")
+    public ResponseEntity<FuelingSearchDTO> search(
+            @RequestParam String type,
+            @RequestParam(required = false) String date,
+            @RequestParam(required = false) String from,
+            @RequestParam(required = false) String to,
+            @RequestParam(required = false) String vehicle,
+            @RequestParam(required = false, defaultValue = "both") String recordType) {
         return ResponseEntity.ok(
-                abastecimentoService.buscar(tipo, data, de, ate, veiculo, tipoRegistro));
+                fuelingService.search(type, date, from, to, vehicle, recordType));
     }
 
-    // Download do relatório nos formatos csv, excel, pdf ou docx
     @GetMapping("/download")
     public ResponseEntity<byte[]> download(
-            @RequestParam String formato,
-            @RequestParam String periodo) {
+            @RequestParam String format,
+            @RequestParam String period) {
 
-        FuelReportDTO relatorio = abastecimentoService.gerarRelatorio(periodo);
-        byte[] arquivo = abastecimentoExportService.exportar(relatorio, formato);
+        FuelReportDTO report = fuelingService.generateReport(period);
+        byte[] file = fuelingExportService.exportar(report, format);
 
-        String nomeArquivo = "relatorio-abastecimento." + formato;
-        MediaType tipoMidia = resolverTipoMidia(formato);
+        String fileName = "fueling-report." + format;
+        MediaType mediaType = resolveMediaType(format);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + nomeArquivo)
-                .contentType(tipoMidia)
-                .body(arquivo);
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+                .contentType(mediaType)
+                .body(file);
     }
 
-    private MediaType resolverTipoMidia(String formato) {
-        return switch (formato) {
+    private MediaType resolveMediaType(String format) {
+        return switch (format) {
             case "pdf"   -> MediaType.APPLICATION_PDF;
             case "csv"   -> MediaType.parseMediaType("text/csv; charset=UTF-8");
             case "excel" -> MediaType.parseMediaType(

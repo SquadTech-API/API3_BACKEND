@@ -9,7 +9,6 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -19,24 +18,27 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class RegistroSaidaService {
+public class DepartureLogService {
 
-    @Autowired
-    private ExitRecordRepository exitRecordRepository;
+    private final ExitRecordRepository exitRecordRepository;
+    private final VehicleRepository vehicleRepository;
+    private final UserRepository userRepository;
+    private final ServiceTypeRepository serviceTypeRepository;
+    private final RefuelingRepository refuelingRepository;
 
-    @Autowired
-    private VehicleRepository vehicleRepository;
+    public DepartureLogService(ExitRecordRepository exitRecordRepository,
+                               VehicleRepository vehicleRepository,
+                               UserRepository userRepository,
+                               ServiceTypeRepository serviceTypeRepository,
+                               RefuelingRepository refuelingRepository) {
+        this.exitRecordRepository = exitRecordRepository;
+        this.vehicleRepository = vehicleRepository;
+        this.userRepository = userRepository;
+        this.serviceTypeRepository = serviceTypeRepository;
+        this.refuelingRepository = refuelingRepository;
+    }
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ServiceTypeRepository serviceTypeRepository;
-
-    @Autowired
-    private RefuelingRepository refuelingRepository;
-
-    public DepartureLog abrirSaida(DepartureLogDTO dto) {
+    public DepartureLogResponseDTO openDeparture(DepartureLogDTO dto) {
         if (dto.getVehicleId() == null) throw new BusinessRuleException("Informe o veículo.");
         if (dto.getUserRegistration() == null) throw new BusinessRuleException("Informe o usuário.");
         if (dto.getServiceTypeId() == null) throw new BusinessRuleException("Informe o type de serviço.");
@@ -46,7 +48,7 @@ public class RegistroSaidaService {
         if (dto.getDestination() == null || dto.getDestination().isBlank()) throw new BusinessRuleException("Informe o local de destino.");
 
         boolean usuarioJaEmSaida = exitRecordRepository
-                .findTopByUsuarioMatriculaAndStatusOrderByDataHoraSaidaDesc(dto.getUserRegistration(), "em_andamento")
+                .findTopByUserRegistrationAndStatusOrderByDateTimeDepartureDesc(dto.getUserRegistration(), "em_andamento")
                 .isPresent();
         if (usuarioJaEmSaida)
             throw new BusinessRuleException("Você já possui uma saída em andamento. Registre o retorno antes de iniciar uma nova saída.");
@@ -61,7 +63,7 @@ public class RegistroSaidaService {
             throw new BusinessRuleException("KM inicial (" + dto.getInitialMileage() + ") não pode ser menor que o KM atual do veículo (" + vehicle.getCurrentKm() + ").");
         }
 
-        User user = userRepository.findByMatricula(dto.getUserRegistration())
+        User user = userRepository.findByRegistration(dto.getUserRegistration())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
 
         if (Boolean.FALSE.equals(user.getActiveColaborator()))
@@ -70,193 +72,215 @@ public class RegistroSaidaService {
         ServiceType serviceType = serviceTypeRepository.findById(dto.getServiceTypeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tipo de serviço não encontrado."));
 
-        DepartureLog registro = new DepartureLog();
-        registro.setVehicle(vehicle);
-        registro.setUser(user);
-        registro.setServiceType(serviceType);
-        registro.setDestination(dto.getDestination());
-        registro.setObservacoes(dto.getObservations());
-        registro.setStartingKm(dto.getInitialMileage());
-        registro.setDateTimeDeparture(dto.getDepartureDatetime());
-        registro.setStatus("em_andamento");
+        DepartureLog departureLog = new DepartureLog();
+        departureLog.setVehicle(vehicle);
+        departureLog.setUser(user);
+        departureLog.setServiceType(serviceType);
+        departureLog.setDestination(dto.getDestination());
+        departureLog.setObservations(dto.getObservations());
+        departureLog.setStartingKm(dto.getInitialMileage());
+        departureLog.setDateTimeDeparture(dto.getDepartureDatetime());
+        departureLog.setStatus("em_andamento");
 
         vehicle.setAvailable(false);
         vehicleRepository.save(vehicle);
 
-        return exitRecordRepository.save(registro);
+        return toDTO(exitRecordRepository.save(departureLog));
     }
 
-    public ReturnResponseDTO registrarRetorno(Integer id, ReturnDTO dto) {
+    public ReturnResponseDTO registerReturn(Integer id, ReturnDTO dto) {
         if (dto.getFinalMileage() == null) throw new BusinessRuleException("Informe o KM final.");
         if (dto.getReturnDatetime() == null) throw new BusinessRuleException("Informe o horário de chegada.");
 
-        DepartureLog registro = exitRecordRepository.findById(id)
+        DepartureLog departureLog = exitRecordRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Registro de saída não encontrado."));
 
-        if (!"em_andamento".equalsIgnoreCase(registro.getStatus()))
+        if (!"em_andamento".equalsIgnoreCase(departureLog.getStatus()))
             throw new BusinessRuleException("Esta saída já foi encerrada.");
 
-        if (dto.getFinalMileage().compareTo(registro.getStartingKm()) < 0)
+        if (dto.getFinalMileage().compareTo(departureLog.getStartingKm()) < 0)
             throw new BusinessRuleException("KM final não pode ser menor que o KM inicial.");
 
-        if (dto.getReturnDatetime().isBefore(registro.getDateTimeDeparture()))
+        if (dto.getReturnDatetime().isBefore(departureLog.getDateTimeDeparture()))
             throw new BusinessRuleException("Horário de chegada não pode ser anterior ao horário de saída.");
 
-        BigDecimal kmRodados = dto.getFinalMileage().subtract(registro.getStartingKm());
+        BigDecimal drivenKm = dto.getFinalMileage().subtract(departureLog.getStartingKm());
 
-        registro.setFinishingKm(dto.getFinalMileage());
-        registro.setDrivenKm(kmRodados);
-        registro.setReturnDate(dto.getReturnDatetime());
-        registro.setStatus("concluido");
+        departureLog.setFinishingKm(dto.getFinalMileage());
+        departureLog.setDrivenKm(drivenKm);
+        departureLog.setReturnDate(dto.getReturnDatetime());
+        departureLog.setStatus("concluido");
 
         if (dto.getObservations() != null && !dto.getObservations().isBlank())
-            registro.setObservacoes(dto.getObservations());
+            departureLog.setObservations(dto.getObservations());
 
-        Vehicle vehicle = registro.getVehicle();
+        Vehicle vehicle = departureLog.getVehicle();
         vehicle.setCurrentKm(dto.getFinalMileage());
         vehicle.setAvailable(true);
         vehicleRepository.save(vehicle);
 
-        exitRecordRepository.save(registro);
+        exitRecordRepository.save(departureLog);
 
         return new ReturnResponseDTO(
-                registro.getDepartureLogId(), registro.getStatus(), registro.getStartingKm(),
-                registro.getFinishingKm(), kmRodados, registro.getDateTimeDeparture(),
-                registro.getReturnDate(), vehicle.getModel(), vehicle.getPrefix(),
-                registro.getUser().getName()
+                departureLog.getDepartureLogId(), departureLog.getStatus(), departureLog.getStartingKm(),
+                departureLog.getFinishingKm(), drivenKm, departureLog.getDateTimeDeparture(),
+                departureLog.getReturnDate(), vehicle.getModel(), vehicle.getPrefix(),
+                departureLog.getUser().getName()
         );
     }
 
-    public DepartureLog fecharSaida(Integer id, FecharSaidaDTO dto) {
-        DepartureLog registro = exitRecordRepository.findById(id)
+    public DepartureLogResponseDTO closeDeparture(Integer id, CloseExitDTO dto) {
+        DepartureLog departureLog = exitRecordRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Registro de saída não encontrado."));
 
-        if (!"em_andamento".equalsIgnoreCase(registro.getStatus()))
+        if (!"em_andamento".equalsIgnoreCase(departureLog.getStatus()))
             throw new BusinessRuleException("Esta saída já foi encerrada.");
-        if (dto.getKmFinal() == null)
+        if (dto.getFinalMileage() == null)
             throw new BusinessRuleException("Informe o KM final.");
-        if (dto.getDataRetorno() == null)
+        if (dto.getReturnDate() == null)
             throw new BusinessRuleException("Informe o horário de chegada.");
-        if (dto.getKmFinal().compareTo(registro.getStartingKm()) < 0)
+        if (dto.getFinalMileage().compareTo(departureLog.getStartingKm()) < 0)
             throw new BusinessRuleException("KM final não pode ser menor que o KM inicial.");
-        if (dto.getDataRetorno().isBefore(registro.getDateTimeDeparture()))
+        if (dto.getReturnDate().isBefore(departureLog.getDateTimeDeparture()))
             throw new BusinessRuleException("Horário de chegada não pode ser anterior ao horário de saída.");
 
-        BigDecimal kmRodados = dto.getKmFinal().subtract(registro.getStartingKm());
+        BigDecimal drivenKm = dto.getFinalMileage().subtract(departureLog.getStartingKm());
 
-        registro.setFinishingKm(dto.getKmFinal());
-        registro.setDrivenKm(kmRodados);
-        registro.setReturnDate(dto.getDataRetorno());
-        registro.setStatus("concluido");
+        departureLog.setFinishingKm(dto.getFinalMileage());
+        departureLog.setDrivenKm(drivenKm);
+        departureLog.setReturnDate(dto.getReturnDate());
+        departureLog.setStatus("concluido");
 
-        if (dto.getObservacoes() != null && !dto.getObservacoes().isBlank())
-            registro.setObservacoes(dto.getObservacoes());
+        if (dto.getObservations() != null && !dto.getObservations().isBlank())
+            departureLog.setObservations(dto.getObservations());
 
-        Vehicle vehicle = registro.getVehicle();
-        vehicle.setCurrentKm(dto.getKmFinal());
+        Vehicle vehicle = departureLog.getVehicle();
+        vehicle.setCurrentKm(dto.getFinalMileage());
         vehicle.setAvailable(true);
         vehicleRepository.save(vehicle);
 
-        return exitRecordRepository.save(registro);
+        return toDTO(exitRecordRepository.save(departureLog));
     }
 
-    public List<DepartureLog> listarTodos() {
-        return exitRecordRepository.findAll();
+    public List<DepartureLogResponseDTO> findAll() {
+        return exitRecordRepository.findAll().stream().map(this::toDTO).toList();
     }
 
-    public DepartureLog buscarPorId(Integer id) {
+    public DepartureLogResponseDTO findById(Integer id) {
         return exitRecordRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Registro de saída não encontrado."));
+                .map(this::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Departure log not found."));
     }
 
-    public MonthlyUsageReportDTO gerarRelatorioUsoMensalPorVeiculo(Long idVeiculo, LocalDateTime inicio, LocalDateTime fim) {
-        // CERTIFICAÇÃO: Alterado para buscar por DataHoraSaida para evitar relatórios zerados
-        List<DepartureLog> viagens = exitRecordRepository.findByVeiculoIdVeiculoAndDataHoraSaidaBetween(idVeiculo.intValue(), inicio, fim);
+    public DepartureLogResponseDTO findActiveByVehicle(Integer vehicleId) {
+        return exitRecordRepository
+                .findTopByVehicleVehicleIdAndStatusOrderByDateTimeDepartureDesc(vehicleId, "em_andamento")
+                .map(this::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Active departure log not found."));
+    }
 
-        BigDecimal totalKm = viagens.stream()
+    public DepartureLogResponseDTO findActiveByUser(Integer registration) {
+        return exitRecordRepository
+                .findTopByUserRegistrationAndStatusOrderByDateTimeDepartureDesc(registration, "em_andamento")
+                .map(this::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Active departure log not found."));
+    }
+
+    public List<DepartureLogResponseDTO> findOilChangeDeparturesByVehicle(Integer vehicleId) {
+        return exitRecordRepository.findByVehicleVehicleIdAndServiceTypeOilChangeSTTrue(vehicleId)
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
+    public MonthlyUsageReportDTO generateMonthlyUsageReportByVehicle(Long vehicleId, LocalDateTime start, LocalDateTime end) {
+        // CERTIFICAÇÃO: Alterado para search por DataHoraSaida para evitar relatórios zerados
+        List<DepartureLog> trips = exitRecordRepository.findByVehicleVehicleIdAndDateTimeDepartureBetween(vehicleId.intValue(), start, end);
+
+        BigDecimal totalKm = trips.stream()
                 .map(v -> v.getDrivenKm() != null ? v.getDrivenKm() : BigDecimal.ZERO)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal totalGasto = BigDecimal.ZERO;
         BigDecimal totalLitros = BigDecimal.ZERO;
 
-        for (DepartureLog viagem : viagens) {
-            List<Fueling> fuelings = refuelingRepository.findByRegistroSaida(viagem);
+        for (DepartureLog trip : trips) {
+            List<Fueling> fuelings = refuelingRepository.findByDepartureLog(trip);
             for (Fueling a : fuelings) {
                 if (a.getTotalValue() != null) totalGasto = totalGasto.add(a.getTotalValue());
                 if (a.getLitersAmount() != null) totalLitros = totalLitros.add(a.getLitersAmount());
             }
         }
 
-        return new MonthlyUsageReportDTO(totalKm, viagens.size(), totalGasto, totalLitros, viagens);
+        return new MonthlyUsageReportDTO(totalKm, trips.size(), totalGasto, totalLitros, trips);
     }
 
-    public byte[] gerarArquivoRelatorio(Long idVeiculo, String formato, String periodoStr) {
-        LocalDateTime fim = LocalDateTime.now();
-        LocalDateTime inicio = switch (periodoStr.toLowerCase()) {
-            case "hoje" -> fim.withHour(0).withMinute(0).withSecond(0);
-            case "7d" -> fim.minusDays(7);
-            case "30d" -> fim.minusDays(30);
-            case "1y" -> fim.minusYears(1);
-            default -> fim.minusDays(30);
+    public byte[] generateReportFile(Long vehicleId, String format, String period) {
+        LocalDateTime end = LocalDateTime.now();
+        LocalDateTime start = switch (period.toLowerCase()) {
+            case "hoje" -> end.withHour(0).withMinute(0).withSecond(0);
+            case "7d" -> end.minusDays(7);
+            case "30d" -> end.minusDays(30);
+            case "1y" -> end.minusYears(1);
+            default -> end.minusDays(30);
         };
 
-        MonthlyUsageReportDTO dados = gerarRelatorioUsoMensalPorVeiculo(idVeiculo, inicio, fim);
+        MonthlyUsageReportDTO data = generateMonthlyUsageReportByVehicle(vehicleId, start, end);
 
-        if ("pdf".equalsIgnoreCase(formato)) {
-            return gerarPdfRelatorio(idVeiculo, periodoStr, inicio, fim, dados);
+        if ("pdf".equalsIgnoreCase(format)) {
+            return generatePdfReport(vehicleId, period, start, end, data);
         }
 
-        StringBuilder relatorio = new StringBuilder();
-        relatorio.append("RELATORIO DE USO - IPEM CONTROL\n");
-        relatorio.append("Viatura ID: ").append(idVeiculo).append("\n");
-        relatorio.append("Periodo: ").append(periodoStr).append(" (").append(inicio.toLocalDate()).append(" a ").append(fim.toLocalDate()).append(")\n");
-        relatorio.append("--------------------------------------------------\n");
-        relatorio.append("RESUMO GERAL:\n");
-        relatorio.append("- Total de Saidas no periodo: ").append(dados.getTotalTrips()).append("\n");
-        relatorio.append("- Quilometragem total rodada: ").append(dados.getTotalMileage()).append(" KM\n");
-        relatorio.append("- Consumo total de combustível: ").append(dados.getTotalLiters()).append(" Litros\n");
-        relatorio.append("- Gasto total com abastecimento: R$ ").append(dados.getTotalSpending()).append("\n");
-        relatorio.append("--------------------------------------------------\n");
-        relatorio.append("DETALHAMENTO DE VIAGENS:\n");
+        StringBuilder report = new StringBuilder();
+        report.append("RELATORIO DE USO - IPEM CONTROL\n");
+        report.append("Viatura ID: ").append(vehicleId).append("\n");
+        report.append("Periodo: ").append(period).append(" (").append(start.toLocalDate()).append(" a ").append(end.toLocalDate()).append(")\n");
+        report.append("--------------------------------------------------\n");
+        report.append("RESUMO GERAL:\n");
+        report.append("- Total de Saidas no periodo: ").append(data.getTotalTrips()).append("\n");
+        report.append("- Quilometragem total rodada: ").append(data.getTotalMileage()).append(" KM\n");
+        report.append("- Consumo total de combustível: ").append(data.getTotalLiters()).append(" Litros\n");
+        report.append("- Gasto total com abastecimento: R$ ").append(data.getTotalSpending()).append("\n");
+        report.append("--------------------------------------------------\n");
+        report.append("DETALHAMENTO DE VIAGENS:\n");
 
-        if (dados.getDetails() != null && !dados.getDetails().isEmpty()) {
-            for (DepartureLog v : dados.getDetails()) {
-                relatorio.append("Data: ").append(v.getDateTimeDeparture().toLocalDate())
+        if (data.getDetails() != null && !data.getDetails().isEmpty()) {
+            for (DepartureLog v : data.getDetails()) {
+                report.append("Data: ").append(v.getDateTimeDeparture().toLocalDate())
                         .append(" | User: ").append(v.getUser() != null ? v.getUser().getName() : "N/I")
                         .append(" | Destino: ").append(v.getDestination() != null ? v.getDestination() : "N/I")
                         .append(" | KM Rodados: ").append(v.getDrivenKm() != null ? v.getDrivenKm() : "0").append("\n");
             }
         } else {
-            relatorio.append("Nenhuma viagem registrada para este vehicle no periodo.\n");
+            report.append("Nenhuma trip registrada para este vehicle no periodo.\n");
         }
 
-        relatorio.append("--------------------------------------------------\n");
-        relatorio.append("Gerado em: ").append(LocalDateTime.now()).append("\n");
+        report.append("--------------------------------------------------\n");
+        report.append("Gerado em: ").append(LocalDateTime.now()).append("\n");
 
-        return relatorio.toString().getBytes(StandardCharsets.UTF_8);
+        return report.toString().getBytes(StandardCharsets.UTF_8);
     }
 
-    private byte[] gerarPdfRelatorio(Long idVeiculo, String periodoStr, LocalDateTime inicio, LocalDateTime fim, MonthlyUsageReportDTO dados) {
+    private byte[] generatePdfReport(Long vehicleId, String period, LocalDateTime start, LocalDateTime end, MonthlyUsageReportDTO data) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             PdfWriter writer = new PdfWriter(baos);
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
 
             document.add(new Paragraph("RELATORIO DE USO - IPEM CONTROL").setBold().setFontSize(16));
-            document.add(new Paragraph("Viatura ID: " + idVeiculo));
-            document.add(new Paragraph("Periodo: " + periodoStr + " (" + inicio.toLocalDate() + " a " + fim.toLocalDate() + ")"));
+            document.add(new Paragraph("Viatura ID: " + vehicleId));
+            document.add(new Paragraph("Periodo: " + period + " (" + start.toLocalDate() + " a " + end.toLocalDate() + ")"));
             document.add(new Paragraph("--------------------------------------------------"));
             document.add(new Paragraph("RESUMO GERAL:"));
-            document.add(new Paragraph("- Total de Saidas no periodo: " + dados.getTotalTrips()));
-            document.add(new Paragraph("- Quilometragem total rodada: " + dados.getTotalMileage() + " KM"));
-            document.add(new Paragraph("- Consumo total de combustível: " + dados.getTotalLiters() + " Litros"));
-            document.add(new Paragraph("- Gasto total com abastecimento: R$ " + dados.getTotalSpending()));
+            document.add(new Paragraph("- Total de Saidas no periodo: " + data.getTotalTrips()));
+            document.add(new Paragraph("- Quilometragem total rodada: " + data.getTotalMileage() + " KM"));
+            document.add(new Paragraph("- Consumo total de combustível: " + data.getTotalLiters() + " Litros"));
+            document.add(new Paragraph("- Gasto total com abastecimento: R$ " + data.getTotalSpending()));
             document.add(new Paragraph("--------------------------------------------------"));
             document.add(new Paragraph("DETALHAMENTO DE VIAGENS:"));
 
-            if (dados.getDetails() != null && !dados.getDetails().isEmpty()) {
-                for (DepartureLog v : dados.getDetails()) {
+            if (data.getDetails() != null && !data.getDetails().isEmpty()) {
+                for (DepartureLog v : data.getDetails()) {
                     String user = v.getUser() != null ? v.getUser().getName() : "N/I";
                     String dest = v.getDestination() != null ? v.getDestination() : "N/I";
                     String km = v.getDrivenKm() != null ? v.getDrivenKm().toString() : "0";
@@ -267,7 +291,7 @@ public class RegistroSaidaService {
                             " | KM Rodados: " + km));
                 }
             } else {
-                document.add(new Paragraph("Nenhuma viagem registrada para este vehicle no periodo."));
+                document.add(new Paragraph("Nenhuma trip registrada para este vehicle no periodo."));
             }
 
             document.add(new Paragraph("--------------------------------------------------"));
@@ -278,5 +302,35 @@ public class RegistroSaidaService {
         } catch (Exception e) {
             throw new RuntimeException("Erro ao gerar PDF: " + e.getMessage());
         }
+    }
+
+    private DepartureLogResponseDTO toDTO(DepartureLog departureLog) {
+        DepartureLogResponseDTO dto = new DepartureLogResponseDTO();
+        dto.setDepartureLogId(departureLog.getDepartureLogId());
+        dto.setDestination(departureLog.getDestination());
+        dto.setStatus(departureLog.getStatus());
+        dto.setObservations(departureLog.getObservations());
+        dto.setDepartureDateTime(departureLog.getDateTimeDeparture());
+        dto.setReturnDate(departureLog.getReturnDate());
+        dto.setStartingKm(departureLog.getStartingKm());
+        dto.setFinishingKm(departureLog.getFinishingKm());
+        dto.setDrivenKm(departureLog.getDrivenKm());
+        if (departureLog.getVehicle() != null) {
+            dto.setVehicleId(departureLog.getVehicle().getVehicleId());
+            dto.setVehiclePrefix(departureLog.getVehicle().getPrefix());
+            dto.setVehicleModel(departureLog.getVehicle().getModel());
+            dto.setVehicleLicensePlate(departureLog.getVehicle().getLicensePlate());
+        }
+        if (departureLog.getUser() != null) {
+            dto.setUserRegistration(departureLog.getUser().getRegistration());
+            dto.setUserName(departureLog.getUser().getName());
+        }
+        if (departureLog.getServiceType() != null) {
+            dto.setServiceTypeId(departureLog.getServiceType().getServiceTypeId());
+            dto.setServiceName(departureLog.getServiceType().getServiceName());
+        }
+        dto.setCreatedAt(departureLog.getCreatedAt());
+        dto.setUpdatedAt(departureLog.getUpdatedAt());
+        return dto;
     }
 }

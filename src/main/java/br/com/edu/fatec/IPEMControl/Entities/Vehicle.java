@@ -23,7 +23,7 @@ public class Vehicle {
     private String prefix;
 
     @Column(name = "nucleo_dar", nullable = false, length = 100)
-    private String nucleoDar;
+    private String darCenter;
 
     @Column(name = "licensePlate", nullable = false, unique = true, length = 10)
     private String licensePlate;

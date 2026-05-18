@@ -12,20 +12,19 @@ import java.util.List;
 
 /**
  * NOVO: Repository para ServiceVehicle.
- * Antes não existia — o VeiculoServicoService não tinha como persistir vínculos.
+ * Antes não existia — o VehicleServiceSyncService não tinha como persistir vínculos.
  */
 @Repository
 public interface ServiceVehicleRepository extends JpaRepository<ServiceVehicle, Integer> {
 
-    // Retorna todos os vínculos habilitados de um veículo
-    List<ServiceVehicle> findByVeiculoIdVeiculoAndHabilitadoTrue(Integer vehicleId);
+    // Retorna includeAll os vínculos habilitados de um veículo
+    List<ServiceVehicle> findByVehicleVehicleIdAndIsLicensedTrue(Integer vehicleId);
 
-    // Retorna todos os vínculos de um veículo (habilitados ou não)
-    List<ServiceVehicle> findByVeiculoIdVeiculo(Integer vehicleId);
+    // Retorna includeAll os vínculos de um veículo (habilitados ou não)
+    List<ServiceVehicle> findByVehicleVehicleId(Integer vehicleId);
 
-    // Remove todos os vínculos de um veículo (usado na sincronização)
     @Modifying
     @Transactional
-    @Query("DELETE FROM ServiceVehicle vs WHERE vs.veiculo.vehicleId = :vehicleId")
-    void deleteByVeiculoIdVeiculo(@Param("vehicleId") Integer vehicleId);
+    @Query("DELETE FROM ServiceVehicle serviceVehicle WHERE serviceVehicle.vehicle.vehicleId = :vehicleId")
+    void deleteByVehicleVehicleId(@Param("vehicleId") Integer vehicleId);
 }

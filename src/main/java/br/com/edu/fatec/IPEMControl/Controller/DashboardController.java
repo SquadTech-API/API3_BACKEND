@@ -14,8 +14,8 @@ public class DashboardController {
         this.service = service;
     }
 
-    @GetMapping("/comparativo")
-    public DashboardChartDTO comparativo() {
-        return service.buscarComparativo();
+    @GetMapping("/comparison")
+    public DashboardChartDTO comparison() {
+        return service.findComparison();
     }
 }

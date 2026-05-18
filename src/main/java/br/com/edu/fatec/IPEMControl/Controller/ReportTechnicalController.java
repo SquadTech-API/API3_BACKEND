@@ -2,9 +2,8 @@ package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.GeneralReportDTO;
 import br.com.edu.fatec.IPEMControl.DTO.TechnicianReportDTO;
-import br.com.edu.fatec.IPEMControl.Service.RelatorioExportService;
-import br.com.edu.fatec.IPEMControl.Service.RelatorioTecnicoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.com.edu.fatec.IPEMControl.Service.ReportExportService;
+import br.com.edu.fatec.IPEMControl.Service.TechnicianReportService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,41 +12,41 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 public class ReportTechnicalController {
 
-    @Autowired
-    private RelatorioTecnicoService relatorioTecnicoService;
+    private final TechnicianReportService technicianReportService;
+    private final ReportExportService exportService;
 
-    @Autowired
-    private RelatorioExportService exportService;
-
-
-    @GetMapping("/geral")
-    public ResponseEntity<GeneralReportDTO> visaoGeral(
-            @RequestParam(defaultValue = "30") String periodo) {
-        return ResponseEntity.ok(relatorioTecnicoService.gerarVisaoGeral(periodo));
+    public ReportTechnicalController(TechnicianReportService technicianReportService,
+                                     ReportExportService exportService) {
+        this.technicianReportService = technicianReportService;
+        this.exportService = exportService;
     }
 
+    @GetMapping("/summary")
+    public ResponseEntity<GeneralReportDTO> summary(
+            @RequestParam(defaultValue = "30") String period) {
+        return ResponseEntity.ok(technicianReportService.generateSummary(period));
+    }
 
-    @GetMapping("/{matricula}")
+    @GetMapping("/{registration}")
     public ResponseEntity<TechnicianReportDTO> individual(
-            @PathVariable Integer matricula,
-            @RequestParam(defaultValue = "30") String periodo) {
-        return ResponseEntity.ok(relatorioTecnicoService.gerarRelatorioIndividual(matricula, periodo));
+            @PathVariable Integer registration,
+            @RequestParam(defaultValue = "30") String period) {
+        return ResponseEntity.ok(technicianReportService.generateIndividualReport(registration, period));
     }
 
-
-    @GetMapping("/{matricula}/download")
+    @GetMapping("/{registration}/download")
     public ResponseEntity<byte[]> download(
-            @PathVariable Integer matricula,
-            @RequestParam(defaultValue = "pdf") String formato,
-            @RequestParam(defaultValue = "30")  String periodo) {
+            @PathVariable Integer registration,
+            @RequestParam(defaultValue = "pdf") String format,
+            @RequestParam(defaultValue = "30") String period) {
 
-        TechnicianReportDTO dto = relatorioTecnicoService.gerarRelatorioIndividual(matricula, periodo);
+        TechnicianReportDTO dto = technicianReportService.generateIndividualReport(registration, period);
 
-        return switch (formato) {
-            case "csv"   -> exportService.exportarCsvResponse(dto, matricula);
-            case "excel" -> exportService.exportarExcelResponse(dto, matricula);
-            case "docx"  -> exportService.exportarDocxResponse(dto, matricula);
-            default      -> exportService.exportarPdfResponse(dto, matricula);
+        return switch (format) {
+            case "csv"   -> exportService.exportarCsvResponse(dto, registration);
+            case "excel" -> exportService.exportarExcelResponse(dto, registration);
+            case "docx"  -> exportService.exportarDocxResponse(dto, registration);
+            default      -> exportService.exportarPdfResponse(dto, registration);
         };
     }
 }

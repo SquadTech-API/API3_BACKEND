@@ -16,8 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
  * — mesmo com @CrossOrigin configurado.
  *
  * Esta classe desabilita completamente a segurança HTTP padrão,
- * liberando todos os endpoints sem autenticação (a autenticação
- * é feita manualmente no UsuarioService via BCrypt + sessionStorage).
+ * liberando includeAll os endpoints sem autenticação (a autenticação
+ * é feita manualmente no UserService via BCrypt + sessionStorage).
  *
  * Se não tiver spring-security no pom.xml, esta classe é ignorada.
  */
@@ -30,7 +30,7 @@ public class SecurityConfig {
         http
                 // Desabilita CSRF (necessário para POST/PUT/PATCH sem token CSRF)
                 .csrf(AbstractHttpConfigurer::disable)
-                // Desabilita autenticação padrão — libera todos os endpoints
+                // Desabilita autenticação padrão — libera includeAll os endpoints
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
                 // Desabilita o formulário de login automático do Spring
                 .formLogin(AbstractHttpConfigurer::disable)

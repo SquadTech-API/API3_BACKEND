@@ -1,9 +1,8 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
 import br.com.edu.fatec.IPEMControl.DTO.OilChangeDTO;
-import br.com.edu.fatec.IPEMControl.Entities.OilChange;
-import br.com.edu.fatec.IPEMControl.Service.TrocaOleoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.com.edu.fatec.IPEMControl.DTO.OilChangeResponseDTO;
+import br.com.edu.fatec.IPEMControl.Service.OilChangeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,46 +10,49 @@ import java.util.List;
 
 /**
  * NOVO: Controller para trocas de óleo.
- * Antes não existia — todos os endpoints abaixo retornavam 404.
+ * Antes não existia — includeAll os endpoints abaixo retornavam 404.
  *
  * Endpoints criados:
- * - POST  /troca-oleo                   — registrar nova troca
- * - GET   /troca-oleo?veiculoId={id}    — listar trocas (por veículo ou todas)
- * - GET   /troca-oleo/{id}              — buscar troca específica
- * - PUT   /troca-oleo/{id}              — editar troca
+ * - POST  /oilChange-oleo                   — registrar nova oilChange
+ * - GET   /oilChange-oleo?veiculoId={id}    — list trocas (por veículo ou todas)
+ * - GET   /oilChange-oleo/{id}              — search oilChange específica
+ * - PUT   /oilChange-oleo/{id}              — editar oilChange
  */
 @RestController
 @RequestMapping("/oil-changes")
 @CrossOrigin(origins = "*")
 public class OilChangeController {
 
-    @Autowired
-    private TrocaOleoService oilChangeService;
+    private final OilChangeService oilChangeService;
 
-    // POST /troca-oleo
+    public OilChangeController(OilChangeService oilChangeService) {
+        this.oilChangeService = oilChangeService;
+    }
+
+    // POST /oilChange-oleo
     @PostMapping
-    public ResponseEntity<OilChange> create(@RequestBody OilChangeDTO dto) {
-        return ResponseEntity.status(201).body(oilChangeService.salvar(dto));
+    public ResponseEntity<OilChangeResponseDTO> create(@RequestBody OilChangeDTO dto) {
+        return ResponseEntity.status(201).body(oilChangeService.save(dto));
     }
 
-    // GET /troca-oleo?veiculoId={id}
+    // GET /oilChange-oleo?veiculoId={id}
     @GetMapping
-    public ResponseEntity<List<OilChange>> findAll(
+    public ResponseEntity<List<OilChangeResponseDTO>> findAll(
             @RequestParam(required = false) Integer vehicleId) {
-        return ResponseEntity.ok(oilChangeService.listarPorVeiculo(vehicleId));
+        return ResponseEntity.ok(oilChangeService.findByVehicle(vehicleId));
     }
 
-    // GET /troca-oleo/{id}
+    // GET /oilChange-oleo/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<OilChange> findById(@PathVariable Integer id) {
-        return ResponseEntity.ok(oilChangeService.buscarPorId(id));
+    public ResponseEntity<OilChangeResponseDTO> findById(@PathVariable Integer id) {
+        return ResponseEntity.ok(oilChangeService.findById(id));
     }
 
-    // PUT /troca-oleo/{id}
+    // PUT /oilChange-oleo/{id}
     @PutMapping("/{id}")
-    public ResponseEntity<OilChange> update(
+    public ResponseEntity<OilChangeResponseDTO> update(
             @PathVariable Integer id,
             @RequestBody OilChangeDTO dto) {
-        return ResponseEntity.ok(oilChangeService.atualizar(id, dto));
+        return ResponseEntity.ok(oilChangeService.update(id, dto));
     }
 }

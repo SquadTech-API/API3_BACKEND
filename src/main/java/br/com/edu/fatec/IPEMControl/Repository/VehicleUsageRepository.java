@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface VehicleUsageRepository extends JpaRepository<VehicleUsage, Long> {
 
-    boolean existsByVeiculoAndDataFimIsNull(String vehicle);
+    boolean existsByVehicleAndFinishDateIsNull(String vehicle);
 
-    List<VehicleUsage> findByDataFimIsNull();
+    List<VehicleUsage> findByFinishDateIsNull();
 
     @Query(value = """
         SELECT 
@@ -22,5 +22,5 @@ public interface VehicleUsageRepository extends JpaRepository<VehicleUsage, Long
         GROUP BY vehicle
         ORDER BY total_usos DESC
     """, nativeQuery = true)
-    List<Object[]> buscarComparativoUso();
+    List<Object[]> findUsageComparison();
 }
