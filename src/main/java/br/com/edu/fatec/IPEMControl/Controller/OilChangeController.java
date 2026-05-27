@@ -1,5 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
+import br.com.edu.fatec.IPEMControl.DTO.OilChangeAlertDTO;
 import br.com.edu.fatec.IPEMControl.DTO.OilChangeDTO;
 import br.com.edu.fatec.IPEMControl.DTO.OilChangeResponseDTO;
 import br.com.edu.fatec.IPEMControl.Service.OilChangeService;
@@ -55,4 +56,9 @@ public class OilChangeController {
             @RequestBody OilChangeDTO dto) {
         return ResponseEntity.ok(oilChangeService.update(id, dto));
     }
+    @GetMapping("/alerts")
+    public ResponseEntity<List<OilChangeAlertDTO>> findAlerts() {
+        return ResponseEntity.ok(oilChangeService.findAlerts());
+    }
+
 }

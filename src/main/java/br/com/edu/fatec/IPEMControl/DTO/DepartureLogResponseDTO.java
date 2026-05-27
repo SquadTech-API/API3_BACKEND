@@ -1,12 +1,16 @@
 package br.com.edu.fatec.IPEMControl.DTO;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
+import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class DepartureLogResponseDTO {
+
     private Integer departureLogId;
     private String destination;
     private String status;
@@ -26,4 +30,5 @@ public class DepartureLogResponseDTO {
     private String serviceName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Boolean sgiTranscribed;
 }
