@@ -1,10 +1,6 @@
 package br.com.edu.fatec.IPEMControl.Controller;
 
-import br.com.edu.fatec.IPEMControl.DTO.CloseExitDTO;
-import br.com.edu.fatec.IPEMControl.DTO.DepartureLogDTO;
-import br.com.edu.fatec.IPEMControl.DTO.DepartureLogResponseDTO;
-import br.com.edu.fatec.IPEMControl.DTO.ReturnDTO;
-import br.com.edu.fatec.IPEMControl.DTO.ReturnResponseDTO;
+import br.com.edu.fatec.IPEMControl.DTO.*;
 import br.com.edu.fatec.IPEMControl.Service.DepartureLogService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +35,14 @@ public class DepartureLogController {
             @PathVariable Integer id,
             @RequestBody CloseExitDTO dto) {
         return ResponseEntity.ok(departureLogService.closeDeparture(id, dto));
+    }
+
+    // Endpoint adicionado para a atualização do status de transcrição do SGI (#A09.2)
+    @PutMapping("/{id}/sgi-status")
+    public ResponseEntity<DepartureLogResponseDTO> updateSgiStatus(
+            @PathVariable Integer id,
+            @RequestBody SGIStatusDTO dto) {
+        return ResponseEntity.ok(departureLogService.updateSgiStatus(id, dto));
     }
 
     @GetMapping
