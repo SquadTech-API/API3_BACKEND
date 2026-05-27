@@ -54,12 +54,15 @@ public class DepartureLog {
     @ManyToOne
     @JoinColumn(name = "id_tipo_servico")
     private ServiceType serviceType;
-    
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "sgi_transcribed", nullable = false)
+    private Boolean sgiTranscribed = false;
 
     @PrePersist
     public void prePersist() {

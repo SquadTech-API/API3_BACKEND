@@ -20,22 +20,34 @@ import java.util.List;
 @Service
 public class DepartureLogService {
 
-    private final ExitRecordRepository exitRecordRepository;
+    private final DepartureLogRepository departureLogRepository;
     private final VehicleRepository vehicleRepository;
     private final UserRepository userRepository;
     private final ServiceTypeRepository serviceTypeRepository;
     private final RefuelingRepository refuelingRepository;
 
-    public DepartureLogService(ExitRecordRepository exitRecordRepository,
+    public DepartureLogService(DepartureLogRepository departureLogRepository,
                                VehicleRepository vehicleRepository,
                                UserRepository userRepository,
                                ServiceTypeRepository serviceTypeRepository,
                                RefuelingRepository refuelingRepository) {
-        this.exitRecordRepository = exitRecordRepository;
+        this.departureLogRepository = departureLogRepository;
         this.vehicleRepository = vehicleRepository;
         this.userRepository = userRepository;
         this.serviceTypeRepository = serviceTypeRepository;
         this.refuelingRepository = refuelingRepository;
+    }
+
+    public DepartureLogResponseDTO updateSgiStatus(Integer id, SGIStatusDTO dto) {
+        DepartureLog departureLog = departureLogRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Departure log not found."));
+
+        if (dto.getSgiTranscribed() == null) {
+            throw new BusinessRuleException("O status de transcrição do SGI não pode ser nulo.");
+        }
+
+        departureLog.setSgiTranscribed(dto.getSgiTranscribed());
+        return toDTO(departureLogRepository.save(departureLog));
     }
 
     public DepartureLogResponseDTO openDeparture(DepartureLogDTO dto) {
@@ -47,7 +59,7 @@ public class DepartureLogService {
         if (dto.getDepartureDatetime() == null) throw new BusinessRuleException("Informe a data e hora de saída.");
         if (dto.getDestination() == null || dto.getDestination().isBlank()) throw new BusinessRuleException("Informe o local de destino.");
 
-        boolean usuarioJaEmSaida = exitRecordRepository
+        boolean usuarioJaEmSaida = departureLogRepository
                 .findTopByUserRegistrationAndStatusOrderByDateTimeDepartureDesc(dto.getUserRegistration(), "em_andamento")
                 .isPresent();
         if (usuarioJaEmSaida)
@@ -85,14 +97,14 @@ public class DepartureLogService {
         vehicle.setAvailable(false);
         vehicleRepository.save(vehicle);
 
-        return toDTO(exitRecordRepository.save(departureLog));
+        return toDTO(departureLogRepository.save(departureLog));
     }
 
     public ReturnResponseDTO registerReturn(Integer id, ReturnDTO dto) {
         if (dto.getFinalMileage() == null) throw new BusinessRuleException("Informe o KM final.");
         if (dto.getReturnDatetime() == null) throw new BusinessRuleException("Informe o horário de chegada.");
 
-        DepartureLog departureLog = exitRecordRepository.findById(id)
+        DepartureLog departureLog = departureLogRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Registro de saída não encontrado."));
 
         if (!"em_andamento".equalsIgnoreCase(departureLog.getStatus()))
@@ -119,7 +131,7 @@ public class DepartureLogService {
         vehicle.setAvailable(true);
         vehicleRepository.save(vehicle);
 
-        exitRecordRepository.save(departureLog);
+        departureLogRepository.save(departureLog);
 
         return new ReturnResponseDTO(
                 departureLog.getDepartureLogId(), departureLog.getStatus(), departureLog.getStartingKm(),
@@ -130,7 +142,7 @@ public class DepartureLogService {
     }
 
     public DepartureLogResponseDTO closeDeparture(Integer id, CloseExitDTO dto) {
-        DepartureLog departureLog = exitRecordRepository.findById(id)
+        DepartureLog departureLog = departureLogRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Registro de saída não encontrado."));
 
         if (!"em_andamento".equalsIgnoreCase(departureLog.getStatus()))
@@ -159,43 +171,42 @@ public class DepartureLogService {
         vehicle.setAvailable(true);
         vehicleRepository.save(vehicle);
 
-        return toDTO(exitRecordRepository.save(departureLog));
+        return toDTO(departureLogRepository.save(departureLog));
     }
 
     public List<DepartureLogResponseDTO> findAll() {
-        return exitRecordRepository.findAll().stream().map(this::toDTO).toList();
+        return departureLogRepository.findAll().stream().map(this::toDTO).toList();
     }
 
     public DepartureLogResponseDTO findById(Integer id) {
-        return exitRecordRepository.findById(id)
+        return departureLogRepository.findById(id)
                 .map(this::toDTO)
                 .orElseThrow(() -> new ResourceNotFoundException("Departure log not found."));
     }
 
     public DepartureLogResponseDTO findActiveByVehicle(Integer vehicleId) {
-        return exitRecordRepository
+        return departureLogRepository
                 .findTopByVehicleVehicleIdAndStatusOrderByDateTimeDepartureDesc(vehicleId, "em_andamento")
                 .map(this::toDTO)
                 .orElseThrow(() -> new ResourceNotFoundException("Active departure log not found."));
     }
 
     public DepartureLogResponseDTO findActiveByUser(Integer registration) {
-        return exitRecordRepository
+        return departureLogRepository
                 .findTopByUserRegistrationAndStatusOrderByDateTimeDepartureDesc(registration, "em_andamento")
                 .map(this::toDTO)
                 .orElseThrow(() -> new ResourceNotFoundException("Active departure log not found."));
     }
 
     public List<DepartureLogResponseDTO> findOilChangeDeparturesByVehicle(Integer vehicleId) {
-        return exitRecordRepository.findByVehicleVehicleIdAndServiceTypeOilChangeSTTrue(vehicleId)
+        return departureLogRepository.findByVehicleVehicleIdAndServiceTypeOilChangeSTTrue(vehicleId)
                 .stream()
                 .map(this::toDTO)
                 .toList();
     }
 
     public MonthlyUsageReportDTO generateMonthlyUsageReportByVehicle(Long vehicleId, LocalDateTime start, LocalDateTime end) {
-        // CERTIFICAÇÃO: Alterado para search por DataHoraSaida para evitar relatórios zerados
-        List<DepartureLog> trips = exitRecordRepository.findByVehicleVehicleIdAndDateTimeDepartureBetween(vehicleId.intValue(), start, end);
+        List<DepartureLog> trips = departureLogRepository.findByVehicleVehicleIdAndDateTimeDepartureBetween(vehicleId.intValue(), start, end);
 
         BigDecimal totalKm = trips.stream()
                 .map(v -> v.getDrivenKm() != null ? v.getDrivenKm() : BigDecimal.ZERO)
@@ -331,6 +342,7 @@ public class DepartureLogService {
         }
         dto.setCreatedAt(departureLog.getCreatedAt());
         dto.setUpdatedAt(departureLog.getUpdatedAt());
+        dto.setSgiTranscribed(departureLog.getSgiTranscribed());
         return dto;
     }
 }
