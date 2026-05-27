@@ -10,6 +10,7 @@ import br.com.edu.fatec.IPEMControl.Exception.BusinessRuleException;
 import br.com.edu.fatec.IPEMControl.Repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import br.com.edu.fatec.IPEMControl.DTO.UpdateProfileDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -106,6 +107,29 @@ public class UserService {
         User user = repository.findByRegistration(registration)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found."));
         user.setActiveColaborator(false);
+        return toDTO(repository.save(user));
+    }
+
+    // ── PUT /users/{registration}/profile — self editing ──────────────────────
+    public UserResponseDTO updateProfile(Integer registration, UpdateProfileDTO dto) {
+
+        User user = repository.findByRegistration(registration)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario não encontrado."));
+
+        if (dto.getName() != null && !dto.getName().isBlank())
+            user.setName(dto.getName());
+
+        if (dto.getNewPassword() != null && !dto.getNewPassword().isBlank()) {
+
+            if (dto.getCurrentPassword() == null || dto.getCurrentPassword().isBlank())
+                throw new BusinessRuleException("A senna atual é necessária para define uma nova senha.");
+
+            if (!passwordEncoder.matches(dto.getCurrentPassword(), user.getPassword()))
+                throw new BusinessRuleException("A senha atual esta incorreta.");
+
+            user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        }
+
         return toDTO(repository.save(user));
     }
 
