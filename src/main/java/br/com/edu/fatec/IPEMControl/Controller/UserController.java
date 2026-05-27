@@ -8,6 +8,7 @@ import br.com.edu.fatec.IPEMControl.DTO.UserResponseDTO;
 import br.com.edu.fatec.IPEMControl.Service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import br.com.edu.fatec.IPEMControl.DTO.UpdateProfileDTO;
 
 import java.util.List;
 
@@ -51,6 +52,13 @@ public class UserController {
             @PathVariable Integer registration,
             @RequestBody UserDTO dto) {
         return ResponseEntity.ok(userService.update(registration, dto));
+    }
+
+    @PutMapping("/{registration}/profile")
+    public ResponseEntity<UserResponseDTO> updateProfile(
+            @PathVariable Integer registration,
+            @RequestBody UpdateProfileDTO dto) {
+        return ResponseEntity.ok(userService.updateProfile(registration, dto));
     }
 
     @PatchMapping("/{registration}/deactivate")
