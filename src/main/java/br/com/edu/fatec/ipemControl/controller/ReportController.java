@@ -2,32 +2,26 @@ package br.com.edu.fatec.ipemControl.controller;
 
 import br.com.edu.fatec.ipemControl.dto.DailyReportDTO;
 import br.com.edu.fatec.ipemControl.service.ReportService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
-@Controller
+@RestController
 @RequestMapping("/report")
+@RequiredArgsConstructor
 public class ReportController {
 
     private final ReportService reportService;
 
-    public ReportController(ReportService reportService) {
-        this.reportService = reportService;
-    }
-
+    // GET /report/daily?registration={}&date={}
     @GetMapping("/daily")
-    public String dailyReport(
+    public ResponseEntity<DailyReportDTO> dailyReport(
             @RequestParam Integer registration,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            Model model) {
-        DailyReportDTO report = reportService.generateDailyReportByTechnician(registration, date);
-        model.addAttribute("report", report);
-        return "vehicle-report";
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return ResponseEntity.ok(
+                reportService.generateDailyReportByTechnician(registration, date));
     }
 }

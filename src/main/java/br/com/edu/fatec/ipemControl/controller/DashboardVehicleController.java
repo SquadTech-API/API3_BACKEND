@@ -2,21 +2,19 @@ package br.com.edu.fatec.ipemControl.controller;
 
 import br.com.edu.fatec.ipemControl.dto.VehicleDashboardResponseDTO;
 import br.com.edu.fatec.ipemControl.service.VehicleDashboardService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/dashboard/Vehicle")
-@CrossOrigin("*")
+@RequestMapping("/dashboard/vehicle")
+@RequiredArgsConstructor
 public class DashboardVehicleController {
 
-    private final VehicleDashboardService service;
+    private final VehicleDashboardService vehicleDashboardService;
 
-    public DashboardVehicleController(VehicleDashboardService service) {
-        this.service = service;
-    }
-
+    // GET /dashboard/vehicle
     @GetMapping
     public VehicleDashboardResponseDTO findDashboard() {
-        return service.findDashboard();
+        return vehicleDashboardService.findDashboard();
     }
 }

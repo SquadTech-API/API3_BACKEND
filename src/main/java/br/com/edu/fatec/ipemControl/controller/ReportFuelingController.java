@@ -4,6 +4,7 @@ import br.com.edu.fatec.ipemControl.dto.FuelReportDTO;
 import br.com.edu.fatec.ipemControl.dto.FuelingSearchDTO;
 import br.com.edu.fatec.ipemControl.service.FuelingExportService;
 import br.com.edu.fatec.ipemControl.service.FuelingService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,23 +12,19 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/report/fueling")
+@RequiredArgsConstructor
 public class ReportFuelingController {
 
     private final FuelingService fuelingService;
     private final FuelingExportService fuelingExportService;
 
-    public ReportFuelingController(
-            FuelingService fuelingService,
-            FuelingExportService fuelingExportService) {
-        this.fuelingService = fuelingService;
-        this.fuelingExportService = fuelingExportService;
-    }
-
+    // GET /report/fueling/summary?period={}
     @GetMapping("/summary")
     public ResponseEntity<FuelReportDTO> summary(@RequestParam String period) {
         return ResponseEntity.ok(fuelingService.generateReport(period));
     }
 
+    // GET /report/fueling/search
     @GetMapping("/search")
     public ResponseEntity<FuelingSearchDTO> search(
             @RequestParam String type,
@@ -40,25 +37,16 @@ public class ReportFuelingController {
                 fuelingService.search(type, date, from, to, vehicle, recordType));
     }
 
+    // GET /report/fueling/download?format={}&period={}
     @GetMapping("/download")
     public ResponseEntity<byte[]> download(
             @RequestParam String format,
             @RequestParam String period) {
 
         FuelReportDTO report = fuelingService.generateReport(period);
-        byte[] file = fuelingExportService.exportar(report, format);
+        byte[] file = fuelingExportService.export(report, format);
 
-        String fileName = "fueling-report." + format;
-        MediaType mediaType = resolveMediaType(format);
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
-                .contentType(mediaType)
-                .body(file);
-    }
-
-    private MediaType resolveMediaType(String format) {
-        return switch (format) {
+        MediaType mediaType = switch (format) {
             case "pdf"   -> MediaType.APPLICATION_PDF;
             case "csv"   -> MediaType.parseMediaType("text/csv; charset=UTF-8");
             case "excel" -> MediaType.parseMediaType(
@@ -67,5 +55,11 @@ public class ReportFuelingController {
                     "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
             default      -> MediaType.APPLICATION_OCTET_STREAM;
         };
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=fueling-report." + format)
+                .contentType(mediaType)
+                .body(file);
     }
 }

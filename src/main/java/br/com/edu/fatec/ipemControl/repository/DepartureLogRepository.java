@@ -216,5 +216,8 @@ public interface DepartureLogRepository extends JpaRepository<DepartureLog, Inte
         WHERE vehicle_id = :vehicleId
           AND departure_datetime >= DATE_SUB(NOW(), INTERVAL 7 DAY)
         """, nativeQuery = true)
-    Long totalWeeklyDepartures(@Param("vehicleId") Integer vehicleId);
+
+    // ── Contagens — AdminDashboardService ────────────────────────
+    long countByStatus(String status);
+    long countBySgiTranscribedFalseAndStatus(String status);
 }

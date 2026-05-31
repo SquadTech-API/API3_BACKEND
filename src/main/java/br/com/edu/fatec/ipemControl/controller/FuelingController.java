@@ -4,6 +4,7 @@ import br.com.edu.fatec.ipemControl.dto.FuelingDTO;
 import br.com.edu.fatec.ipemControl.dto.FuelingHistoryDTO;
 import br.com.edu.fatec.ipemControl.dto.SavedFuelingDTO;
 import br.com.edu.fatec.ipemControl.service.FuelingService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,27 +13,24 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/fueling")
+@RequiredArgsConstructor
 public class FuelingController {
 
     private final FuelingService fuelingService;
 
-    public FuelingController(FuelingService fuelingService) {
-        this.fuelingService = fuelingService;
-    }
-
+    // POST /fueling
     @PostMapping
-    public ResponseEntity<SavedFuelingDTO> createFueling(@RequestBody FuelingDTO dto) {
-        SavedFuelingDTO savedFueling = fuelingService.save(dto);
+    public ResponseEntity<SavedFuelingDTO> create(@RequestBody FuelingDTO dto) {
+        SavedFuelingDTO saved = fuelingService.save(dto);
         return ResponseEntity
-                .created(URI.create("/fueling/" + savedFueling.getFuelingId()))
-                .body(savedFueling);
+                .created(URI.create("/fueling/" + saved.getId()))
+                .body(saved);
     }
 
+    // GET /fueling/history?vehicleId={id}
     @GetMapping("/history")
-    public ResponseEntity<List<FuelingHistoryDTO>> getFuelingHistory(
+    public ResponseEntity<List<FuelingHistoryDTO>> history(
             @RequestParam(required = false) Integer vehicleId) {
-
-        List<FuelingHistoryDTO> history = fuelingService.findHistory(vehicleId);
-        return ResponseEntity.ok(history);
+        return ResponseEntity.ok(fuelingService.findHistory(vehicleId));
     }
 }

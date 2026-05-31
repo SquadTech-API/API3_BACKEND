@@ -10,6 +10,8 @@ import java.util.Optional;
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
 
+    // ── Listagens ─────────────────────────────────────────────────
+
     // Todas as viaturas ativas
     List<Vehicle> findByActiveTrue();
 
@@ -19,12 +21,18 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
     // Viaturas ativas e em uso
     List<Vehicle> findByActiveTrueAndAvailableFalse();
 
-    // Busca por prefixo
-    Optional<Vehicle> findByPrefix(String prefix);
-
-    // Busca por placa
-    Optional<Vehicle> findByLicensePlate(String licensePlate);
-
     // Viaturas com alerta de troca de óleo pendente
     List<Vehicle> findByActiveTrueAndOilChangeAlertSentFalse();
+
+    // ── Buscas ────────────────────────────────────────────────────
+
+    Optional<Vehicle> findByPrefix(String prefix);
+    Optional<Vehicle> findByLicensePlate(String licensePlate);
+
+    // ── Contagens — AdminDashboardService ─────────────────────────
+
+    long countByActiveTrue();
+    long countByActiveTrueAndAvailableTrue();
+    long countByActiveTrueAndAvailableFalse();
+    long countByActiveTrueAndOilChangeAlertSentTrue();
 }

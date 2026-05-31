@@ -3,45 +3,42 @@ package br.com.edu.fatec.ipemControl.controller;
 import br.com.edu.fatec.ipemControl.dto.VehicleReportDTO;
 import br.com.edu.fatec.ipemControl.service.VehicleReportExportService;
 import br.com.edu.fatec.ipemControl.service.VehicleReportService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/report/vehicle")
-@CrossOrigin("*")
+@RequiredArgsConstructor
 public class ReportVehicleController {
 
-    private final VehicleReportService service;
-    private final VehicleReportExportService exportService;
+    private final VehicleReportService vehicleReportService;
+    private final VehicleReportExportService vehicleReportExportService;
 
-    public ReportVehicleController(VehicleReportService service,
-                                   VehicleReportExportService exportService) {
-        this.service = service;
-        this.exportService = exportService;
-    }
-
+    // GET /report/vehicle/{id}
     @GetMapping("/{id}")
     public ResponseEntity<VehicleReportDTO> generate(@PathVariable Integer id) {
-        return ResponseEntity.ok(service.generateVehicleReport(id));
+        return ResponseEntity.ok(vehicleReportService.generateVehicleReport(id));
     }
 
+    // GET /report/vehicle/{id}/pdf
     @GetMapping("/{id}/pdf")
     public ResponseEntity<byte[]> pdf(@PathVariable Integer id) {
-        return exportService.exportarPdf(service.generateVehicleReport(id), id);
+        return vehicleReportExportService.exportPdf(
+                vehicleReportService.generateVehicleReport(id), id);
     }
 
+    // GET /report/vehicle/{id}/csv
     @GetMapping("/{id}/csv")
     public ResponseEntity<byte[]> csv(@PathVariable Integer id) {
-        return exportService.exportarCsv(service.generateVehicleReport(id), id);
+        return vehicleReportExportService.exportCsv(
+                vehicleReportService.generateVehicleReport(id), id);
     }
 
+    // GET /report/vehicle/{id}/xlsx
     @GetMapping("/{id}/xlsx")
     public ResponseEntity<byte[]> excel(@PathVariable Integer id) {
-        return exportService.exportarExcel(service.generateVehicleReport(id), id);
-    }
-
-    @GetMapping("/{id}/docx")
-    public ResponseEntity<byte[]> docx(@PathVariable Integer id) {
-        return exportService.exportarDocx(service.generateVehicleReport(id), id);
+        return vehicleReportExportService.exportExcel(
+                vehicleReportService.generateVehicleReport(id), id);
     }
 }
