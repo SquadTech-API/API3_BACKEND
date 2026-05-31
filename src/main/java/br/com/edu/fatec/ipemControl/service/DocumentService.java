@@ -26,7 +26,7 @@ public class DocumentService {
     private final DepartureLogRepository departureLogRepository;
     private final UserRepository userRepository;
 
-    // ── POST /documents — vincula documento a uma saída ──────────
+    // ── POST /documents ───────────────────────────────────────────
     public DocumentResponseDTO create(Integer departureLogId, String fileName, String filePath) {
         DepartureLog departureLog = departureLogRepository.findById(departureLogId)
                 .orElseThrow(() -> new ResourceNotFoundException("Saída não encontrada."));
@@ -54,7 +54,6 @@ public class DocumentService {
     }
 
     // ── POST /documents/{id}/assign/{registration} ────────────────
-    // Vincula um documento a um usuário (para controle de leitura)
     public UserDocumentResponseDTO assignToUser(Integer documentId, Integer registration) {
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Documento não encontrado."));
@@ -73,7 +72,7 @@ public class DocumentService {
         return toUserDocDTO(userDocumentRepository.save(userDocument));
     }
 
-    // ── PATCH /documents/{id}/read ────────────────────────────────
+    // ── PATCH /documents/user-doc/{id}/read ──────────────────────
     public UserDocumentResponseDTO markAsRead(Integer userDocumentId) {
         UserDocument userDocument = userDocumentRepository.findById(userDocumentId)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -82,7 +81,7 @@ public class DocumentService {
         return toUserDocDTO(userDocumentRepository.save(userDocument));
     }
 
-    // ── PATCH /documents/{id}/download ───────────────────────────
+    // ── PATCH /documents/user-doc/{id}/download ───────────────────
     public UserDocumentResponseDTO markAsDownloaded(Integer userDocumentId) {
         UserDocument userDocument = userDocumentRepository.findById(userDocumentId)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -94,14 +93,10 @@ public class DocumentService {
 
     // ── GET /documents/user/{registration}/stats ──────────────────
     public UserDocumentResponseDTO getUserStats(Integer registration) {
-        long received   = userDocumentRepository.countByUserRegistration(registration);
-        long read       = userDocumentRepository.countByUserRegistrationAndReadTrue(registration);
-        long downloaded = userDocumentRepository.countByUserRegistrationAndDownloadedTrue(registration);
-
         UserDocumentResponseDTO dto = new UserDocumentResponseDTO();
-        dto.setReceived(received);
-        dto.setRead(read);
-        dto.setDownloaded(downloaded);
+        dto.setReceived(userDocumentRepository.countByUserRegistration(registration));
+        dto.setReadCount(userDocumentRepository.countByUserRegistrationAndReadTrue(registration));
+        dto.setDownloadedCount(userDocumentRepository.countByUserRegistrationAndDownloadedTrue(registration));
         return dto;
     }
 
@@ -120,7 +115,7 @@ public class DocumentService {
     private UserDocumentResponseDTO toUserDocDTO(UserDocument ud) {
         UserDocumentResponseDTO dto = new UserDocumentResponseDTO();
         dto.setId(ud.getId());
-        dto.setRead(ud.isRead());
+        dto.setIsRead(ud.isRead());
         dto.setDownloaded(ud.isDownloaded());
         dto.setAccessedAt(ud.getAccessedAt());
         if (ud.getUser() != null)

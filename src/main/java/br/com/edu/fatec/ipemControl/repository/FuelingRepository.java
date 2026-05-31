@@ -15,116 +15,144 @@ import java.util.Optional;
 @Repository
 public interface FuelingRepository extends JpaRepository<Fueling, Integer> {
 
-    // Abastecimentos de uma viatura
-    @Query("SELECT f FROM Fueling f WHERE f.departureLog.vehicle.id = :vehicleId")
-    List<Fueling> findByVehicleId(@Param("vehicleId") Integer vehicleId);
+    // ── Busca por saída ───────────────────────────────────────────
 
-    // Abastecimentos de uma saída
     List<Fueling> findByDepartureLog(DepartureLog departureLog);
 
-    // Último abastecimento de uma viatura
-    Optional<Fueling> findTopByDepartureLogVehicleIdOrderByFuelingDatetimeDesc(Integer vehicleId);
-
-    // Abastecimentos de uma viatura ordenados por data
     List<Fueling> findByDepartureLogVehicleIdOrderByFuelingDatetimeDesc(Integer vehicleId);
 
-    // Todos os abastecimentos ordenados por data
     List<Fueling> findAllByOrderByFuelingDatetimeDesc();
 
-    // Abastecimentos em um período
     List<Fueling> findByFuelingDatetimeBetweenOrderByFuelingDatetimeDesc(
             LocalDateTime start, LocalDateTime end);
 
-    // Abastecimentos após uma data
-    List<Fueling> findByFuelingDatetimeAfterOrderByFuelingDatetimeDesc(LocalDateTime start);
-
-    // Abastecimentos por placa da viatura
     List<Fueling> findByDepartureLogVehicleLicensePlateOrderByFuelingDatetimeDesc(
             String licensePlate);
 
-    // Último abastecimento de um técnico
-    Optional<Fueling> findTopByDepartureLogUserRegistrationOrderByFuelingDatetimeDesc(
-            Integer registration);
+    List<Fueling> findByFuelingDatetimeAfterOrderByFuelingDatetimeDesc(
+            LocalDateTime startDate);
 
-    // Custo total de abastecimento de um técnico em um período
+    Optional<Fueling> findTopByDepartureLogVehicleIdOrderByFuelingDatetimeDesc(
+            Integer vehicleId);
+
+    // ── Busca por viatura (sem departure log) ─────────────────────
+
     @Query(value = """
-        SELECT COALESCE(SUM(f.total_value), 0)
+        SELECT f.* FROM fueling f
+        JOIN departure_log dl ON dl.id = f.departure_log_id
+        WHERE dl.vehicle_id = :vehicleId
+        """, nativeQuery = true)
+    List<Fueling> findByVehicleId(@Param("vehicleId") Integer vehicleId);
+
+    // ── Dashboard de viaturas ─────────────────────────────────────
+
+    @Query(value = """
+        SELECT COALESCE(SUM(f.total_value), 0.0) FROM fueling f
+        JOIN departure_log dl ON dl.id = f.departure_log_id
+        WHERE dl.vehicle_id = :vehicleId
+          AND f.fueling_datetime >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        """, nativeQuery = true)
+    Double totalWeeklySpending(@Param("vehicleId") Integer vehicleId);
+
+    @Query(value = """
+        SELECT COALESCE(SUM(f.liters), 0.0) FROM fueling f
+        JOIN departure_log dl ON dl.id = f.departure_log_id
+        WHERE dl.vehicle_id = :vehicleId
+          AND f.fueling_datetime >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        """, nativeQuery = true)
+    Double totalWeeklyLiters(@Param("vehicleId") Integer vehicleId);
+
+    // ── Relatório de técnicos — TechnicianReportService ──────────
+
+    @Query(value = """
+        SELECT dl.user_registration, COALESCE(SUM(f.total_value), 0)
         FROM fueling f
-        JOIN departure_log dl ON f.departure_log_id = dl.id
+        JOIN departure_log dl ON dl.id = f.departure_log_id
+        WHERE f.fueling_datetime >= :startDate
+        GROUP BY dl.user_registration
+        """, nativeQuery = true)
+    List<Object[]> findCostByTechnician(@Param("startDate") LocalDateTime startDate);
+
+    @Query(value = """
+        SELECT COALESCE(SUM(f.total_value), 0) FROM fueling f
+        JOIN departure_log dl ON dl.id = f.departure_log_id
         WHERE dl.user_registration = :registration
-          AND dl.departure_datetime >= :startDate
+          AND f.fueling_datetime >= :startDate
         """, nativeQuery = true)
     BigDecimal sumSpendingByRegistrationAndPeriod(
             @Param("registration") Integer registration,
             @Param("startDate") LocalDateTime startDate);
 
-    // Total de abastecimentos de um técnico em um período
     @Query(value = """
-        SELECT COUNT(f.id)
-        FROM fueling f
-        JOIN departure_log dl ON f.departure_log_id = dl.id
+        SELECT COUNT(*) FROM fueling f
+        JOIN departure_log dl ON dl.id = f.departure_log_id
         WHERE dl.user_registration = :registration
-          AND dl.departure_datetime >= :startDate
+          AND f.fueling_datetime >= :startDate
         """, nativeQuery = true)
     long countByRegistrationAndPeriod(
             @Param("registration") Integer registration,
             @Param("startDate") LocalDateTime startDate);
 
-    // Gasto semanal de uma viatura
-    @Query(value = """
-        SELECT COALESCE(SUM(f.total_value), 0)
-        FROM fueling f
-        JOIN departure_log dl ON f.departure_log_id = dl.id
-        WHERE dl.vehicle_id = :vehicleId
-          AND dl.departure_datetime >= NOW() - INTERVAL 7 DAY
-        """, nativeQuery = true)
-    Double totalWeeklySpending(@Param("vehicleId") Integer vehicleId);
+    // ── Relatório de abastecimentos — FuelingService ──────────────
 
-    // Litros abastecidos semanalmente por viatura
     @Query(value = """
-        SELECT COALESCE(SUM(f.liters), 0)
+        SELECT YEARWEEK(f.fueling_datetime) AS week,
+               COALESCE(SUM(f.total_value), 0),
+               COALESCE(SUM(f.liters), 0)
         FROM fueling f
-        JOIN departure_log dl ON f.departure_log_id = dl.id
-        WHERE dl.vehicle_id = :vehicleId
-          AND dl.departure_datetime >= NOW() - INTERVAL 7 DAY
+        WHERE f.fueling_datetime >= :startDate
+        GROUP BY week
+        ORDER BY week DESC
+        LIMIT 4
         """, nativeQuery = true)
-    Double totalWeeklyLiters(@Param("vehicleId") Integer vehicleId);
-
-    // Estatísticas semanais (relatório)
-    @Query("SELECT WEEK(f.fuelingDatetime), SUM(f.totalValue), SUM(f.liters) " +
-            "FROM Fueling f WHERE f.fuelingDatetime >= :startDate " +
-            "GROUP BY WEEK(f.fuelingDatetime) ORDER BY WEEK(f.fuelingDatetime)")
     List<Object[]> findWeeklyStatistics(@Param("startDate") LocalDateTime startDate);
 
-    // Ranking de postos mais utilizados
-    @Query("SELECT f.stationName, f.stationCity, COUNT(f) " +
-            "FROM Fueling f WHERE f.fuelingDatetime >= :startDate " +
-            "GROUP BY f.stationName, f.stationCity ORDER BY COUNT(f) DESC")
-    List<Object[]> findStationRankings(@Param("startDate") LocalDateTime startDate);
-
-    // Distribuição por tipo de combustível
-    @Query("SELECT f.fuelType.name, COUNT(f) " +
-            "FROM Fueling f WHERE f.fuelingDatetime >= :startDate " +
-            "GROUP BY f.fuelType.name ORDER BY COUNT(f) DESC")
-    List<Object[]> findFuelDistribution(@Param("startDate") LocalDateTime startDate);
-
-    // Consumo por viatura (km/L, custo)
-    @Query("SELECT v.licensePlate, SUM(f.liters), SUM(dl.drivenMileage), " +
-            "CASE WHEN SUM(f.liters) > 0 THEN SUM(dl.drivenMileage) / SUM(f.liters) ELSE 0 END, " +
-            "SUM(f.totalValue) " +
-            "FROM Fueling f " +
-            "JOIN f.departureLog dl " +
-            "JOIN dl.vehicle v " +
-            "WHERE f.fuelingDatetime >= :startDate " +
-            "GROUP BY v.licensePlate")
+    @Query(value = """
+        SELECT v.license_plate,
+               COALESCE(SUM(f.liters), 0),
+               COALESCE(SUM(dl.driven_mileage), 0),
+               CASE WHEN SUM(f.liters) > 0
+                    THEN SUM(dl.driven_mileage) / SUM(f.liters)
+                    ELSE 0 END,
+               COALESCE(SUM(f.total_value), 0)
+        FROM fueling f
+        JOIN departure_log dl ON dl.id = f.departure_log_id
+        JOIN vehicle v ON v.id = dl.vehicle_id
+        WHERE f.fueling_datetime >= :startDate
+        GROUP BY v.license_plate
+        """, nativeQuery = true)
     List<Object[]> findVehicleConsumption(@Param("startDate") LocalDateTime startDate);
 
-    // Ranking de usuários que mais abastecem
-    @Query("SELECT u.fullName, COUNT(f), SUM(f.totalValue) " +
-            "FROM Fueling f " +
-            "JOIN f.departureLog dl " +
-            "JOIN dl.user u " +
-            "WHERE f.fuelingDatetime >= :startDate " +
-            "GROUP BY u.fullName ORDER BY COUNT(f) DESC")
+    @Query(value = """
+        SELECT dl.user_registration, u.full_name,
+               COUNT(f.id), COALESCE(SUM(f.total_value), 0)
+        FROM fueling f
+        JOIN departure_log dl ON dl.id = f.departure_log_id
+        JOIN users u ON u.registration = dl.user_registration
+        WHERE f.fueling_datetime >= :startDate
+        GROUP BY dl.user_registration, u.full_name
+        ORDER BY SUM(f.total_value) DESC
+        LIMIT 10
+        """, nativeQuery = true)
     List<Object[]> findUserRankings(@Param("startDate") LocalDateTime startDate);
+
+    @Query(value = """
+        SELECT f.station_name, f.station_city, COUNT(f.id)
+        FROM fueling f
+        WHERE f.fueling_datetime >= :startDate
+          AND f.station_name IS NOT NULL
+        GROUP BY f.station_name, f.station_city
+        ORDER BY COUNT(f.id) DESC
+        LIMIT 10
+        """, nativeQuery = true)
+    List<Object[]> findStationRankings(@Param("startDate") LocalDateTime startDate);
+
+    @Query(value = """
+        SELECT ft.name, COUNT(f.id)
+        FROM fueling f
+        JOIN fuel_type ft ON ft.id = f.fuel_type_id
+        WHERE f.fueling_datetime >= :startDate
+        GROUP BY ft.name
+        """, nativeQuery = true)
+    List<Object[]> findFuelDistribution(@Param("startDate") LocalDateTime startDate);
 }

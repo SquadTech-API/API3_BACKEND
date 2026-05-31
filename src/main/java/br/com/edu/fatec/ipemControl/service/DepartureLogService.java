@@ -39,7 +39,6 @@ public class DepartureLogService {
         if (dto.getDestination() == null || dto.getDestination().isBlank())
             throw new BusinessRuleException("Informe o local de destino.");
 
-        // Valida usuário já em saída ativa
         if (departureLogRepository.existsActiveByUserRegistration(dto.getUserRegistration()))
             throw new BusinessRuleException(
                     "Você já possui uma saída em andamento. Registre o retorno antes de iniciar uma nova.");
@@ -75,7 +74,6 @@ public class DepartureLogService {
         departureLog.setDepartureDatetime(dto.getDepartureDatetime());
         departureLog.setStatus("in_progress");
 
-        // 2º condutor opcional
         if (dto.getSecondUserRegistration() != null) {
             User secondUser = userRepository.findByRegistration(dto.getSecondUserRegistration())
                     .orElseThrow(() -> new ResourceNotFoundException("2º condutor não encontrado."));
@@ -88,7 +86,7 @@ public class DepartureLogService {
         return toDTO(departureLogRepository.save(departureLog));
     }
 
-    // ── PATCH /departure-logs/{id}/return — registra retorno ─────
+    // ── PATCH /departure-logs/{id}/return ────────────────────────
     public DepartureLogResponseDTO registerReturn(Integer id, ReturnDTO dto) {
         if (dto.getFinalMileage() == null)
             throw new BusinessRuleException("Informe o KM final.");
@@ -147,7 +145,7 @@ public class DepartureLogService {
                 .orElseThrow(() -> new ResourceNotFoundException("Registro de saída não encontrado."));
     }
 
-    // ── GET /departure-logs/active/vehicle/{vehicleId} ────────────
+    // ── GET /departure-logs/active?vehicleId={} ───────────────────
     public DepartureLogResponseDTO findActiveByVehicle(Integer vehicleId) {
         return departureLogRepository
                 .findTopByVehicleIdAndStatusOrderByDepartureDatetimeDesc(vehicleId, "in_progress")
@@ -155,7 +153,7 @@ public class DepartureLogService {
                 .orElseThrow(() -> new ResourceNotFoundException("Nenhuma saída ativa para este veículo."));
     }
 
-    // ── GET /departure-logs/active/user/{registration} ────────────
+    // ── GET /departure-logs/active-user?registration={} ──────────
     public DepartureLogResponseDTO findActiveByUser(Integer registration) {
         return departureLogRepository
                 .findTopByUserRegistrationAndStatusOrderByDepartureDatetimeDesc(registration, "in_progress")
@@ -170,33 +168,42 @@ public class DepartureLogService {
                 .stream().map(this::toDTO).toList();
     }
 
+    // ── GET /departure-logs/vehicle/{vehicleId}/oil-change ────────
+    public List<DepartureLogResponseDTO> findOilChangeDeparturesByVehicle(Integer vehicleId) {
+        return departureLogRepository
+                .findByVehicleIdAndServiceTypeIsOilChangeTrueOrderByDepartureDatetimeDesc(vehicleId)
+                .stream().map(this::toDTO).toList();
+    }
+
     // ── Relatório mensal por viatura ──────────────────────────────
     public MonthlyUsageReportDTO generateMonthlyReport(Integer vehicleId,
                                                        LocalDateTime start,
                                                        LocalDateTime end) {
-        var trips = departureLogRepository
+        List<DepartureLog> trips = departureLogRepository
                 .findByVehicleIdAndDepartureDatetimeBetween(vehicleId, start, end);
 
-        BigDecimal totalKm = trips.stream()
-                .map(d -> d.getDrivenMileage() != null ? d.getDrivenMileage() : BigDecimal.ZERO)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
+        BigDecimal totalKm       = BigDecimal.ZERO;
         BigDecimal totalSpending = BigDecimal.ZERO;
         BigDecimal totalLiters   = BigDecimal.ZERO;
 
         for (DepartureLog trip : trips) {
-            var fuelings = fuelingRepository.findByDepartureLog(trip);
-            for (var f : fuelings) {
+            if (trip.getDrivenMileage() != null)
+                totalKm = totalKm.add(trip.getDrivenMileage());
+
+            for (var f : fuelingRepository.findByDepartureLog(trip)) {
                 if (f.getTotalValue() != null) totalSpending = totalSpending.add(f.getTotalValue());
                 if (f.getLiters()     != null) totalLiters   = totalLiters.add(f.getLiters());
             }
         }
 
-        return new MonthlyUsageReportDTO(totalKm, trips.size(), totalSpending, totalLiters, trips);
+        // Converte entidades para DTOs — nunca expor entidade diretamente
+        List<DepartureLogResponseDTO> details = trips.stream().map(this::toDTO).toList();
+
+        return new MonthlyUsageReportDTO(totalKm, trips.size(), totalSpending, totalLiters, details);
     }
 
     // ── Mapeamento ────────────────────────────────────────────────
-    private DepartureLogResponseDTO toDTO(DepartureLog d) {
+    public DepartureLogResponseDTO toDTO(DepartureLog d) {
         DepartureLogResponseDTO dto = new DepartureLogResponseDTO();
         dto.setId(d.getId());
         dto.setDestination(d.getDestination());

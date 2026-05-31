@@ -20,4 +20,5 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
 
     // Agendamentos pendentes de uma viatura
     List<Schedule> findByVehicleIdAndStatus(Integer vehicleId, String status);
+
 }

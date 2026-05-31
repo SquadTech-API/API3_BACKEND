@@ -9,6 +9,5 @@ import java.util.List;
 @Repository
 public interface DocumentRepository extends JpaRepository<Document, Integer> {
 
-    // Documentos de uma saída
     List<Document> findByDepartureLogId(Integer departureLogId);
 }

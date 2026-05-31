@@ -5,7 +5,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class UserDocumentResponseDTO {
-    // Campos de vínculo individual
+
+    // ── Campos de vínculo individual ──────────────────────────────
     private Integer id;
     private Boolean isRead;
     private Boolean downloaded;
@@ -13,8 +14,8 @@ public class UserDocumentResponseDTO {
     private Integer userRegistration;
     private Integer documentId;
 
-    // Campos de estatísticas (GET /documents/user/{registration}/stats)
+    // ── Campos de estatísticas (/documents/user/{registration}/stats)
     private Long received;
-    private Long read;
+    private Long readCount;
     private Long downloadedCount;
 }

@@ -37,16 +37,16 @@ public class FuelingExportService {
 
     private String[] toRow(FuelingItemDTO item) {
         return new String[]{
-                item.getDateTime()       != null ? item.getDateTime().toString()       : "",
-                item.getVehicle()        != null ? item.getVehicle()                   : "",
-                item.getResponsible()    != null ? item.getResponsible()               : "",
-                item.getFuelTypeName()   != null ? item.getFuelTypeName()              : "",
-                item.getLiters()         != null ? item.getLiters().toString()         : "",
-                item.getTotalValue()     != null ? item.getTotalValue().toString()     : "",
-                item.getMileage()        != null ? item.getMileage().toString()        : "",
-                item.getStationName()    != null ? item.getStationName()               : "",
-                item.getStationCity()    != null ? item.getStationCity()               : "",
-                item.getInvoiceNumber()  != null ? item.getInvoiceNumber()             : "—"
+                item.getFuelingDatetime()    != null ? item.getFuelingDatetime().toString() : "",
+                item.getVehicle()            != null ? item.getVehicle()                   : "",
+                item.getResponsible()        != null ? item.getResponsible()               : "",
+                item.getFuelTypeName()       != null ? item.getFuelTypeName()              : "",
+                item.getLiters()             != null ? item.getLiters().toString()         : "",
+                item.getTotalValue()         != null ? item.getTotalValue().toString()     : "",
+                item.getMileageAtFueling()   != null ? item.getMileageAtFueling().toString(): "",
+                item.getStationName()        != null ? item.getStationName()               : "",
+                item.getStationCity()        != null ? item.getStationCity()               : "",
+                item.getInvoiceNumber()      != null ? item.getInvoiceNumber()             : "—"
         };
     }
 
@@ -71,8 +71,7 @@ public class FuelingExportService {
 
             List<FuelingItemDTO> items = report.getFuelings();
             for (int i = 0; i < items.size(); i++) {
-                FuelingItemDTO item = items.get(i);
-                String[] row = toRow(item);
+                String[] row = toRow(items.get(i));
                 Row xlsRow = sheet.createRow(i + 1);
                 for (int j = 0; j < row.length; j++) xlsRow.createCell(j).setCellValue(row[j]);
             }
@@ -89,9 +88,8 @@ public class FuelingExportService {
             document.add(new Paragraph("Fueling Report").setBold().setFontSize(16));
             Table table = new Table(HEADERS.length);
             for (String h : HEADERS) table.addHeaderCell(new Cell().add(new Paragraph(h).setBold()));
-            for (FuelingItemDTO item : report.getFuelings()) {
+            for (FuelingItemDTO item : report.getFuelings())
                 for (String cell : toRow(item)) table.addCell(cell);
-            }
             document.add(table);
             document.close();
             return baos.toByteArray();

@@ -69,7 +69,6 @@ public interface DepartureLogRepository extends JpaRepository<DepartureLog, Inte
     // RELATÓRIO DE TÉCNICOS — TechnicianReportService
     // ══════════════════════════════════════════════════════════════
 
-    // Saídas e KM por técnico em um período
     @Query(value = """
         SELECT dl.user_registration, u.full_name,
                COUNT(dl.id), COALESCE(SUM(dl.driven_mileage), 0)
@@ -80,7 +79,6 @@ public interface DepartureLogRepository extends JpaRepository<DepartureLog, Inte
         """, nativeQuery = true)
     List<Object[]> buscarSaidasKmPorTecnico(@Param("startDate") LocalDateTime startDate);
 
-    // KM por semana (para gráfico de linha)
     @Query(value = """
         SELECT dl.user_registration,
                COALESCE(SUM(dl.driven_mileage), 0)
@@ -90,7 +88,6 @@ public interface DepartureLogRepository extends JpaRepository<DepartureLog, Inte
         """, nativeQuery = true)
     List<Object[]> buscarKmPorSemana(@Param("startDate") LocalDateTime startDate);
 
-    // Contagem de saídas de um técnico em um período
     @Query(value = """
         SELECT COUNT(*) FROM departure_log
         WHERE user_registration = :registration
@@ -100,7 +97,6 @@ public interface DepartureLogRepository extends JpaRepository<DepartureLog, Inte
             @Param("registration") Integer registration,
             @Param("startDate") LocalDateTime startDate);
 
-    // KM total de um técnico em um período
     @Query(value = """
         SELECT COALESCE(SUM(driven_mileage), 0) FROM departure_log
         WHERE user_registration = :registration
@@ -110,7 +106,6 @@ public interface DepartureLogRepository extends JpaRepository<DepartureLog, Inte
             @Param("registration") Integer registration,
             @Param("startDate") LocalDateTime startDate);
 
-    // Maior KM de uma saída do técnico
     @Query(value = """
         SELECT MAX(driven_mileage) FROM departure_log
         WHERE user_registration = :registration
@@ -120,7 +115,6 @@ public interface DepartureLogRepository extends JpaRepository<DepartureLog, Inte
             @Param("registration") Integer registration,
             @Param("startDate") LocalDateTime startDate);
 
-    // Maior duração de saída do técnico (em horas)
     @Query(value = """
         SELECT MAX(TIMESTAMPDIFF(SECOND, departure_datetime, return_datetime)) / 3600
         FROM departure_log
@@ -132,7 +126,6 @@ public interface DepartureLogRepository extends JpaRepository<DepartureLog, Inte
             @Param("registration") Integer registration,
             @Param("startDate") LocalDateTime startDate);
 
-    // Tempo médio de saída do técnico (em horas)
     @Query(value = """
         SELECT COALESCE(
             AVG(TIMESTAMPDIFF(SECOND, departure_datetime, return_datetime)) / 3600, 0)
@@ -145,7 +138,6 @@ public interface DepartureLogRepository extends JpaRepository<DepartureLog, Inte
             @Param("registration") Integer registration,
             @Param("startDate") LocalDateTime startDate);
 
-    // Top 5 destinos mais frequentes do técnico
     @Query(value = """
         SELECT destination, COUNT(*) as freq
         FROM departure_log
@@ -156,7 +148,6 @@ public interface DepartureLogRepository extends JpaRepository<DepartureLog, Inte
         """, nativeQuery = true)
     List<Object[]> buscarDestinosMaisFrequentes(@Param("registration") Integer registration);
 
-    // Serviços por tipo realizados pelo técnico
     @Query(value = """
         SELECT st.service_name, COUNT(dl.id)
         FROM departure_log dl
@@ -169,7 +160,6 @@ public interface DepartureLogRepository extends JpaRepository<DepartureLog, Inte
             @Param("registration") Integer registration,
             @Param("startDate") LocalDateTime startDate);
 
-    // Viaturas utilizadas pelo técnico
     @Query(value = """
         SELECT DISTINCT CONCAT(v.model, ' (', v.prefix, ')')
         FROM departure_log dl
@@ -178,7 +168,6 @@ public interface DepartureLogRepository extends JpaRepository<DepartureLog, Inte
         """, nativeQuery = true)
     List<String> buscarVeiculosUtilizados(@Param("registration") Integer registration);
 
-    // Total de técnicos ativos no sistema
     @Query(value = """
         SELECT COUNT(*) FROM users
         WHERE active_employee = true
@@ -190,7 +179,6 @@ public interface DepartureLogRepository extends JpaRepository<DepartureLog, Inte
     // DASHBOARD DE VIATURAS — VehicleDashboardService
     // ══════════════════════════════════════════════════════════════
 
-    // Top 5 viaturas com mais KM na semana
     @Query(value = """
         SELECT v.id, v.model, COALESCE(SUM(dl.driven_mileage), 0) AS total_km
         FROM departure_log dl
@@ -202,7 +190,6 @@ public interface DepartureLogRepository extends JpaRepository<DepartureLog, Inte
         """, nativeQuery = true)
     List<Object[]> findTop5WeeklyKilometers();
 
-    // KM semanal de uma viatura específica
     @Query(value = """
         SELECT COALESCE(SUM(driven_mileage), 0.0) FROM departure_log
         WHERE vehicle_id = :vehicleId
@@ -210,12 +197,12 @@ public interface DepartureLogRepository extends JpaRepository<DepartureLog, Inte
         """, nativeQuery = true)
     Double totalWeeklyKilometers(@Param("vehicleId") Integer vehicleId);
 
-    // Total de saídas semanais de uma viatura
     @Query(value = """
         SELECT COUNT(*) FROM departure_log
         WHERE vehicle_id = :vehicleId
           AND departure_datetime >= DATE_SUB(NOW(), INTERVAL 7 DAY)
         """, nativeQuery = true)
+    Long totalWeeklyDepartures(@Param("vehicleId") Integer vehicleId);
 
     // ── Contagens — AdminDashboardService ────────────────────────
     long countByStatus(String status);
