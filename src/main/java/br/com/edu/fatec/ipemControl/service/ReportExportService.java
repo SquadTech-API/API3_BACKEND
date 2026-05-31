@@ -29,92 +29,86 @@ import java.util.Map;
 @Service
 public class ReportExportService {
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  PDF — iText 7
-    // ════════════════════════════════════════════════════════════════════════
-
-    public ResponseEntity<byte[]> exportarPdfResponse(TechnicianReportDTO dto, Integer registration) {
+    // ── PDF ───────────────────────────────────────────────────────
+    public ResponseEntity<byte[]> exportPdfResponse(TechnicianReportDTO dto, Integer registration) {
         try {
-            byte[] bytes = gerarPdf(dto);
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_PDF)
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"relatorio_tecnico_" + registration + ".pdf\"")
-                    .body(bytes);
+                            "attachment; filename=\"technician_report_" + registration + ".pdf\"")
+                    .body(generatePdf(dto));
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao gerar PDF: " + e.getMessage(), e);
+            throw new RuntimeException("Error generating PDF: " + e.getMessage(), e);
         }
     }
 
-    private byte[] gerarPdf(TechnicianReportDTO dto) {
+    private byte[] generatePdf(TechnicianReportDTO dto) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter   writer  = new PdfWriter(baos);
-        PdfDocument pdfDoc  = new PdfDocument(writer);
-        Document    document = new Document(pdfDoc);
+        Document document = new Document(new PdfDocument(new PdfWriter(baos)));
 
-        document.add(new Paragraph("IPEM Control — Relatório de Técnico")
+        document.add(new Paragraph("IPEM Control — Technician Report")
                 .setFontSize(18).setBold().setFontColor(ColorConstants.DARK_GRAY));
         document.add(new Paragraph(" "));
 
         // Identificação
-        document.add(new Paragraph("1. Identificação").setFontSize(14).setBold());
+        document.add(new Paragraph("1. Identification").setFontSize(14).setBold());
         Table tId = new Table(UnitValue.createPercentArray(new float[]{40, 60})).useAllAvailableWidth();
-        addRow(tId, "Nome",           dto.getName());
-        addRow(tId, "Matrícula",      str(dto.getRegistration()));
+        addRow(tId, "Name",           dto.getName());
+        addRow(tId, "Registration",   str(dto.getRegistration()));
         addRow(tId, "CPF",            dto.getCpf());
         addRow(tId, "Email",          dto.getEmail());
-        addRow(tId, "Cargo",          dto.getRole());
-        addRow(tId, "CNH",            dto.getDriversLicense());
-        addRow(tId, "Nº Habilitação", dto.getLicenseNumber());
-        addRow(tId, "Nascimento",     dto.getBirthDate());
+        addRow(tId, "Role",           dto.getRole());
+        addRow(tId, "License Type",   dto.getLicenseType());
+        addRow(tId, "License Number", dto.getLicenseNumber());
+        addRow(tId, "Birth Date",     dto.getBirthDate());
         document.add(tId);
         document.add(new Paragraph(" "));
 
         // Status
-        document.add(new Paragraph("2. Status Operacional").setFontSize(14).setBold());
+        document.add(new Paragraph("2. Operational Status").setFontSize(14).setBold());
         Table tSt = new Table(UnitValue.createPercentArray(new float[]{40, 60})).useAllAvailableWidth();
-        addRow(tSt, "Ativo",              Boolean.TRUE.equals(dto.getActive()) ? "Sim" : "Não");
-        addRow(tSt, "Saída em aberto",    Boolean.TRUE.equals(dto.getOpenDeparture()) ? "Sim" : "Não");
-        addRow(tSt, "Cadastro",           dto.getRegistrationDate());
-        addRow(tSt, "Última atualização", dto.getLastUpdate());
+        addRow(tSt, "Active",          Boolean.TRUE.equals(dto.getActive()) ? "Yes" : "No");
+        addRow(tSt, "Open Departure",  Boolean.TRUE.equals(dto.getOpenDeparture()) ? "Yes" : "No");
+        addRow(tSt, "Registered At",   dto.getRegistrationDate());
+        addRow(tSt, "Last Update",     dto.getLastUpdate());
         document.add(tSt);
         document.add(new Paragraph(" "));
 
         // Comportamento
-        document.add(new Paragraph("4. Comportamento Operacional").setFontSize(14).setBold());
+        document.add(new Paragraph("3. Operational Behavior").setFontSize(14).setBold());
         Table tComp = new Table(UnitValue.createPercentArray(new float[]{40, 60})).useAllAvailableWidth();
-        addRow(tComp, "Tempo médio saída (h)",  fmt(dto.getAvgDepartureDurationHours()));
-        addRow(tComp, "Maior saída (mileage)",       fmt(dto.getLongestDepartureKm()));
-        addRow(tComp, "Maior duração (h)",      fmt(dto.getLongestDepartureDurationHours()));
-        addRow(tComp, "Freq. saídas/semana",    fmt(dto.getDepartureFrequencyPerWeek()));
+        addRow(tComp, "Avg Duration (h)",       fmt(dto.getAvgDurationHours()));
+        addRow(tComp, "Longest Departure (km)", fmt(dto.getLongestKm()));
+        addRow(tComp, "Longest Duration (h)",   fmt(dto.getLongestDurationHours()));
+        addRow(tComp, "Departures/week",        fmt(dto.getDepartureFrequencyPerWeek()));
         document.add(tComp);
         document.add(new Paragraph(" "));
 
         // Manutenção
-        document.add(new Paragraph("6. Manutenção").setFontSize(14).setBold());
+        document.add(new Paragraph("4. Maintenance").setFontSize(14).setBold());
         Table tMan = new Table(UnitValue.createPercentArray(new float[]{40, 60})).useAllAvailableWidth();
-        addRow(tMan, "Trocas de óleo",    str(dto.getOilChanges()));
-        addRow(tMan, "Última oilChange",      dto.getLastOilChange());
+        addRow(tMan, "Oil Changes",     str(dto.getOilChanges()));
+        addRow(tMan, "Last Oil Change", dto.getLastOilChange());
         document.add(tMan);
         document.add(new Paragraph(" "));
 
         // Documentos
         if (dto.getDocuments() != null) {
-            document.add(new Paragraph("7. Documentos").setFontSize(14).setBold());
+            document.add(new Paragraph("5. Documents").setFontSize(14).setBold());
             Table tDoc = new Table(UnitValue.createPercentArray(new float[]{40, 60})).useAllAvailableWidth();
-            addRow(tDoc, "Recebidos", str(dto.getDocuments().getReceived()));
-            addRow(tDoc, "Lidos",     str(dto.getDocuments().getRead()));
-            addRow(tDoc, "Baixados",  str(dto.getDocuments().getDownloaded()));
+            addRow(tDoc, "Received",   str(dto.getDocuments().getReceived()));
+            addRow(tDoc, "Read",       str(dto.getDocuments().getRead()));
+            addRow(tDoc, "Downloaded", str(dto.getDocuments().getDownloaded()));
             document.add(tDoc);
             document.add(new Paragraph(" "));
         }
 
         // Destinos
         if (dto.getDestinations() != null && !dto.getDestinations().isEmpty()) {
-            document.add(new Paragraph("Destinos Mais Frequentes").setFontSize(14).setBold());
+            document.add(new Paragraph("Top Destinations").setFontSize(14).setBold());
             Table tDest = new Table(UnitValue.createPercentArray(new float[]{70, 30})).useAllAvailableWidth();
-            tDest.addHeaderCell(new Cell().add(new Paragraph("Local").setBold()));
-            tDest.addHeaderCell(new Cell().add(new Paragraph("Visitas").setBold()));
+            tDest.addHeaderCell(new Cell().add(new Paragraph("Location").setBold()));
+            tDest.addHeaderCell(new Cell().add(new Paragraph("Visits").setBold()));
             for (FrequentDestinationDTO d : dto.getDestinations()) {
                 tDest.addCell(d.getLocation());
                 tDest.addCell(String.valueOf(d.getQuantity()));
@@ -131,164 +125,147 @@ public class ReportExportService {
         table.addCell(new Cell().add(new Paragraph(value != null ? value : "—")));
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  CSV — OpenCSV
-    // ════════════════════════════════════════════════════════════════════════
-
-    public ResponseEntity<byte[]> exportarCsvResponse(TechnicianReportDTO dto, Integer registration) {
+    // ── CSV ───────────────────────────────────────────────────────
+    public ResponseEntity<byte[]> exportCsvResponse(TechnicianReportDTO dto, Integer registration) {
         try {
-            byte[] bytes = gerarCsv(dto);
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType("text/csv; charset=UTF-8"))
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"relatorio_tecnico_" + registration + ".csv\"")
-                    .body(bytes);
+                            "attachment; filename=\"technician_report_" + registration + ".csv\"")
+                    .body(generateCsv(dto));
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao gerar CSV: " + e.getMessage(), e);
+            throw new RuntimeException("Error generating CSV: " + e.getMessage(), e);
         }
     }
 
-    private byte[] gerarCsv(TechnicianReportDTO dto) throws IOException {
-        ByteArrayOutputStream baos   = new ByteArrayOutputStream();
-        OutputStreamWriter    writer = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
-        CSVWriter             csv    = new CSVWriter(writer);
+    private byte[] generateCsv(TechnicianReportDTO dto) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CSVWriter csv = new CSVWriter(new OutputStreamWriter(baos, StandardCharsets.UTF_8));
 
-        csv.writeNext(new String[]{"Seção", "Campo", "Valor"});
+        csv.writeNext(new String[]{"Section", "Field", "Value"});
+        csv.writeNext(new String[]{"Identification", "Name",           dto.getName()});
+        csv.writeNext(new String[]{"Identification", "Registration",   str(dto.getRegistration())});
+        csv.writeNext(new String[]{"Identification", "CPF",            dto.getCpf()});
+        csv.writeNext(new String[]{"Identification", "Email",          dto.getEmail()});
+        csv.writeNext(new String[]{"Identification", "Role",           dto.getRole()});
+        csv.writeNext(new String[]{"Identification", "License Type",   dto.getLicenseType()});
+        csv.writeNext(new String[]{"Identification", "License Number", dto.getLicenseNumber()});
+        csv.writeNext(new String[]{"Identification", "Birth Date",     dto.getBirthDate()});
 
-        csv.writeNext(new String[]{"Identificação", "Nome",          dto.getName()});
-        csv.writeNext(new String[]{"Identificação", "Matrícula",     str(dto.getRegistration())});
-        csv.writeNext(new String[]{"Identificação", "CPF",           dto.getCpf()});
-        csv.writeNext(new String[]{"Identificação", "Email",         dto.getEmail()});
-        csv.writeNext(new String[]{"Identificação", "Cargo",         dto.getRole()});
-        csv.writeNext(new String[]{"Identificação", "CNH",           dto.getDriversLicense()});
-        csv.writeNext(new String[]{"Identificação", "Nº Habilitação",dto.getLicenseNumber()});
-        csv.writeNext(new String[]{"Identificação", "Nascimento",    dto.getBirthDate()});
+        csv.writeNext(new String[]{"Status", "Active",
+                Boolean.TRUE.equals(dto.getActive()) ? "Yes" : "No"});
+        csv.writeNext(new String[]{"Status", "Open Departure",
+                Boolean.TRUE.equals(dto.getOpenDeparture()) ? "Yes" : "No"});
 
-        csv.writeNext(new String[]{"Status", "Ativo",
-                Boolean.TRUE.equals(dto.getActive()) ? "Sim" : "Não"});
-        csv.writeNext(new String[]{"Status", "Saída em aberto",
-                Boolean.TRUE.equals(dto.getOpenDeparture()) ? "Sim" : "Não"});
+        csv.writeNext(new String[]{"Behavior", "Avg Duration (h)",       fmt(dto.getAvgDurationHours())});
+        csv.writeNext(new String[]{"Behavior", "Longest Departure (km)", fmt(dto.getLongestKm())});
+        csv.writeNext(new String[]{"Behavior", "Departures/week",        fmt(dto.getDepartureFrequencyPerWeek())});
 
-        csv.writeNext(new String[]{"Comportamento", "Tempo médio (h)",     fmt(dto.getAvgDepartureDurationHours())});
-        csv.writeNext(new String[]{"Comportamento", "Maior saída (mileage)",    fmt(dto.getLongestDepartureKm())});
-        csv.writeNext(new String[]{"Comportamento", "Freq. saídas/semana", fmt(dto.getDepartureFrequencyPerWeek())});
+        if (dto.getDeparturesByPeriod() != null)
+            for (Map.Entry<String, Long> e : dto.getDeparturesByPeriod().entrySet())
+                csv.writeNext(new String[]{"Departures/period", e.getKey(), str(e.getValue())});
 
-        if (dto.getDeparturesByPeriod() != null) {
-            for (Map.Entry<String, Long> e : dto.getDeparturesByPeriod().entrySet()) {
-                csv.writeNext(new String[]{"Saídas/período", e.getKey(), str(e.getValue())});
-            }
-        }
-        if (dto.getSpendingByPeriod() != null) {
-            for (Map.Entry<String, BigDecimal> e : dto.getSpendingByPeriod().entrySet()) {
-                csv.writeNext(new String[]{"Gasto/período", e.getKey(), fmt(e.getValue())});
-            }
-        }
+        if (dto.getSpendingByPeriod() != null)
+            for (Map.Entry<String, BigDecimal> e : dto.getSpendingByPeriod().entrySet())
+                csv.writeNext(new String[]{"Spending/period", e.getKey(), fmt(e.getValue())});
 
         if (dto.getDocuments() != null) {
-            csv.writeNext(new String[]{"Documentos", "Recebidos", str(dto.getDocuments().getReceived())});
-            csv.writeNext(new String[]{"Documentos", "Lidos",     str(dto.getDocuments().getRead())});
-            csv.writeNext(new String[]{"Documentos", "Baixados",  str(dto.getDocuments().getDownloaded())});
+            csv.writeNext(new String[]{"Documents", "Received",   str(dto.getDocuments().getReceived())});
+            csv.writeNext(new String[]{"Documents", "Read",       str(dto.getDocuments().getRead())});
+            csv.writeNext(new String[]{"Documents", "Downloaded", str(dto.getDocuments().getDownloaded())});
         }
 
-        if (dto.getDestinations() != null) {
-            for (FrequentDestinationDTO d : dto.getDestinations()) {
-                csv.writeNext(new String[]{"Destinos", d.getLocation(), str(d.getQuantity())});
-            }
-        }
+        if (dto.getDestinations() != null)
+            for (FrequentDestinationDTO d : dto.getDestinations())
+                csv.writeNext(new String[]{"Destinations", d.getLocation(), str(d.getQuantity())});
 
         csv.close();
         return baos.toByteArray();
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  Excel — Apache POI (XLSX)
-    // ════════════════════════════════════════════════════════════════════════
-
-    public ResponseEntity<byte[]> exportarExcelResponse(TechnicianReportDTO dto, Integer registration) {
+    // ── Excel ─────────────────────────────────────────────────────
+    public ResponseEntity<byte[]> exportExcelResponse(TechnicianReportDTO dto, Integer registration) {
         try {
-            byte[] bytes = gerarExcel(dto);
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(
                             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"relatorio_tecnico_" + registration + ".xlsx\"")
-                    .body(bytes);
+                            "attachment; filename=\"technician_report_" + registration + ".xlsx\"")
+                    .body(generateExcel(dto));
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao gerar Excel: " + e.getMessage(), e);
+            throw new RuntimeException("Error generating Excel: " + e.getMessage(), e);
         }
     }
 
-    private byte[] gerarExcel(TechnicianReportDTO dto) throws IOException {
+    private byte[] generateExcel(TechnicianReportDTO dto) throws IOException {
         Workbook workbook = new XSSFWorkbook();
-        CellStyle cabecalho = criarEstiloCabecalho(workbook);
+        CellStyle headerStyle = createHeaderStyle(workbook);
 
-        // Aba 1 — Identificação e Status
-        Sheet sheId = workbook.createSheet("Identificação");
-        addXlsRow(sheId, cabecalho, 0, "Campo", "Valor");
-        addXlsRow(sheId, null, 1, "Nome",           dto.getName());
-        addXlsRow(sheId, null, 2, "Matrícula",      str(dto.getRegistration()));
-        addXlsRow(sheId, null, 3, "CPF",            dto.getCpf());
-        addXlsRow(sheId, null, 4, "Email",          dto.getEmail());
-        addXlsRow(sheId, null, 5, "Cargo",          dto.getRole());
-        addXlsRow(sheId, null, 6, "CNH",            dto.getDriversLicense());
-        addXlsRow(sheId, null, 7, "Nº Habilitação", dto.getLicenseNumber());
-        addXlsRow(sheId, null, 8, "Nascimento",     dto.getBirthDate());
-        addXlsRow(sheId, null, 9, "Ativo",
-                Boolean.TRUE.equals(dto.getActive()) ? "Sim" : "Não");
-        addXlsRow(sheId, null, 10, "Saída em aberto",
-                Boolean.TRUE.equals(dto.getOpenDeparture()) ? "Sim" : "Não");
-        sheId.autoSizeColumn(0); sheId.autoSizeColumn(1);
+        // Aba 1 — Identification
+        Sheet shId = workbook.createSheet("Identification");
+        addXlsRow(shId, headerStyle, 0, "Field", "Value");
+        addXlsRow(shId, null, 1,  "Name",           dto.getName());
+        addXlsRow(shId, null, 2,  "Registration",   str(dto.getRegistration()));
+        addXlsRow(shId, null, 3,  "CPF",            dto.getCpf());
+        addXlsRow(shId, null, 4,  "Email",          dto.getEmail());
+        addXlsRow(shId, null, 5,  "Role",           dto.getRole());
+        addXlsRow(shId, null, 6,  "License Type",   dto.getLicenseType());
+        addXlsRow(shId, null, 7,  "License Number", dto.getLicenseNumber());
+        addXlsRow(shId, null, 8,  "Birth Date",     dto.getBirthDate());
+        addXlsRow(shId, null, 9,  "Active",         Boolean.TRUE.equals(dto.getActive()) ? "Yes" : "No");
+        addXlsRow(shId, null, 10, "Open Departure", Boolean.TRUE.equals(dto.getOpenDeparture()) ? "Yes" : "No");
+        shId.autoSizeColumn(0); shId.autoSizeColumn(1);
 
-        // Aba 2 — Comportamento
-        Sheet sheComp = workbook.createSheet("Comportamento");
-        addXlsRow(sheComp, cabecalho, 0, "Indicador", "Valor");
-        addXlsRow(sheComp, null, 1, "Tempo médio saída (h)",  fmt(dto.getAvgDepartureDurationHours()));
-        addXlsRow(sheComp, null, 2, "Maior saída (mileage)",       fmt(dto.getLongestDepartureKm()));
-        addXlsRow(sheComp, null, 3, "Maior duração (h)",      fmt(dto.getLongestDepartureDurationHours()));
-        addXlsRow(sheComp, null, 4, "Freq. saídas/semana",    fmt(dto.getDepartureFrequencyPerWeek()));
-        sheComp.autoSizeColumn(0); sheComp.autoSizeColumn(1);
+        // Aba 2 — Behavior
+        Sheet shBeh = workbook.createSheet("Behavior");
+        addXlsRow(shBeh, headerStyle, 0, "Indicator", "Value");
+        addXlsRow(shBeh, null, 1, "Avg Duration (h)",       fmt(dto.getAvgDurationHours()));
+        addXlsRow(shBeh, null, 2, "Longest Departure (km)", fmt(dto.getLongestKm()));
+        addXlsRow(shBeh, null, 3, "Longest Duration (h)",   fmt(dto.getLongestDurationHours()));
+        addXlsRow(shBeh, null, 4, "Departures/week",        fmt(dto.getDepartureFrequencyPerWeek()));
+        shBeh.autoSizeColumn(0); shBeh.autoSizeColumn(1);
 
-        // Aba 3 — Saídas e KM por período
+        // Aba 3 — Departures by period
         if (dto.getDeparturesByPeriod() != null) {
-            Sheet sheUso = workbook.createSheet("Saídas por Período");
-            addXlsRow(sheUso, cabecalho, 0, "Período", "Saídas", "KM");
+            Sheet shDep = workbook.createSheet("Departures by Period");
+            addXlsRow(shDep, headerStyle, 0, "Period", "Departures", "KM");
             int r = 1;
             for (String p : dto.getDeparturesByPeriod().keySet()) {
-                Row row = sheUso.createRow(r++);
+                Row row = shDep.createRow(r++);
                 row.createCell(0).setCellValue(p);
                 row.createCell(1).setCellValue(str(dto.getDeparturesByPeriod().get(p)));
                 BigDecimal km = dto.getKmByPeriod() != null ? dto.getKmByPeriod().get(p) : null;
                 row.createCell(2).setCellValue(fmt(km));
             }
-            sheUso.autoSizeColumn(0); sheUso.autoSizeColumn(1); sheUso.autoSizeColumn(2);
+            shDep.autoSizeColumn(0); shDep.autoSizeColumn(1); shDep.autoSizeColumn(2);
         }
 
-        // Aba 4 — Financeiro por período
+        // Aba 4 — Spending by period
         if (dto.getSpendingByPeriod() != null) {
-            Sheet sheFin = workbook.createSheet("Financeiro por Período");
-            addXlsRow(sheFin, cabecalho, 0, "Período", "Gasto (R$)", "Abastecimentos");
+            Sheet shFin = workbook.createSheet("Spending by Period");
+            addXlsRow(shFin, headerStyle, 0, "Period", "Spending (R$)", "Fuelings");
             int r = 1;
             for (String p : dto.getSpendingByPeriod().keySet()) {
-                Row row = sheFin.createRow(r++);
+                Row row = shFin.createRow(r++);
                 row.createCell(0).setCellValue(p);
                 row.createCell(1).setCellValue(fmt(dto.getSpendingByPeriod().get(p)));
-                Long abast = dto.getRefuelsByPeriod() != null ? dto.getRefuelsByPeriod().get(p) : null;
-                row.createCell(2).setCellValue(str(abast));
+                Long f = dto.getFuelingsByPeriod() != null ? dto.getFuelingsByPeriod().get(p) : null;
+                row.createCell(2).setCellValue(str(f));
             }
-            sheFin.autoSizeColumn(0); sheFin.autoSizeColumn(1); sheFin.autoSizeColumn(2);
+            shFin.autoSizeColumn(0); shFin.autoSizeColumn(1); shFin.autoSizeColumn(2);
         }
 
-        // Aba 5 — Destinos
+        // Aba 5 — Destinations
         if (dto.getDestinations() != null && !dto.getDestinations().isEmpty()) {
-            Sheet sheDest = workbook.createSheet("Destinos");
-            addXlsRow(sheDest, cabecalho, 0, "Local", "Visitas");
+            Sheet shDest = workbook.createSheet("Destinations");
+            addXlsRow(shDest, headerStyle, 0, "Location", "Visits");
             int r = 1;
             for (FrequentDestinationDTO d : dto.getDestinations()) {
-                Row row = sheDest.createRow(r++);
+                Row row = shDest.createRow(r++);
                 row.createCell(0).setCellValue(d.getLocation());
                 row.createCell(1).setCellValue(d.getQuantity());
             }
-            sheDest.autoSizeColumn(0); sheDest.autoSizeColumn(1);
+            shDest.autoSizeColumn(0); shDest.autoSizeColumn(1);
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -297,7 +274,7 @@ public class ReportExportService {
         return baos.toByteArray();
     }
 
-    private CellStyle criarEstiloCabecalho(Workbook wb) {
+    private CellStyle createHeaderStyle(Workbook wb) {
         CellStyle style = wb.createCellStyle();
         Font font = wb.createFont();
         font.setBold(true);
@@ -310,76 +287,69 @@ public class ReportExportService {
     private void addXlsRow(Sheet sheet, CellStyle style, int rowNum, String... values) {
         Row row = sheet.createRow(rowNum);
         for (int i = 0; i < values.length; i++) {
-            // 'var' evita ambiguidade entre org.apache.poi.ss.usermodel.Cell
-            // e com.itextpdf.layout.element.Cell (ambas importadas no mesmo arquivo)
             var cell = row.createCell(i);
             cell.setCellValue(values[i] != null ? values[i] : "");
             if (style != null) cell.setCellStyle(style);
         }
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    //  DOCX — Apache POI
-    // ════════════════════════════════════════════════════════════════════════
-
-    public ResponseEntity<byte[]> exportarDocxResponse(TechnicianReportDTO dto, Integer registration) {
+    // ── DOCX ──────────────────────────────────────────────────────
+    public ResponseEntity<byte[]> exportDocxResponse(TechnicianReportDTO dto, Integer registration) {
         try {
-            byte[] bytes = gerarDocx(dto);
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(
                             "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"relatorio_tecnico_" + registration + ".docx\"")
-                    .body(bytes);
+                            "attachment; filename=\"technician_report_" + registration + ".docx\"")
+                    .body(generateDocx(dto));
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao gerar DOCX: " + e.getMessage(), e);
+            throw new RuntimeException("Error generating DOCX: " + e.getMessage(), e);
         }
     }
 
-    private byte[] gerarDocx(TechnicianReportDTO dto) throws IOException {
+    private byte[] generateDocx(TechnicianReportDTO dto) throws IOException {
         XWPFDocument doc = new XWPFDocument();
 
-        addDocxTitulo(doc, "IPEM Control — Relatório de Técnico", 20);
+        addDocxTitle(doc, "IPEM Control — Technician Report", 20);
         addDocxParagraph(doc, " ", false, 11);
 
-        addDocxTitulo(doc, "1. Identificação", 14);
-        addDocxField(doc, "Nome",           dto.getName());
-        addDocxField(doc, "Matrícula",      str(dto.getRegistration()));
+        addDocxTitle(doc, "1. Identification", 14);
+        addDocxField(doc, "Name",           dto.getName());
+        addDocxField(doc, "Registration",   str(dto.getRegistration()));
         addDocxField(doc, "CPF",            dto.getCpf());
         addDocxField(doc, "Email",          dto.getEmail());
-        addDocxField(doc, "Cargo",          dto.getRole());
-        addDocxField(doc, "CNH",            dto.getDriversLicense());
-        addDocxField(doc, "Nº Habilitação", dto.getLicenseNumber());
-        addDocxField(doc, "Nascimento",     dto.getBirthDate());
+        addDocxField(doc, "Role",           dto.getRole());
+        addDocxField(doc, "License Type",   dto.getLicenseType());
+        addDocxField(doc, "License Number", dto.getLicenseNumber());
+        addDocxField(doc, "Birth Date",     dto.getBirthDate());
         addDocxParagraph(doc, " ", false, 11);
 
-        addDocxTitulo(doc, "2. Status Operacional", 14);
-        addDocxField(doc, "Ativo",           Boolean.TRUE.equals(dto.getActive()) ? "Sim" : "Não");
-        addDocxField(doc, "Saída em aberto", Boolean.TRUE.equals(dto.getOpenDeparture()) ? "Sim" : "Não");
-        addDocxField(doc, "Data cadastro",   dto.getRegistrationDate());
+        addDocxTitle(doc, "2. Operational Status", 14);
+        addDocxField(doc, "Active",        Boolean.TRUE.equals(dto.getActive()) ? "Yes" : "No");
+        addDocxField(doc, "Open Departure",Boolean.TRUE.equals(dto.getOpenDeparture()) ? "Yes" : "No");
+        addDocxField(doc, "Registered At", dto.getRegistrationDate());
         addDocxParagraph(doc, " ", false, 11);
 
-        addDocxTitulo(doc, "4. Comportamento Operacional", 14);
-        addDocxField(doc, "Tempo médio saída (h)", fmt(dto.getAvgDepartureDurationHours()));
-        addDocxField(doc, "Maior saída (mileage)",      fmt(dto.getLongestDepartureKm()));
-        addDocxField(doc, "Maior duração (h)",     fmt(dto.getLongestDepartureDurationHours()));
-        addDocxField(doc, "Freq. saídas/semana",   fmt(dto.getDepartureFrequencyPerWeek()));
+        addDocxTitle(doc, "3. Operational Behavior", 14);
+        addDocxField(doc, "Avg Duration (h)",       fmt(dto.getAvgDurationHours()));
+        addDocxField(doc, "Longest Departure (km)", fmt(dto.getLongestKm()));
+        addDocxField(doc, "Longest Duration (h)",   fmt(dto.getLongestDurationHours()));
+        addDocxField(doc, "Departures/week",        fmt(dto.getDepartureFrequencyPerWeek()));
         addDocxParagraph(doc, " ", false, 11);
 
         if (dto.getDocuments() != null) {
-            addDocxTitulo(doc, "7. Documentos", 14);
-            addDocxField(doc, "Recebidos", str(dto.getDocuments().getReceived()));
-            addDocxField(doc, "Lidos",     str(dto.getDocuments().getRead()));
-            addDocxField(doc, "Baixados",  str(dto.getDocuments().getDownloaded()));
+            addDocxTitle(doc, "4. Documents", 14);
+            addDocxField(doc, "Received",   str(dto.getDocuments().getReceived()));
+            addDocxField(doc, "Read",       str(dto.getDocuments().getRead()));
+            addDocxField(doc, "Downloaded", str(dto.getDocuments().getDownloaded()));
             addDocxParagraph(doc, " ", false, 11);
         }
 
         if (dto.getDestinations() != null && !dto.getDestinations().isEmpty()) {
-            addDocxTitulo(doc, "Destinos Mais Frequentes", 14);
-            for (FrequentDestinationDTO d : dto.getDestinations()) {
-                addDocxParagraph(doc, "• " + d.getLocation() + " — " + d.getQuantity() + " visita(s)",
+            addDocxTitle(doc, "Top Destinations", 14);
+            for (FrequentDestinationDTO d : dto.getDestinations())
+                addDocxParagraph(doc, "• " + d.getLocation() + " — " + d.getQuantity() + " visit(s)",
                         false, 11);
-            }
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -388,35 +358,26 @@ public class ReportExportService {
         return baos.toByteArray();
     }
 
-    private void addDocxTitulo(XWPFDocument doc, String text, int size) {
-        XWPFParagraph p = doc.createParagraph();
-        XWPFRun run = p.createRun();
-        run.setText(text);
-        run.setBold(true);
-        run.setFontSize(size);
+    private void addDocxTitle(XWPFDocument doc, String text, int size) {
+        XWPFRun run = doc.createParagraph().createRun();
+        run.setText(text); run.setBold(true); run.setFontSize(size);
     }
 
     private void addDocxParagraph(XWPFDocument doc, String text, boolean bold, int size) {
-        XWPFParagraph p = doc.createParagraph();
-        XWPFRun run = p.createRun();
-        run.setText(text != null ? text : "");
-        run.setBold(bold);
-        run.setFontSize(size);
+        XWPFRun run = doc.createParagraph().createRun();
+        run.setText(text != null ? text : ""); run.setBold(bold); run.setFontSize(size);
     }
 
     private void addDocxField(XWPFDocument doc, String label, String value) {
         XWPFParagraph p = doc.createParagraph();
         XWPFRun bold = p.createRun();
-        bold.setBold(true);
-        bold.setText(label + ": ");
+        bold.setBold(true); bold.setText(label + ": ");
         XWPFRun val = p.createRun();
         val.setText(value != null ? value : "—");
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
-
+    // ── Helpers ───────────────────────────────────────────────────
     private String fmt(BigDecimal v) { return v != null ? v.toPlainString() : "0"; }
     private String fmt(Double v)     { return v != null ? String.format("%.2f", v) : "0"; }
     private String str(Object v)     { return v != null ? v.toString() : ""; }
 }
-

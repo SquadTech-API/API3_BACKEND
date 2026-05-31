@@ -1,60 +1,53 @@
 package br.com.edu.fatec.ipemControl.service;
 
 import br.com.edu.fatec.ipemControl.dto.UsageHistoryCardDTO;
-import br.com.edu.fatec.ipemControl.entity.DepartureLog;
-import br.com.edu.fatec.ipemControl.entity.Fueling;
+import br.com.edu.fatec.ipemControl.repository.DepartureLogRepository;
 import br.com.edu.fatec.ipemControl.repository.FuelingRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UsageHistoryService {
 
-    private final ExitRecordRepository exitRecordRepository;
-    private final FuelingRepository refuelingRepository;
-
-    public UsageHistoryService(ExitRecordRepository exitRecordRepository,
-                               FuelingRepository refuelingRepository) {
-        this.exitRecordRepository = exitRecordRepository;
-        this.refuelingRepository = refuelingRepository;
-    }
+    private final DepartureLogRepository departureLogRepository;
+    private final FuelingRepository fuelingRepository;
 
     public List<UsageHistoryCardDTO> getUsageHistoryByVehicle(Integer vehicleId) {
-        List<DepartureLog> departures = exitRecordRepository
-                .findByVehicleVehicleIdAndDateTimeDepartureBetween(
+        return departureLogRepository
+                .findByVehicleIdAndDepartureDatetimeBetween(
                         vehicleId,
-                        java.time.LocalDateTime.now().minusYears(5),
-                        java.time.LocalDateTime.now()
-                );
-
-        return departures.stream()
+                        LocalDateTime.now().minusYears(5),
+                        LocalDateTime.now()
+                )
+                .stream()
                 .sorted((a, b) -> {
-                    if (a.getDateTimeDeparture() == null) return 1;
-                    if (b.getDateTimeDeparture() == null) return -1;
-                    return b.getDateTimeDeparture().compareTo(a.getDateTimeDeparture());
+                    if (a.getDepartureDatetime() == null) return 1;
+                    if (b.getDepartureDatetime() == null) return -1;
+                    return b.getDepartureDatetime().compareTo(a.getDepartureDatetime());
                 })
-                .map(departureLog -> {
-                    String driver = departureLog.getUser() != null
-                            ? departureLog.getUser().getName() : "-";
+                .map(d -> {
+                    String driver = d.getUser() != null
+                            ? d.getUser().getFullName() : "-";
 
-                    String serviceType = departureLog.getServiceType() != null
-                            ? departureLog.getServiceType().getServiceName() : "-";
+                    String serviceType = d.getServiceType() != null
+                            ? d.getServiceType().getServiceName() : "-";
 
-                    BigDecimal drivenKm = departureLog.getDrivenKm() != null
-                            ? departureLog.getDrivenKm() : BigDecimal.ZERO;
+                    BigDecimal drivenMileage = d.getDrivenMileage() != null
+                            ? d.getDrivenMileage() : BigDecimal.ZERO;
 
-                    List<Fueling> fuelings =
-                            refuelingRepository.findByDepartureLog(departureLog);
-                    boolean wasFueled = !fuelings.isEmpty();
+                    boolean wasFueled = !fuelingRepository.findByDepartureLog(d).isEmpty();
 
                     return new UsageHistoryCardDTO(
                             driver,
-                            departureLog.getDateTimeDeparture(),
+                            d.getDepartureDatetime(),
                             serviceType,
-                            drivenKm,
+                            drivenMileage,
                             wasFueled
                     );
                 })

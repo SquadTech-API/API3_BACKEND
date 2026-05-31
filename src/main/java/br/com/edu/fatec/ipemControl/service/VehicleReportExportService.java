@@ -26,27 +26,23 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class VehicleReportExportService {
 
-    public ResponseEntity<byte[]> exportarPdf(VehicleReportDTO dto, Integer vehicleId) {
+    public ResponseEntity<byte[]> exportPdf(VehicleReportDTO dto, Integer vehicleId) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PdfWriter writer = new PdfWriter(baos);
-            PdfDocument pdfDoc = new PdfDocument(writer);
-            Document document = new Document(pdfDoc);
-
-            document.add(new Paragraph("RELATÓRIO DE VEÍCULO").setBold().setFontSize(18));
+            Document document = new Document(new PdfDocument(new PdfWriter(baos)));
+            document.add(new Paragraph("VEHICLE REPORT — IPEM CONTROL").setBold().setFontSize(18));
 
             Table table = new Table(UnitValue.createPercentArray(new float[]{40, 60}))
                     .useAllAvailableWidth();
-
-            addRow(table, "Prefixo", dto.getPrefix());
-            addRow(table, "Placa", dto.getLicensePlate());
-            addRow(table, "Marca", dto.getBrand());
-            addRow(table, "Modelo", dto.getModel());
-            addRow(table, "Ano", str(dto.getYear()));
-            addRow(table, "Combustível", dto.getFuelType());
-            addRow(table, "KM Rodado", fmt(dto.getMileageDriven()));
-            addRow(table, "Consumo Médio", fmt(dto.getAvgConsumption()));
-            addRow(table, "Total de Saídas", str(dto.getTotalDepartures()));
+            addRow(table, "Prefix",          dto.getPrefix());
+            addRow(table, "License Plate",   dto.getLicensePlate());
+            addRow(table, "Brand",           dto.getBrand());
+            addRow(table, "Model",           dto.getModel());
+            addRow(table, "Year",            str(dto.getManufactureYear()));
+            addRow(table, "Fuel Type",       dto.getFuelTypeName());
+            addRow(table, "Total Mileage",   fmt(dto.getMileageDriven()));
+            addRow(table, "Avg Consumption", fmt(dto.getAvgConsumption()));
+            addRow(table, "Total Departures",str(dto.getTotalDepartures()));
 
             document.add(table);
             document.close();
@@ -54,126 +50,80 @@ public class VehicleReportExportService {
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_PDF)
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=relatorio_veiculo_" + vehicleId + ".pdf")
+                            "attachment; filename=vehicle_report_" + vehicleId + ".pdf")
                     .body(baos.toByteArray());
-
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao gerar PDF", e);
+            throw new RuntimeException("Error generating PDF", e);
         }
     }
 
-    public ResponseEntity<byte[]> exportarCsv(VehicleReportDTO dto, Integer vehicleId) {
+    public ResponseEntity<byte[]> exportCsv(VehicleReportDTO dto, Integer vehicleId) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            OutputStreamWriter writer = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
-            CSVWriter csv = new CSVWriter(writer);
-
-            csv.writeNext(new String[]{"Campo", "Valor"});
-            csv.writeNext(new String[]{"Prefixo", dto.getPrefix()});
-            csv.writeNext(new String[]{"Placa", dto.getLicensePlate()});
-            csv.writeNext(new String[]{"Marca", dto.getBrand()});
-            csv.writeNext(new String[]{"Modelo", dto.getModel()});
-            csv.writeNext(new String[]{"Ano", str(dto.getYear())});
-            csv.writeNext(new String[]{"Combustível", dto.getFuelType()});
-            csv.writeNext(new String[]{"KM Rodado", fmt(dto.getMileageDriven())});
-            csv.writeNext(new String[]{"Consumo Médio", fmt(dto.getAvgConsumption())});
-            csv.writeNext(new String[]{"Total de Saídas", str(dto.getTotalDepartures())});
-
+            CSVWriter csv = new CSVWriter(new OutputStreamWriter(baos, StandardCharsets.UTF_8));
+            csv.writeNext(new String[]{"Field", "Value"});
+            csv.writeNext(new String[]{"Prefix",          dto.getPrefix()});
+            csv.writeNext(new String[]{"License Plate",   dto.getLicensePlate()});
+            csv.writeNext(new String[]{"Brand",           dto.getBrand()});
+            csv.writeNext(new String[]{"Model",           dto.getModel()});
+            csv.writeNext(new String[]{"Year",            str(dto.getManufactureYear())});
+            csv.writeNext(new String[]{"Fuel Type",       dto.getFuelTypeName()});
+            csv.writeNext(new String[]{"Total Mileage",   fmt(dto.getMileageDriven())});
+            csv.writeNext(new String[]{"Avg Consumption", fmt(dto.getAvgConsumption())});
+            csv.writeNext(new String[]{"Total Departures",str(dto.getTotalDepartures())});
             csv.close();
 
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType("text/csv"))
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=relatorio_veiculo_" + vehicleId + ".csv")
+                            "attachment; filename=vehicle_report_" + vehicleId + ".csv")
                     .body(baos.toByteArray());
-
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao gerar CSV", e);
+            throw new RuntimeException("Error generating CSV", e);
         }
     }
 
-    public ResponseEntity<byte[]> exportarExcel(VehicleReportDTO dto, Integer vehicleId) {
+    public ResponseEntity<byte[]> exportExcel(VehicleReportDTO dto, Integer vehicleId) {
         try {
             Workbook workbook = new XSSFWorkbook();
-            Sheet sheet = workbook.createSheet("Veículo");
-
-            addXlsRow(sheet, 0, "Campo", "Valor");
-            addXlsRow(sheet, 1, "Prefixo", dto.getPrefix());
-            addXlsRow(sheet, 2, "Placa", dto.getLicensePlate());
-            addXlsRow(sheet, 3, "Marca", dto.getBrand());
-            addXlsRow(sheet, 4, "Modelo", dto.getModel());
-            addXlsRow(sheet, 5, "Ano", str(dto.getYear()));
-            addXlsRow(sheet, 6, "Combustível", dto.getFuelType());
-            addXlsRow(sheet, 7, "KM Rodado", fmt(dto.getMileageDriven()));
-            addXlsRow(sheet, 8, "Consumo Médio", fmt(dto.getAvgConsumption()));
-            addXlsRow(sheet, 9, "Total de Saídas", str(dto.getTotalDepartures()));
+            Sheet sheet = workbook.createSheet("Vehicle");
+            addXlsRow(sheet, 0, "Field",           "Value");
+            addXlsRow(sheet, 1, "Prefix",           dto.getPrefix());
+            addXlsRow(sheet, 2, "License Plate",    dto.getLicensePlate());
+            addXlsRow(sheet, 3, "Brand",            dto.getBrand());
+            addXlsRow(sheet, 4, "Model",            dto.getModel());
+            addXlsRow(sheet, 5, "Year",             str(dto.getManufactureYear()));
+            addXlsRow(sheet, 6, "Fuel Type",        dto.getFuelTypeName());
+            addXlsRow(sheet, 7, "Total Mileage",    fmt(dto.getMileageDriven()));
+            addXlsRow(sheet, 8, "Avg Consumption",  fmt(dto.getAvgConsumption()));
+            addXlsRow(sheet, 9, "Total Departures", str(dto.getTotalDepartures()));
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             workbook.write(baos);
             workbook.close();
 
             return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .contentType(MediaType.parseMediaType(
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=relatorio_veiculo_" + vehicleId + ".xlsx")
+                            "attachment; filename=vehicle_report_" + vehicleId + ".xlsx")
                     .body(baos.toByteArray());
-
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao gerar Excel", e);
+            throw new RuntimeException("Error generating Excel", e);
         }
     }
 
-    public ResponseEntity<byte[]> exportarDocx(VehicleReportDTO dto, Integer vehicleId) {
-        try {
-            XWPFDocument doc = new XWPFDocument();
-
-            addDocxField(doc, "Prefixo", dto.getPrefix());
-            addDocxField(doc, "Placa", dto.getLicensePlate());
-            addDocxField(doc, "Marca", dto.getBrand());
-            addDocxField(doc, "Modelo", dto.getModel());
-            addDocxField(doc, "Ano", str(dto.getYear()));
-            addDocxField(doc, "Combustível", dto.getFuelType());
-            addDocxField(doc, "KM Rodado", fmt(dto.getMileageDriven()));
-            addDocxField(doc, "Consumo Médio", fmt(dto.getAvgConsumption()));
-            addDocxField(doc, "Total de Saídas", str(dto.getTotalDepartures()));
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            doc.write(baos);
-            doc.close();
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
-                    .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=relatorio_veiculo_" + vehicleId + ".docx")
-                    .body(baos.toByteArray());
-
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao gerar DOCX", e);
-        }
+    private void addRow(Table table, String field, String value) {
+        table.addCell(new Cell().add(new Paragraph(field)));
+        table.addCell(new Cell().add(new Paragraph(value != null ? value : "")));
     }
 
-    private void addRow(Table table, String campo, String valor) {
-        table.addCell(new Cell().add(new Paragraph(campo)));
-        table.addCell(new Cell().add(new Paragraph(valor)));
-    }
-
-    private void addXlsRow(Sheet sheet, int rowNum, String campo, String valor) {
+    private void addXlsRow(Sheet sheet, int rowNum, String field, String value) {
         Row row = sheet.createRow(rowNum);
-        row.createCell(0).setCellValue(campo);
-        row.createCell(1).setCellValue(valor);
+        row.createCell(0).setCellValue(field);
+        row.createCell(1).setCellValue(value != null ? value : "");
     }
 
-    private void addDocxField(XWPFDocument doc, String campo, String valor) {
-        var p = doc.createParagraph();
-        var run = p.createRun();
-        run.setText(campo + ": " + valor);
-    }
-
-    private String fmt(Double valor) {
-        return valor != null ? String.format("%.2f", valor) : "0.00";
-    }
-
-    private String str(Object valor) {
-        return valor != null ? valor.toString() : "";
-    }
+    private String fmt(Double v) { return v != null ? String.format("%.2f", v) : "0.00"; }
+    private String str(Object v) { return v != null ? v.toString() : ""; }
 }

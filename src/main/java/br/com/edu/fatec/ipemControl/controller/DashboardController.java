@@ -1,7 +1,6 @@
 package br.com.edu.fatec.ipemControl.controller;
 
 import br.com.edu.fatec.ipemControl.dto.DashboardChartDTO;
-import br.com.edu.fatec.ipemControl.service.DashboardService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

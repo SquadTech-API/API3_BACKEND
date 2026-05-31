@@ -5,7 +5,9 @@ import br.com.edu.fatec.ipemControl.dto.DailyReportDTO;
 import br.com.edu.fatec.ipemControl.entity.DepartureLog;
 import br.com.edu.fatec.ipemControl.entity.User;
 import br.com.edu.fatec.ipemControl.exception.ResourceNotFoundException;
+import br.com.edu.fatec.ipemControl.repository.DepartureLogRepository;
 import br.com.edu.fatec.ipemControl.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,46 +18,41 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ReportService {
 
-    private final ExitRecordRepository exitRecordRepository;
+    private final DepartureLogRepository departureLogRepository;
     private final UserRepository userRepository;
-
-    public ReportService(ExitRecordRepository exitRecordRepository,
-                         UserRepository userRepository) {
-        this.exitRecordRepository = exitRecordRepository;
-        this.userRepository = userRepository;
-    }
 
     public DailyReportDTO generateDailyReportByTechnician(Integer registration, LocalDate date) {
 
         User user = userRepository.findByRegistration(registration)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
 
         LocalDateTime dayStart = date.atStartOfDay();
-        LocalDateTime dayEnd = date.atTime(LocalTime.MAX);
+        LocalDateTime dayEnd   = date.atTime(LocalTime.MAX);
 
-        List<DepartureLog> dailyDepartures = exitRecordRepository
-                .findByUserRegistrationAndDateTimeDepartureBetween(registration, dayStart, dayEnd);
+        List<DepartureLog> dailyDepartures = departureLogRepository
+                .findByUserRegistrationAndDepartureDatetimeBetween(registration, dayStart, dayEnd);
 
         BigDecimal totalKm = dailyDepartures.stream()
-                .map(departureLog -> departureLog.getDrivenKm() != null ? departureLog.getDrivenKm() : BigDecimal.ZERO)
+                .map(d -> d.getDrivenMileage() != null ? d.getDrivenMileage() : BigDecimal.ZERO)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         List<DailyActivityDTO> activities = dailyDepartures.stream()
-                .map(departureLog -> new DailyActivityDTO (
-                        departureLog.getVehicle().getPrefix(),
-                        departureLog.getDestination(),
-                        departureLog.getDateTimeDeparture(),
-                        departureLog.getReturnDate(),
-                        departureLog.getDrivenKm(),
-                        departureLog.getStatus()
+                .map(d -> new DailyActivityDTO(
+                        d.getVehicle().getPrefix(),
+                        d.getDestination(),
+                        d.getDepartureDatetime(),
+                        d.getReturnDatetime(),
+                        d.getDrivenMileage(),
+                        d.getStatus()
                 ))
                 .collect(Collectors.toList());
 
         return new DailyReportDTO(
                 user.getRegistration(),
-                user.getName(),
+                user.getFullName(),
                 date,
                 activities.size(),
                 totalKm,

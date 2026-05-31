@@ -2,7 +2,6 @@ package br.com.edu.fatec.ipemControl.controller;
 
 import br.com.edu.fatec.ipemControl.dto.ServiceOrderDTO;
 import br.com.edu.fatec.ipemControl.dto.ServiceOrderResponseDTO;
-import br.com.edu.fatec.ipemControl.service.ServiceOrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
