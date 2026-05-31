@@ -1,18 +1,19 @@
 package br.com.edu.fatec.ipemControl.dto;
 
-import br.com.edu.fatec.ipemControl.entity.DepartureLog;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class MonthlyUsageReportDTO {
-
     private BigDecimal totalMileage;
     private Integer totalTrips;
-    private BigDecimal totalSpending;   // Adicionado para o R$ do Dashboard
-    private BigDecimal totalLiters;  // Adicionado para o L do Dashboard
-    private List<DepartureLog> details;
-    }
+    private BigDecimal totalSpending;
+    private BigDecimal totalLiters;
+    private List<DepartureLogResponseDTO> details;
+}

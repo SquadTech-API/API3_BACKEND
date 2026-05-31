@@ -6,13 +6,14 @@ import java.time.LocalDateTime;
 
 @Data
 public class FuelingDTO {
-    private Integer tripId;
-    private LocalDateTime dateTime;
-    private String fuelType;
-    private BigDecimal litersQuantity;
-    private BigDecimal totalAmount;
-    private BigDecimal fuelingMileage;
-    private String gasStationName;
-    private String gasStationCity;
+    private Integer departureLogId;
+    private Integer fuelTypeId;
+    private LocalDateTime fuelingDatetime;
+    private BigDecimal liters;
+    private BigDecimal totalValue;
+    private BigDecimal mileageAtFueling;
+    private String stationName;
+    private String stationCity;
     private String invoiceNumber;
+    private String receiptUrl;
 }

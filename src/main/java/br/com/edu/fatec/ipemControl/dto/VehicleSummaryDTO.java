@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VehicleSummaryDTO {
-
-    private Integer vehicleId;
+    private Integer id;
     private String model;
     private String prefix;
     private String lastUsage;
@@ -20,18 +19,17 @@ public class VehicleSummaryDTO {
     private String licenseCategory;
     private Boolean active;
 
-    // Construtor de compatibilidade sem os novos campos (para não quebrar código existente)
-    public VehicleSummaryDTO(Integer vehicleId, String model, String prefix,
+    public VehicleSummaryDTO(Integer id, String model, String prefix,
                              String lastUsage, String lastDriver,
                              String lastRefuel, String mileage, String status) {
-        this.vehicleId = vehicleId;
+        this.id = id;
         this.model = model;
         this.prefix = prefix;
         this.lastUsage = lastUsage;
         this.lastDriver = lastDriver;
         this.lastRefuel = lastRefuel;
         this.mileage = mileage;
-        this.status              = status;
+        this.status = status;
         this.active = true;
     }
 }

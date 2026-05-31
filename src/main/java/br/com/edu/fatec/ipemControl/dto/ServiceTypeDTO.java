@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class ServiceTypeDTO {
-    private Integer serviceTypeId;
+    private Integer id;
     private String serviceName;
     private String description;
-    private Boolean licensed;
+    private Boolean enabled;
     private Boolean oilChange;
 }

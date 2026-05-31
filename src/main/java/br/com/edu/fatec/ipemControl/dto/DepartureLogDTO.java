@@ -8,9 +8,10 @@ import java.time.LocalDateTime;
 public class DepartureLogDTO {
     private Integer vehicleId;
     private Integer userRegistration;
+    private Integer secondUserRegistration;
     private Integer serviceTypeId;
     private String destination;
-    private String observations;
+    private String notes;
     private BigDecimal initialMileage;
     private LocalDateTime departureDatetime;
 }

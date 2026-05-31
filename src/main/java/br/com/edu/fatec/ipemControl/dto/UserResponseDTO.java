@@ -1,8 +1,6 @@
 package br.com.edu.fatec.ipemControl.dto;
 
-import br.com.edu.fatec.ipemControl.entity.User;
 import lombok.Data;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -14,10 +12,10 @@ public class UserResponseDTO {
     private String name;
     private LocalDate birthDate;
     private String email;
-    private User.UserType userType;
+    private String userType;
     private String role;
     private Boolean activeEmployee;
-    private User.DriverLicenseType driverLicenseType;
+    private String licenseType;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

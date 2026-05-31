@@ -6,8 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class ReturnDTO {
-
     private BigDecimal finalMileage;
     private LocalDateTime returnDatetime;
-    private String observations;
+    private String notes;
 }

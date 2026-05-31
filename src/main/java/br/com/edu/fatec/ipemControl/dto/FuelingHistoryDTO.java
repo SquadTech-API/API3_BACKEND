@@ -8,14 +8,14 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 public class FuelingHistoryDTO {
-    private Integer fuelingId;
-    private LocalDateTime dateTime;
-    private String fuelType;
-    private BigDecimal litersQuantity;
-    private BigDecimal totalAmount;
-    private BigDecimal fuelingMileage;
-    private String gasStationName;
-    private String gasStationCity;
+    private Integer id;
+    private LocalDateTime fuelingDatetime;
+    private String fuelTypeName;
+    private BigDecimal liters;
+    private BigDecimal totalValue;
+    private BigDecimal mileageAtFueling;
+    private String stationName;
+    private String stationCity;
     private String invoiceNumber;
     private Integer vehicleId;
     private String vehicleModel;

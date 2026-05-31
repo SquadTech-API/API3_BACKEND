@@ -1,19 +1,18 @@
 package br.com.edu.fatec.ipemControl.dto;
 
 import lombok.Data;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 public class OilChangeResponseDTO {
-    private Integer oilChangeId;
-    private BigDecimal changeKm;
+    private Integer id;
+    private BigDecimal changeMileage;
     private BigDecimal intervalKm;
-    private BigDecimal nextChangeKm;
+    private BigDecimal nextChangeMileage;
     private LocalDate changeDate;
-    private String observation;
+    private String notes;
     private Boolean alertSent;
     private Integer departureLogId;
     private Integer vehicleId;

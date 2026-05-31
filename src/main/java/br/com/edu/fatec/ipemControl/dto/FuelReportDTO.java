@@ -22,8 +22,8 @@ public class FuelReportDTO {
     private List<BigDecimal> weeklySpending;
     private List<BigDecimal> weeklyLiters;
 
-    // Tabela de registros individuais
-    private List<FuelingItemDTO> refuels;
+    // Tabela de registros individuais — renomeado de refuels → fuelings
+    private List<FuelingItemDTO> fuelings;
 
     // Dados por veículo
     private List<VehicleConsumptionDTO> vehicles;
