@@ -1,8 +1,8 @@
 package br.com.edu.fatec.ipemControl.service;
 
 import br.com.edu.fatec.ipemControl.dto.*;
-import br.com.edu.fatec.ipemControl.entities.DepartureLog;
-import br.com.edu.fatec.ipemControl.entities.User;
+import br.com.edu.fatec.ipemControl.entity.DepartureLog;
+import br.com.edu.fatec.ipemControl.entity.User;
 import br.com.edu.fatec.ipemControl.exception.ResourceNotFoundException;
 import br.com.edu.fatec.ipemControl.repository.*;
 import org.springframework.stereotype.Service;

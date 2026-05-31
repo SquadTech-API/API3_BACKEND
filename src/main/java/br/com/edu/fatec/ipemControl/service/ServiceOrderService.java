@@ -2,8 +2,8 @@ package br.com.edu.fatec.ipemControl.service;
 
 import br.com.edu.fatec.ipemControl.dto.ServiceOrderDTO;
 import br.com.edu.fatec.ipemControl.dto.ServiceOrderResponseDTO;
-import br.com.edu.fatec.ipemControl.entities.ServiceType;
-import br.com.edu.fatec.ipemControl.entities.Vehicle;
+import br.com.edu.fatec.ipemControl.entity.ServiceType;
+import br.com.edu.fatec.ipemControl.entity.Vehicle;
 import br.com.edu.fatec.ipemControl.exception.ResourceNotFoundException;
 import br.com.edu.fatec.ipemControl.exception.BusinessRuleException;
 import br.com.edu.fatec.ipemControl.repository.ServiceOrderRepository;
@@ -39,7 +39,7 @@ public class ServiceOrderService {
         ServiceType serviceType = serviceTypeRepository.findById(dto.getServiceTypeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Service type not found."));
 
-        br.com.edu.fatec.ipemControl.entities.ServiceOrder serviceOrder = new br.com.edu.fatec.ipemControl.entities.ServiceOrder();
+        br.com.edu.fatec.ipemControl.entity.ServiceOrder serviceOrder = new br.com.edu.fatec.ipemControl.entity.ServiceOrder();
         serviceOrder.setVehicle(vehicle);
         serviceOrder.setServiceType(serviceType);
         serviceOrder.setObservation(dto.getObservations());
@@ -55,7 +55,7 @@ public class ServiceOrderService {
                 .collect(Collectors.toList());
     }
 
-    private ServiceOrderResponseDTO mapToDTO(br.com.edu.fatec.ipemControl.entities.ServiceOrder serviceOrder) {
+    private ServiceOrderResponseDTO mapToDTO(br.com.edu.fatec.ipemControl.entity.ServiceOrder serviceOrder) {
         return new ServiceOrderResponseDTO(
                 serviceOrder.getServiceOrderId(),
                 serviceOrder.getVehicle().getLicensePlate(),

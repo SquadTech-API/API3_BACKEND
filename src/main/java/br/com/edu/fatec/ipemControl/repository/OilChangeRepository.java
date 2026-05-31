@@ -1,6 +1,6 @@
 package br.com.edu.fatec.ipemControl.repository;
 
-import br.com.edu.fatec.ipemControl.entities.OilChange;
+import br.com.edu.fatec.ipemControl.entity.OilChange;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

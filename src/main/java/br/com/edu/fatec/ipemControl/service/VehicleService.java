@@ -2,9 +2,9 @@ package br.com.edu.fatec.ipemControl.service;
 
 import br.com.edu.fatec.ipemControl.dto.VehicleDTO;
 import br.com.edu.fatec.ipemControl.dto.VehicleSummaryDTO;
-import br.com.edu.fatec.ipemControl.entities.DepartureLog;
-import br.com.edu.fatec.ipemControl.entities.Fueling;
-import br.com.edu.fatec.ipemControl.entities.Vehicle;
+import br.com.edu.fatec.ipemControl.entity.DepartureLog;
+import br.com.edu.fatec.ipemControl.entity.Fueling;
+import br.com.edu.fatec.ipemControl.entity.Vehicle;
 import br.com.edu.fatec.ipemControl.exception.ResourceNotFoundException;
 import br.com.edu.fatec.ipemControl.repository.RefuelingRepository;
 import br.com.edu.fatec.ipemControl.repository.ExitRecordRepository;

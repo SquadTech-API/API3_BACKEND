@@ -1,7 +1,7 @@
 package br.com.edu.fatec.ipemControl.service;
 
 import br.com.edu.fatec.ipemControl.dto.*;
-import br.com.edu.fatec.ipemControl.entities.Vehicle;
+import br.com.edu.fatec.ipemControl.entity.Vehicle;
 import br.com.edu.fatec.ipemControl.repository.RefuelingRepository;
 import br.com.edu.fatec.ipemControl.repository.ExitRecordRepository;
 import br.com.edu.fatec.ipemControl.repository.VehicleRepository;

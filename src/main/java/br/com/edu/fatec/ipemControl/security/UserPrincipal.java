@@ -1,6 +1,6 @@
 package br.com.edu.fatec.ipemControl.security;
 
-import br.com.edu.fatec.ipemControl.entities.User;
+import br.com.edu.fatec.ipemControl.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

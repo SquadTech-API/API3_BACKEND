@@ -1,6 +1,6 @@
 package br.com.edu.fatec.ipemControl.dto;
 
-import br.com.edu.fatec.ipemControl.entities.DepartureLog;
+import br.com.edu.fatec.ipemControl.entity.DepartureLog;
 import lombok.*;
 
 import java.math.BigDecimal;

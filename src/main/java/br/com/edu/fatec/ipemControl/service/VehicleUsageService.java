@@ -2,7 +2,7 @@ package br.com.edu.fatec.ipemControl.service;
 
 import br.com.edu.fatec.ipemControl.dto.VehicleUsageDTO;
 import br.com.edu.fatec.ipemControl.dto.ActiveUsageDTO;
-import br.com.edu.fatec.ipemControl.entities.VehicleUsage;
+import br.com.edu.fatec.ipemControl.entity.VehicleUsage;
 import br.com.edu.fatec.ipemControl.repository.TechnicianRepository;
 import br.com.edu.fatec.ipemControl.repository.VehicleUsageRepository;
 import org.springframework.stereotype.Service;

@@ -1,9 +1,9 @@
 package br.com.edu.fatec.ipemControl.service;
 
 import br.com.edu.fatec.ipemControl.dto.ServiceTypeDTO;
-import br.com.edu.fatec.ipemControl.entities.ServiceType;
-import br.com.edu.fatec.ipemControl.entities.Vehicle;
-import br.com.edu.fatec.ipemControl.entities.ServiceVehicle;
+import br.com.edu.fatec.ipemControl.entity.ServiceType;
+import br.com.edu.fatec.ipemControl.entity.Vehicle;
+import br.com.edu.fatec.ipemControl.entity.VehicleService;
 import br.com.edu.fatec.ipemControl.exception.ResourceNotFoundException;
 import br.com.edu.fatec.ipemControl.repository.ServiceTypeRepository;
 import br.com.edu.fatec.ipemControl.repository.VehicleRepository;
@@ -54,7 +54,7 @@ public class VehicleServiceSyncService {
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Tipo de serviço não encontrado: " + serviceTypeId));
 
-            ServiceVehicle vs = new ServiceVehicle();
+            VehicleService vs = new VehicleService();
             vs.setVehicle(vehicle);
             vs.setServiceType(serviceType);
             vs.setIsLicensed(true);
@@ -70,7 +70,7 @@ public class VehicleServiceSyncService {
         return serviceVehicleRepository
                 .findByVehicleVehicleIdAndIsLicensedTrue(vehicleId)
                 .stream()
-                .map(ServiceVehicle::getServiceType)
+                .map(VehicleService::getServiceType)
                 .filter(ts -> Boolean.TRUE.equals(ts.getLicensed()))
                 .map(serviceTypeService::toDTO)
                 .toList();

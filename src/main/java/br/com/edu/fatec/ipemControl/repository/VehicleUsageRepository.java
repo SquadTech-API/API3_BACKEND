@@ -1,6 +1,6 @@
 package br.com.edu.fatec.ipemControl.repository;
 
-import br.com.edu.fatec.ipemControl.entities.VehicleUsage;
+import br.com.edu.fatec.ipemControl.entity.VehicleUsage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

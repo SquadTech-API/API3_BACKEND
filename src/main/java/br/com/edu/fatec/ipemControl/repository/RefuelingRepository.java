@@ -1,7 +1,7 @@
 package br.com.edu.fatec.ipemControl.repository;
 
-import br.com.edu.fatec.ipemControl.entities.DepartureLog;
-import br.com.edu.fatec.ipemControl.entities.Fueling;
+import br.com.edu.fatec.ipemControl.entity.DepartureLog;
+import br.com.edu.fatec.ipemControl.entity.Fueling;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

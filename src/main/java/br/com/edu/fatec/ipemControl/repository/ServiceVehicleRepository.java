@@ -1,6 +1,6 @@
 package br.com.edu.fatec.ipemControl.repository;
 
-import br.com.edu.fatec.ipemControl.entities.ServiceVehicle;
+import br.com.edu.fatec.ipemControl.entity.VehicleService;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,13 +15,13 @@ import java.util.List;
  * Antes não existia — o VehicleServiceSyncService não tinha como persistir vínculos.
  */
 @Repository
-public interface ServiceVehicleRepository extends JpaRepository<ServiceVehicle, Integer> {
+public interface ServiceVehicleRepository extends JpaRepository<VehicleService, Integer> {
 
     // Retorna includeAll os vínculos habilitados de um veículo
-    List<ServiceVehicle> findByVehicleVehicleIdAndIsLicensedTrue(Integer vehicleId);
+    List<VehicleService> findByVehicleVehicleIdAndIsLicensedTrue(Integer vehicleId);
 
     // Retorna includeAll os vínculos de um veículo (habilitados ou não)
-    List<ServiceVehicle> findByVehicleVehicleId(Integer vehicleId);
+    List<VehicleService> findByVehicleVehicleId(Integer vehicleId);
 
     @Modifying
     @Transactional

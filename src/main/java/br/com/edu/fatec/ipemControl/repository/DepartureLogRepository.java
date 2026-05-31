@@ -1,6 +1,6 @@
 package br.com.edu.fatec.ipemControl.repository;
 
-import br.com.edu.fatec.ipemControl.entities.DepartureLog;
+import br.com.edu.fatec.ipemControl.entity.DepartureLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;

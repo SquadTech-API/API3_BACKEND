@@ -4,7 +4,7 @@ import br.com.edu.fatec.ipemControl.dto.UpdatePasswordDTO;
 import br.com.edu.fatec.ipemControl.dto.LoginResponseDTO;
 import br.com.edu.fatec.ipemControl.dto.UserDTO;
 import br.com.edu.fatec.ipemControl.dto.UserResponseDTO;
-import br.com.edu.fatec.ipemControl.entities.User;
+import br.com.edu.fatec.ipemControl.entity.User;
 import br.com.edu.fatec.ipemControl.exception.ResourceNotFoundException;
 import br.com.edu.fatec.ipemControl.exception.BusinessRuleException;
 import br.com.edu.fatec.ipemControl.repository.UserRepository;

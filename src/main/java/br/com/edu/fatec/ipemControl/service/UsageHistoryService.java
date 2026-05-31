@@ -1,8 +1,8 @@
 package br.com.edu.fatec.ipemControl.service;
 
 import br.com.edu.fatec.ipemControl.dto.UsageHistoryCardDTO;
-import br.com.edu.fatec.ipemControl.entities.DepartureLog;
-import br.com.edu.fatec.ipemControl.entities.Fueling;
+import br.com.edu.fatec.ipemControl.entity.DepartureLog;
+import br.com.edu.fatec.ipemControl.entity.Fueling;
 import br.com.edu.fatec.ipemControl.repository.RefuelingRepository;
 import br.com.edu.fatec.ipemControl.repository.ExitRecordRepository;
 import org.springframework.stereotype.Service;

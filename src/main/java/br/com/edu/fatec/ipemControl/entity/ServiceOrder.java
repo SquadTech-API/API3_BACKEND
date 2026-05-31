@@ -1,4 +1,4 @@
-package br.com.edu.fatec.ipemControl.entities;
+package br.com.edu.fatec.ipemControl.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

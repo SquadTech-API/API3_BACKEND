@@ -1,7 +1,7 @@
 package br.com.edu.fatec.ipemControl.service;
 
 import br.com.edu.fatec.ipemControl.dto.*;
-import br.com.edu.fatec.ipemControl.entities.*;
+import br.com.edu.fatec.ipemControl.entity.*;
 import br.com.edu.fatec.ipemControl.exception.ResourceNotFoundException;
 import br.com.edu.fatec.ipemControl.exception.BusinessRuleException;
 import br.com.edu.fatec.ipemControl.repository.*;
