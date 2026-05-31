@@ -13,16 +13,23 @@ import java.util.Optional;
 @Repository
 public interface OilChangeRepository extends JpaRepository<OilChange, Integer> {
 
+    // Total de trocas de óleo feitas pelo usuário
     long countByDepartureLogUserRegistration(Integer registration);
 
-    Optional<OilChange> findTopByDepartureLogUserRegistrationOrderByCreatedAtDesc(Integer registration);
+    // Última troca feita pelo usuário
+    Optional<OilChange> findTopByDepartureLogUserRegistrationOrderByCreatedAtDesc(
+            Integer registration);
 
-    @Query("SELECT oilChange FROM OilChange oilChange WHERE oilChange.vehicle.vehicleId = :vehicleId ORDER BY oilChange.createdAt DESC")
+    // Última troca de uma viatura
+    @Query("SELECT o FROM OilChange o WHERE o.vehicle.id = :vehicleId ORDER BY o.createdAt DESC")
     Optional<OilChange> findLatestByVehicle(@Param("vehicleId") Integer vehicleId);
 
-    List<OilChange> findByVehicleVehicleIdOrderByCreatedAtDesc(Integer vehicleId);
-    
+    // Histórico de trocas de uma viatura ordenado por data
+    List<OilChange> findByVehicleIdOrderByCreatedAtDesc(Integer vehicleId);
+
+    // Trocas registradas após uma data
     List<OilChange> findByCreatedAtAfterOrderByCreatedAtDesc(LocalDateTime startDate);
 
-    Optional<OilChange> findTopByDepartureLogDepartureLogIdOrderByCreatedAtDesc(Integer exitId);
+    // Última troca vinculada a uma saída
+    Optional<OilChange> findTopByDepartureLogIdOrderByCreatedAtDesc(Integer departureLogId);
 }

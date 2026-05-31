@@ -24,13 +24,13 @@ public class DepartureLogService {
     private final VehicleRepository vehicleRepository;
     private final UserRepository userRepository;
     private final ServiceTypeRepository serviceTypeRepository;
-    private final RefuelingRepository refuelingRepository;
+    private final FuelingRepository refuelingRepository;
 
     public DepartureLogService(DepartureLogRepository departureLogRepository,
                                VehicleRepository vehicleRepository,
                                UserRepository userRepository,
                                ServiceTypeRepository serviceTypeRepository,
-                               RefuelingRepository refuelingRepository) {
+                               FuelingRepository refuelingRepository) {
         this.departureLogRepository = departureLogRepository;
         this.vehicleRepository = vehicleRepository;
         this.userRepository = userRepository;

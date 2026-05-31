@@ -1,6 +1,5 @@
 package br.com.edu.fatec.ipemControl.service;
 
-import br.com.edu.fatec.ipemControl.repository.TechnicianRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

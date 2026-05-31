@@ -56,9 +56,15 @@ public class DepartureLog {
     @JoinColumn(name = "vehicle_id", nullable = false)
     private Vehicle vehicle;
 
+    // Condutor principal
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_registration", nullable = false)
     private User user;
+
+    // 2º condutor opcional
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "second_user_registration", nullable = true)
+    private User secondUser;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

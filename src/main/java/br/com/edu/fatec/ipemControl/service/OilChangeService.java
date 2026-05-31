@@ -8,7 +8,6 @@ import br.com.edu.fatec.ipemControl.entity.OilChange;
 import br.com.edu.fatec.ipemControl.entity.Vehicle;
 import br.com.edu.fatec.ipemControl.exception.BusinessRuleException;
 import br.com.edu.fatec.ipemControl.exception.ResourceNotFoundException;
-import br.com.edu.fatec.ipemControl.repository.ExitRecordRepository;
 import br.com.edu.fatec.ipemControl.repository.OilChangeRepository;
 import br.com.edu.fatec.ipemControl.repository.VehicleRepository;
 import org.springframework.scheduling.annotation.Scheduled;

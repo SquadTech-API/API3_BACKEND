@@ -7,7 +7,7 @@ import br.com.edu.fatec.ipemControl.entity.VehicleService;
 import br.com.edu.fatec.ipemControl.exception.ResourceNotFoundException;
 import br.com.edu.fatec.ipemControl.repository.ServiceTypeRepository;
 import br.com.edu.fatec.ipemControl.repository.VehicleRepository;
-import br.com.edu.fatec.ipemControl.repository.ServiceVehicleRepository;
+import br.com.edu.fatec.ipemControl.repository.VehicleServiceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +20,12 @@ import java.util.List;
 @Service
 public class VehicleServiceSyncService {
 
-    private final ServiceVehicleRepository serviceVehicleRepository;
+    private final VehicleServiceRepository serviceVehicleRepository;
     private final VehicleRepository vehicleRepository;
     private final ServiceTypeRepository serviceTypeRepository;
     private final ServiceTypeService serviceTypeService;
 
-    public VehicleServiceSyncService(ServiceVehicleRepository serviceVehicleRepository,
+    public VehicleServiceSyncService(VehicleServiceRepository serviceVehicleRepository,
                                      VehicleRepository vehicleRepository,
                                      ServiceTypeRepository serviceTypeRepository,
                                      ServiceTypeService serviceTypeService) {

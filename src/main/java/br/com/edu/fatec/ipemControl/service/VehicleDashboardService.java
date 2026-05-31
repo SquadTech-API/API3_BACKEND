@@ -2,8 +2,7 @@ package br.com.edu.fatec.ipemControl.service;
 
 import br.com.edu.fatec.ipemControl.dto.*;
 import br.com.edu.fatec.ipemControl.entity.Vehicle;
-import br.com.edu.fatec.ipemControl.repository.RefuelingRepository;
-import br.com.edu.fatec.ipemControl.repository.ExitRecordRepository;
+import br.com.edu.fatec.ipemControl.repository.FuelingRepository;
 import br.com.edu.fatec.ipemControl.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +14,11 @@ import java.util.ArrayList;
 public class VehicleDashboardService {
 
     private final ExitRecordRepository exitRecordRepository;
-    private final RefuelingRepository refuelingRepository;
+    private final FuelingRepository refuelingRepository;
     private final VehicleRepository vehicleRepository;
 
     public VehicleDashboardService(ExitRecordRepository exitRecordRepository,
-                                   RefuelingRepository refuelingRepository,
+                                   FuelingRepository refuelingRepository,
                                    VehicleRepository vehicleRepository) {
         this.exitRecordRepository = exitRecordRepository;
         this.refuelingRepository = refuelingRepository;

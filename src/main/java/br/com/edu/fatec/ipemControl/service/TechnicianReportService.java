@@ -21,13 +21,13 @@ public class TechnicianReportService {
     private static final DateTimeFormatter FMT_DATETIME = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     private final ExitRecordRepository saidaRepo;
-    private final RefuelingRepository abastRepo;
+    private final FuelingRepository abastRepo;
     private final UserRepository usuarioRepo;
     private final OilChangeRepository trocaOleoRepo;
     private final UserDocumentRepository docRepo;
 
     public TechnicianReportService(ExitRecordRepository saidaRepo,
-                                   RefuelingRepository abastRepo,
+                                   FuelingRepository abastRepo,
                                    UserRepository usuarioRepo,
                                    OilChangeRepository trocaOleoRepo,
                                    UserDocumentRepository docRepo) {

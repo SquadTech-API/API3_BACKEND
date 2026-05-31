@@ -1,7 +1,6 @@
 package br.com.edu.fatec.ipemControl.service;
 
 import br.com.edu.fatec.ipemControl.dto.DashboardChartDTO;
-import br.com.edu.fatec.ipemControl.repository.VehicleUsageRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

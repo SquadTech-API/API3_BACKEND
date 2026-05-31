@@ -5,8 +5,7 @@ import br.com.edu.fatec.ipemControl.entity.DepartureLog;
 import br.com.edu.fatec.ipemControl.entity.Fueling;
 import br.com.edu.fatec.ipemControl.entity.Vehicle;
 import br.com.edu.fatec.ipemControl.exception.ResourceNotFoundException;
-import br.com.edu.fatec.ipemControl.repository.RefuelingRepository;
-import br.com.edu.fatec.ipemControl.repository.ExitRecordRepository;
+import br.com.edu.fatec.ipemControl.repository.FuelingRepository;
 import br.com.edu.fatec.ipemControl.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +19,11 @@ public class VehicleReportService {
 
     private final VehicleRepository vehicleRepository;
     private final ExitRecordRepository exitRecordRepository;
-    private final RefuelingRepository refuelingRepository;
+    private final FuelingRepository refuelingRepository;
 
     public VehicleReportService(VehicleRepository vehicleRepository,
                                 ExitRecordRepository exitRecordRepository,
-                                RefuelingRepository refuelingRepository) {
+                                FuelingRepository refuelingRepository) {
         this.vehicleRepository = vehicleRepository;
         this.exitRecordRepository = exitRecordRepository;
         this.refuelingRepository = refuelingRepository;

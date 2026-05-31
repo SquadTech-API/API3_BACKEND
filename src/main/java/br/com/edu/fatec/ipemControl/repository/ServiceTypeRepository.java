@@ -6,13 +6,15 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/**
- * CORRIGIDO: adicionado findByLicensedTrue para search apenas serviços ativos.
- * Antes não tinha esse método — TipoServicoController não conseguia filtrar.
- */
 @Repository
 public interface ServiceTypeRepository extends JpaRepository<ServiceType, Integer> {
 
-    // NOVO: filtra apenas serviços habilitados
-    List<ServiceType> findByLicensedTrue();
+    // Apenas serviços habilitados
+    List<ServiceType> findByEnabledTrue();
+
+    // Apenas serviços de troca de óleo
+    List<ServiceType> findByIsOilChangeTrue();
+
+    // Serviços habilitados de troca de óleo
+    List<ServiceType> findByEnabledTrueAndIsOilChangeTrue();
 }

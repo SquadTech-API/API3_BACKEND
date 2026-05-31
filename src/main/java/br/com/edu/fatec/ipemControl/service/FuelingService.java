@@ -5,8 +5,7 @@ import br.com.edu.fatec.ipemControl.entity.DepartureLog;
 import br.com.edu.fatec.ipemControl.entity.Fueling;
 import br.com.edu.fatec.ipemControl.entity.OilChange;
 import br.com.edu.fatec.ipemControl.entity.Vehicle;
-import br.com.edu.fatec.ipemControl.repository.RefuelingRepository;
-import br.com.edu.fatec.ipemControl.repository.ExitRecordRepository;
+import br.com.edu.fatec.ipemControl.repository.FuelingRepository;
 import br.com.edu.fatec.ipemControl.repository.OilChangeRepository;
 import br.com.edu.fatec.ipemControl.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
@@ -22,13 +21,13 @@ import java.util.stream.Collectors;
 @Service
 public class FuelingService {
 
-    private final RefuelingRepository refuelingRepository;
+    private final FuelingRepository refuelingRepository;
     private final OilChangeRepository oilChangeRepository;
     private final ExitRecordRepository exitRecordRepository;
     private final VehicleRepository vehicleRepository;
 
     public FuelingService(
-            RefuelingRepository refuelingRepository,
+            FuelingRepository refuelingRepository,
             OilChangeRepository oilChangeRepository,
             ExitRecordRepository exitRecordRepository,
             VehicleRepository vehicleRepository) {

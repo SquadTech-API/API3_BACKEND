@@ -3,8 +3,7 @@ package br.com.edu.fatec.ipemControl.service;
 import br.com.edu.fatec.ipemControl.dto.UsageHistoryCardDTO;
 import br.com.edu.fatec.ipemControl.entity.DepartureLog;
 import br.com.edu.fatec.ipemControl.entity.Fueling;
-import br.com.edu.fatec.ipemControl.repository.RefuelingRepository;
-import br.com.edu.fatec.ipemControl.repository.ExitRecordRepository;
+import br.com.edu.fatec.ipemControl.repository.FuelingRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -15,10 +14,10 @@ import java.util.stream.Collectors;
 public class UsageHistoryService {
 
     private final ExitRecordRepository exitRecordRepository;
-    private final RefuelingRepository refuelingRepository;
+    private final FuelingRepository refuelingRepository;
 
     public UsageHistoryService(ExitRecordRepository exitRecordRepository,
-                               RefuelingRepository refuelingRepository) {
+                               FuelingRepository refuelingRepository) {
         this.exitRecordRepository = exitRecordRepository;
         this.refuelingRepository = refuelingRepository;
     }

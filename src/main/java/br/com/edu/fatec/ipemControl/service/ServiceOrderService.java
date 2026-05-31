@@ -6,7 +6,6 @@ import br.com.edu.fatec.ipemControl.entity.ServiceType;
 import br.com.edu.fatec.ipemControl.entity.Vehicle;
 import br.com.edu.fatec.ipemControl.exception.ResourceNotFoundException;
 import br.com.edu.fatec.ipemControl.exception.BusinessRuleException;
-import br.com.edu.fatec.ipemControl.repository.ServiceOrderRepository;
 import br.com.edu.fatec.ipemControl.repository.ServiceTypeRepository;
 import br.com.edu.fatec.ipemControl.repository.VehicleRepository;
 import org.springframework.stereotype.Service;
