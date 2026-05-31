@@ -1,6 +1,6 @@
 package br.com.edu.fatec.ipemControl.config;
 
-import com.ipem.control.security.JwtAuthFilter;
+import br.com.edu.fatec.ipemControl.security.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
