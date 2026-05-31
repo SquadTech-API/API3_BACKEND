@@ -1,0 +1,16 @@
+package br.com.edu.fatec.ipemControl.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Data
+@AllArgsConstructor
+public class OilChangeItemDTO {
+    private LocalDateTime oilChangeDate;
+    private String vehiclePlate;
+    private BigDecimal mileageAtChange;
+    private BigDecimal nextChangeMileage;
+    private BigDecimal currentMileage;
+}
